@@ -25,20 +25,19 @@ class SaleOrderCase(SavepointCase):
         self.assertEqual(self.sale.amount_untaxed, 110)
         self.assertEqual(self.sale.amount_tax, 16.5)
 
-    def test_conf_total_amount(self):
-        self.assertEqual(self.line_with_opt.price_subtotal, 0)
+    def test_conf_total_amount_main_without_price(self):
         self.assertEqual(self.line_with_opt.price_config_subtotal, 110)
         self.assertEqual(self.line_with_opt.price_config_total, 126.5)
+        self.assertEqual(self.line_opt_1.price_config_total, 0)
+        self.assertEqual(self.line_opt_2.price_config_total, 0)
+        self.assertEqual(self.line_opt_3.price_config_total, 0)
+
+    def test_conf_total_amount_main_without_price(self):
         # Set price to product with option and check totals
         cls.line_with_opt.price_unit = 100
-        self.assertEqual(self.line_with_opt.price_subtotal, 100)
         self.assertEqual(self.line_with_opt.price_config_subtotal, 210)
-        self.assertEqual(self.line_with_opt.price_total, 115)
         self.assertEqual(self.line_with_opt.price_config_total, 241.5)
         self.assertEqual(self.line_opt_1.price_config_total, 0)
         self.assertEqual(self.line_opt_2.price_config_total, 0)
         self.assertEqual(self.line_opt_3.price_config_total, 0)
 
-        self.assertEqual(self.sale.amount_total, 241.5)
-        self.assertEqual(self.sale.amount_untaxed, 210)
-        self.assertEqual(self.sale.amount_tax, 31.5)
