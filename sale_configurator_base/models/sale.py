@@ -9,8 +9,14 @@ from odoo import api, fields, models
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    price_config_subtotal = fields.Monetary(compute='_compute_config_amount', string='Config Subtotal', readonly=True, store=True)
-    price_config_total = fields.Monetary(compute='_compute_config_amount', string='Config Total', readonly=True, store=True)
+    price_config_subtotal = fields.Monetary(
+        compute='_compute_config_amount',
+        string='Config Subtotal',
+        readonly=True, store=True)
+    price_config_total = fields.Monetary(
+        compute='_compute_config_amount',
+        string='Config Total',
+        readonly=True, store=True)
 
     @api.depends('price_subtotal', 'price_total')
     def _compute_config_amount(self):

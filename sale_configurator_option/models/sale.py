@@ -11,19 +11,19 @@ class SaleOrderLine(models.Model):
 
     parent_option_id = fields.Many2one("sale.order.line", "Parent Option")
     option_ids = fields.One2many("sale.order.line", "parent_option_id", "Options")
-    
+
     @api.model
     def _get_price_config_subtotal(self):
         """
         get the config subtotal amounts of the SO line.
         """
-        res = super(SaleOrderLine, line)._get_price_config_subtotal()
+        res = super(SaleOrderLine, self)._get_price_config_subtotal()
         if self.parent_option_id:
             res = 0
         elif self.option_ids:
-            res = 0
+            res = self.price_subtotal
             for opt in self.option_ids:
-                res += self.price_subtotal
+                res += opt.price_subtotal
         return res
 
     @api.model
@@ -31,11 +31,11 @@ class SaleOrderLine(models.Model):
         """
         get the config subtotal amounts of the SO line.
         """
-        res = super(SaleOrderLine, line)._get_price_config_total()
+        res = super(SaleOrderLine, self)._get_price_config_total()
         if self.parent_option_id:
             res = 0
         elif self.option_ids:
-            res = 0
+            res = self.price_total
             for opt in self.option_ids:
-                res += self.price_total
+                res += opt.price_total
         return res
