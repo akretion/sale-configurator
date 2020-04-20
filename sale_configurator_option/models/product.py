@@ -10,7 +10,7 @@ from odoo.addons import decimal_precision as dp
 class ProductConfiguratorOption(models.Model):
     _name = 'product.configurator.option'
     _order = "sequence, id"
-    _rec_name = "product_config_id"
+    _rec_name = "product_id"
     _description = 'Product Configurator Option'
 
     def _get_default_product_uom_id(self):
@@ -19,7 +19,7 @@ class ProductConfiguratorOption(models.Model):
     product_tmpl_id = fields.Many2one(
         'product.template', 'Product Template',
         auto_join=True, index=True, ondelete="cascade", required=True)
-    product_config_id = fields.Many2one(
+    product_id = fields.Many2one(
         'product.product', 'Option', required=True)
     product_uom_id = fields.Many2one(
         'uom.uom', 'Product Unit of Measure',
@@ -35,26 +35,26 @@ class ProductConfiguratorOption(models.Model):
         digits=dp.get_precision('Product Unit of Measure'))
     opt_default_qty = fields.Float(
         string="Default Qty", oldname='default_qty', default=0,
-        digits=dp.get_precision('Product Unit of Measure')
+        digits=dp.get_precision('Product Unit of Measure'),
         help="This is the default quantity set to the sale line option ")
     opt_max_qty = fields.Float(
         string="Max Qty", oldname='max_qty', default=1,
-        digits=dp.get_precision('Product Unit of Measure')
+        digits=dp.get_precision('Product Unit of Measure'),
         help="High limit authorised in the sale line option")
 
-    @api.onchange('product_config_id')
+    @api.onchange('product_id')
     def onchange_product_id(self):
-        if self.product_config_id:
-            self.product_uom_id = self.product_config_id.uom_id.id
+        if self.product_id:
+            self.product_uom_id = self.product_id.uom_id.id
 
     @api.onchange('product_uom_id')
     def onchange_product_uom_id(self):
         res = {}
-        if not self.product_uom_id or not self.product_config_id:
+        if not self.product_uom_id or not self.product_id:
             return res
         if self.product_uom_id.category_id !=\
-                self.product_config_id.uom_id.category_id:
-            self.product_uom_id = self.product_config_id.uom_id.id
+                self.product_id.uom_id.category_id:
+            self.product_uom_id = self.product_id.uom_id.id
             res['warning'] = {
                 'title': _('Warning'),
                 'message': _(
@@ -67,9 +67,9 @@ class ProductConfiguratorOption(models.Model):
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    configurable_opt_ok = fields.Boolean(
-        'Has a Configurable Options?',
-        help='Chek this, if the product has a configurable options',
+    is_configurable_opt = fields.Boolean(
+        'Is a Configurable Product ?',
+        help='Chek this, if the product is configurable with options',
     )
     product_config_opt_ids = fields.One2many(
         'product.configurator.option', 'product_tmpl_id',

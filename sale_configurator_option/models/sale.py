@@ -38,3 +38,25 @@ class SaleOrderLine(models.Model):
             for opt in self.option_ids:
                 res += opt.price_total
         return res
+ 
+    def _prepare_sale_line_option(self, opt):
+        return {
+            'order_id': self.order_id.id,
+            # 'parent_option_id': self.id,
+            'product_id': opt.product_id.id,
+            'product_uom_qty': 
+            opt.opt_default_qty * self.product_uom_qty,
+            }
+
+    @api.onchange('product_id')
+    def product_id_change(self):
+        res = super(SaleOrderLine, self).product_id_change()
+        self.option_ids = False
+        if self.product_id.product_tmpl_id.is_configurable_opt:
+            options = []
+            for opt in self.product_id.product_tmpl_id.product_config_opt_ids:
+                if opt.opt_default_qty:
+                    options.append(
+                        (0, 0, self._prepare_sale_line_option(opt)))
+            self.option_ids = options
+        return res
