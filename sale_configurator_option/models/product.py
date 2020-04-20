@@ -71,6 +71,6 @@ class ProductTemplate(models.Model):
         'Is a Configurable Product ?',
         help='Chek this, if the product is configurable with options',
     )
-    product_config_opt_ids = fields.One2many(
+    configurable_option_ids = fields.One2many(
         'product.configurator.option', 'product_tmpl_id',
-        'Option Lines', copy=True)
+        'Configurable Option Lines', copy=True)

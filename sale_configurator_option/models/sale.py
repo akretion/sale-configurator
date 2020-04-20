@@ -51,9 +51,9 @@ class SaleOrderLine(models.Model):
     def product_id_change(self):
         res = super(SaleOrderLine, self).product_id_change()
         self.option_ids = False
-        if self.product_id.product_tmpl_id.is_configurable_opt:
+        if self.product_id.is_configurable_opt:
             options = []
-            for opt in self.product_id.product_tmpl_id.product_config_opt_ids:
+            for opt in self.product_id.configurable_option_ids:
                 if opt.opt_default_qty:
                     options.append(
                         (0, 0, self._prepare_sale_line_option(opt)))
