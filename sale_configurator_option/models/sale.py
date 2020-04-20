@@ -38,13 +38,12 @@ class SaleOrderLine(models.Model):
             for opt in self.option_ids:
                 res += opt.price_total
         return res
- 
+
     def _prepare_sale_line_option(self, opt):
         return {
             'order_id': self.order_id.id,
-            # 'parent_option_id': self.id,
             'product_id': opt.product_id.id,
-            'product_uom_qty': 
+            'product_uom_qty':
             opt.opt_default_qty * self.product_uom_qty,
             }
 

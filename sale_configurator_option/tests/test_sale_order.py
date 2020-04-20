@@ -58,16 +58,16 @@ class SaleOrderCase(SavepointCase):
         self.line_with_opt_2.product_id_change()
         default_options = [
             x.product_id
-            for x in self.product_with_option_2.product_tmpl_id.\
-                    product_config_opt_ids
+            for x in self.product_with_option_2.product_tmpl_id.
+            product_config_opt_ids
             if x.opt_default_qty > 0]
         self.assertEqual(len(self.line_with_opt_2.option_ids), len(default_options))
 
     def test_conf_product_default_opt_qty(self):
         qties = {
             x.product_id: x.opt_default_qty
-            for x in self.product_with_option_2.product_tmpl_id.\
-                    product_config_opt_ids}
+            for x in self.product_with_option_2.product_tmpl_id.
+            product_config_opt_ids}
         for opt in self.line_with_opt_2.option_ids:
             self.assertEqual(
                 opt.product_uom_qty, qties[opt.product_id],
