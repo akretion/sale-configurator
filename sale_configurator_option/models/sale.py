@@ -1,5 +1,6 @@
 # Copyright 2020 Akretion (http://www.akretion.com).
 # @author Sébastien BEAU <sebastien.beau@akretion.com>
+# @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 
@@ -21,7 +22,6 @@ class SaleOrderLine(models.Model):
         if self.parent_option_id:
             res = 0
         elif self.option_ids:
-            res = self.price_subtotal
             for opt in self.option_ids:
                 res += opt.price_subtotal
         return res
@@ -35,7 +35,6 @@ class SaleOrderLine(models.Model):
         if self.parent_option_id:
             res = 0
         elif self.option_ids:
-            res = self.price_total
             for opt in self.option_ids:
                 res += opt.price_total
         return res

@@ -40,4 +40,3 @@ class SaleOrderCase(SavepointCase):
         self.assertEqual(self.line_opt_1.price_config_total, 0)
         self.assertEqual(self.line_opt_2.price_config_total, 0)
         self.assertEqual(self.line_opt_3.price_config_total, 0)
-
