@@ -17,7 +17,7 @@ class ProductConfiguratorOption(models.Model):
         return self.env['uom.uom'].search([], limit=1, order='id').id
 
     product_tmpl_id = fields.Many2one(
-        'product.template', 'Product Template',
+        'product.template', 'Parent Product Template',
         auto_join=True, index=True, ondelete="cascade", required=True)
     product_id = fields.Many2one(
         'product.product', 'Option', required=True)
@@ -41,6 +41,11 @@ class ProductConfiguratorOption(models.Model):
         string="Max Qty", oldname='max_qty', default=1,
         digits=dp.get_precision('Product Unit of Measure'),
         help="High limit authorised in the sale line option")
+    option_qty_type = fields.Selection([
+        ('proportional_qty', 'Proportional Qty'),
+        ('independent_qty', 'Independent Qty')], string='Option qty Type',
+        default='proportional_qty', required=True,
+        )
 
     @api.onchange('product_id')
     def onchange_product_id(self):

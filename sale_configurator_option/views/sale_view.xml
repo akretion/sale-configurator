@@ -98,16 +98,17 @@
                                            options="{'no_create': True}"
                                           />
                                     <field  name="option_unit_qty"/>
-                                    <field  name="force_option_qty" string="Force Desired qty" invisible="0"/>
-                                    <field name="product_uom_qty" string="Desired qty"
+                                    <field  name="option_qty_type" string="Qty type" invisible="0"/>
+                                    <field name="product_uom_qty" string="Total Qty"
                                         attrs="{
-                                        'readonly': [('force_option_qty', '=', False)],
+                                        'readonly': [('option_qty_type', '=', 'proportional_qty')],
                                         }"  force_save="1"
                                         />
                                     <field name="order_id" invisible="1"/>
-                                    <field name="parent_option_qty" invisible="0"/>
+                                    <field name="parent_option_qty" string="Parent Qty" invisible="0"/>
                                     <field name="product_uom"
                                         options="{'no_open':True,'no_create':True}" groups="uom.group_uom"/>
+                                    <field name="price_subtotal" widget="monetary" invisible="0"/>
                                 </tree>
                             </field>
                         </div>
@@ -133,7 +134,7 @@
                 <button name="%(action_sale_line_config_option)d"
                     type="action"
                     string="Add or Configrable Options"
-                    class="oe_edit_only oe_right"
+                    class="oe_edit_only oe_left"
                     states="draft,sent"
                     context="{'default_order_id': active_id,
                       'default_name': '/', }"
