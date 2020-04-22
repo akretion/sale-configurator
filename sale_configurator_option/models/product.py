@@ -21,7 +21,7 @@ class ProductConfiguratorOption(models.Model):
         auto_join=True, index=True, ondelete="cascade", required=True)
     product_id = fields.Many2one(
         'product.product', 'Option', required=True)
-    product_uom_id = fields.Many2one(
+    product_uom = fields.Many2one(
         'uom.uom', 'Product Unit of Measure',
         default=_get_default_product_uom_id,
         oldname='product_uom', required=True,

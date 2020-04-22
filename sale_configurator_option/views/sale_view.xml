@@ -4,7 +4,7 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
    <record id="sale_order_line_config_option_view_form" model="ir.ui.view">
-        <field name="name">sale.order.line.form.readonly</field>
+        <field name="name">sale.order.line.config.option.form</field>
         <field name="model">sale.order.line</field>
         <field name="arch" type="xml">
             <form string="Sale Order Line Option Configurator">
@@ -97,9 +97,17 @@
                                     <field name="product_id"
                                            options="{'no_create': True}"
                                           />
-                                    <field name="product_uom_qty" string="Desired qty" />
+                                    <field  name="option_unit_qty"/>
+                                    <field  name="force_option_qty" string="Force Desired qty" invisible="0"/>
+                                    <field name="product_uom_qty" string="Desired qty"
+                                        attrs="{
+                                        'readonly': [('force_option_qty', '=', False)],
+                                        }"  force_save="1"
+                                        />
                                     <field name="order_id" invisible="1"/>
-                                    <field name="product_uom" options="{'no_open':True,'no_create':True}" groups="uom.group_uom"/>
+                                    <field name="parent_option_qty" invisible="0"/>
+                                    <field name="product_uom"
+                                        options="{'no_open':True,'no_create':True}" groups="uom.group_uom"/>
                                 </tree>
                             </field>
                         </div>

@@ -5,6 +5,7 @@
 
 
 from odoo import _, api, fields, models
+from odoo.addons import decimal_precision as dp
 
 
 class SaleOrder(models.Model):
@@ -23,6 +24,15 @@ class SaleOrderLine(models.Model):
     pricelist_id = fields.Many2one(
         related='order_id.pricelist_id',
         string='Pricelist', store=True, readonly=True)
+    option_unit_qty = fields.Float(
+        string='Option Unit Qty',
+        digits=dp.get_precision('Product Unit of Measure'),
+        default=1.0)
+    parent_option_qty = fields.Float(
+        related="parent_option_id.product_uom_qty")
+    force_option_qty = fields.Boolean(
+        'Force Option Qty',
+        )
 
     @api.multi
     def open_sale_line_config_option(self):
@@ -71,8 +81,10 @@ class SaleOrderLine(models.Model):
         return {
             'order_id': self.order_id.id,
             'product_id': opt.product_id.id,
+            'option_unit_qty': opt.opt_default_qty,
             'product_uom_qty':
             opt.opt_default_qty * self.product_uom_qty,
+            'product_uom': opt.product_uom,
             }
 
     @api.onchange('product_id')
@@ -86,4 +98,13 @@ class SaleOrderLine(models.Model):
                     options.append(
                         (0, 0, self._prepare_sale_line_option(opt)))
             self.option_ids = options
+        return res
+
+    @api.onchange('product_uom',
+        'option_unit_qty', 'parent_option_qty')
+    def product_uom_change(self):
+        if self.parent_option_id:
+            self.product_uom_qty =\
+                self.option_unit_qty * self.parent_option_qty
+        res = super(SaleOrderLine, self).product_uom_change()
         return res
