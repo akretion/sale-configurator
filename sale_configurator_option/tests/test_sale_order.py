@@ -80,5 +80,5 @@ class SaleOrderCase(SavepointCase):
             }
         for line_opt in new_line.option_ids:
             self.assertEqual(
-               line_opt.product_uom_qty, qties[line_opt.product_id],
+                line_opt.product_uom_qty, qties[line_opt.product_id],
                 "Option qty error on product %s" % line_opt.product_id.name)

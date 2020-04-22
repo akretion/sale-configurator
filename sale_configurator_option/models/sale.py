@@ -4,14 +4,42 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+
+
+class SaleOrder(models.Model):
+    _inherit = "sale.order"
 
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     parent_option_id = fields.Many2one("sale.order.line", "Parent Option")
-    option_ids = fields.One2many("sale.order.line", "parent_option_id", "Options")
+    option_ids = fields.One2many(
+        "sale.order.line", "parent_option_id", "Options")
+    is_configurable_opt = fields.Boolean(
+        'Is the product configurable Option ?',
+        related="product_id.is_configurable_opt")
+    pricelist_id = fields.Many2one(
+        related='order_id.pricelist_id',
+        string='Pricelist', store=True, readonly=True)
+
+    @api.multi
+    def open_sale_line_config_option(self):
+        self.ensure_one()
+        view_id = self.env.ref(
+            'sale_configurator_option.sale_order_line_config_option_view_form'
+            ).id
+        return {
+            'name': _('Option Configurator'),
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': self._name,
+            'view_id': view_id,
+            'views': [(view_id, 'form')],
+            'target': 'new',
+            'res_id': self.id,
+            }
 
     @api.model
     def _get_price_config_subtotal(self):

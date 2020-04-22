@@ -16,6 +16,11 @@
     "external_dependencies": {"python": [], "bin": []},
     "depends": ["sale_configurator_base"],
     "data": [],
-    "demo": ["demo/product_demo.xml", "demo/sale_demo.xml"],
+    "demo": [
+        "demo/product_demo.xml",
+        "demo/sale_demo.xml",
+        "views/sale_view.xml",
+        "security/ir.model.access.csv",
+    ],
     "qweb": [],
 }
