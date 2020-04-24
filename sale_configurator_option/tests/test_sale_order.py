@@ -11,30 +11,33 @@ class SaleOrderCase(SavepointCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.sale = cls.env.ref("sale_configurator_option.sale_order_1")
-        cls.line_with_opt = cls.env.ref(
-            "sale_configurator_option.sale_order_line_1")
+        cls.line_with_opt = cls.env.ref("sale_configurator_option.sale_order_line_1")
         cls.line_opt_1 = cls.env.ref(
-            "sale_configurator_option.sale_order_line_option_1")
+            "sale_configurator_option.sale_order_line_option_1"
+        )
         cls.line_opt_2 = cls.env.ref(
-            "sale_configurator_option.sale_order_line_option_2")
+            "sale_configurator_option.sale_order_line_option_2"
+        )
         cls.line_opt_3 = cls.env.ref(
-            "sale_configurator_option.sale_order_line_option_3")
+            "sale_configurator_option.sale_order_line_option_3"
+        )
         cls.product_with_option = cls.env.ref(
-            "sale_configurator_option.product_with_option")
-        cls.product_option_1 = cls.env.ref(
-            "sale_configurator_option.product_option_1")
-        cls.product_option_2 = cls.env.ref(
-            "sale_configurator_option.product_option_2")
+            "sale_configurator_option.product_with_option"
+        )
+        cls.product_option_1 = cls.env.ref("sale_configurator_option.product_option_1")
+        cls.product_option_2 = cls.env.ref("sale_configurator_option.product_option_2")
 
     def create_sale_line(self, product):
-        sale_line = self.env['sale.order.line'].create({
-            'name': product.name,
-            'product_id': product.id,
-            'product_uom_qty': 1,
-            'product_uom': product.uom_id.id,
-            'price_unit': product.list_price,
-            'order_id': self.sale.id,
-        })
+        sale_line = self.env["sale.order.line"].create(
+            {
+                "name": product.name,
+                "product_id": product.id,
+                "product_uom_qty": 1,
+                "product_uom": product.uom_id.id,
+                "price_unit": product.list_price,
+                "order_id": self.sale.id,
+            }
+        )
         return sale_line
 
     def test_total_amount(self):
@@ -62,23 +65,22 @@ class SaleOrderCase(SavepointCase):
         new_line = self.create_sale_line(self.product_with_option)
         new_line.product_id_change()
         product_ids = set(new_line.option_ids.mapped("product_id.id"))
-        default_options = set(
-            [self.product_option_1.id, self.product_option_2.id])
+        default_options = {self.product_option_1.id, self.product_option_2.id}
         self.assertEqual(product_ids, default_options)
 
     def test_conf_product_default_opt_qty(self):
         new_line = self.create_sale_line(self.product_with_option)
         new_line.product_id_change()
-        opt_1 = self.env.ref(
-            "sale_configurator_option.product_configurator_option_1")
-        opt_2 = self.env.ref(
-            "sale_configurator_option.product_configurator_option_2")
+        opt_1 = self.env.ref("sale_configurator_option.product_configurator_option_1")
+        opt_2 = self.env.ref("sale_configurator_option.product_configurator_option_2")
 
         qties = {
             opt_1.product_id: opt_1.opt_default_qty,
             opt_2.product_id: opt_2.opt_default_qty,
-            }
+        }
         for line_opt in new_line.option_ids:
             self.assertEqual(
-                line_opt.product_uom_qty, qties[line_opt.product_id],
-                "Option qty error on product %s" % line_opt.product_id.name)
+                line_opt.product_uom_qty,
+                qties[line_opt.product_id],
+                "Option qty error on product %s" % line_opt.product_id.name,
+            )
