@@ -4,7 +4,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 
 
 class SaleOrderLine(models.Model):
@@ -22,6 +22,12 @@ class SaleOrderLine(models.Model):
         readonly=True,
         store=True,
     )
+    pricelist_id = fields.Many2one(
+        related="order_id.pricelist_id", string="Pricelist", store=True, readonly=True
+    )
+    is_configurable_parent_opt = fields.Boolean(
+        "Line is parent of configurable Option ?",
+    )
 
     @api.depends("price_subtotal", "price_total")
     def _compute_config_amount(self):
@@ -35,6 +41,23 @@ class SaleOrderLine(models.Model):
                     "price_config_total": line._get_price_config_total(),
                 }
             )
+
+    @api.multi
+    def open_sale_line_config_base(self):
+        self.ensure_one()
+        view_id = self.env.ref(
+            "sale_configurator_base.sale_order_line_config_base_view_form"
+        ).id
+        return {
+            "name": _("Base Configurator"),
+            "type": "ir.actions.act_window",
+            "view_mode": "form",
+            "res_model": self._name,
+            "view_id": view_id,
+            "views": [(view_id, "form")],
+            "target": "new",
+            "res_id": self.id,
+        }
 
     @api.model
     def _get_price_config_subtotal(self):

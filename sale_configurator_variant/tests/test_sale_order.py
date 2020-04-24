@@ -64,12 +64,12 @@ class SaleOrderCase(SavepointCase):
         new_line.product_tmpl_id_change()
         product_ids = set(new_line.variant_ids.mapped("product_id.id"))
         default_variants = {
-                self.product_variant_1.id,
-                self.product_variant_2.id,
-                self.product_variant_3.id,
-                self.product_variant_4.id,
-                self.product_variant_5.id,
-                self.product_variant_6.id,
+            self.product_variant_1.id,
+            self.product_variant_2.id,
+            self.product_variant_3.id,
+            self.product_variant_4.id,
+            self.product_variant_5.id,
+            self.product_variant_6.id,
         }
         self.assertEqual(product_ids, default_variants)
 
@@ -77,3 +77,5 @@ class SaleOrderCase(SavepointCase):
         new_line = self.create_sale_line_parent(self.product_with_variant)
         new_line.product_tmpl_id_change()
         self.assertEqual(new_line.product_uom_qty, 6)
+        new_line.variant_ids[0].product_uom_qty = 3
+        self.assertEqual(new_line.product_uom_qty, 8)

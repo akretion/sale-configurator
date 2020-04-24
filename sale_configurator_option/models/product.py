@@ -26,7 +26,7 @@ class ProductConfiguratorOption(models.Model):
         required=True,
     )
     product_id = fields.Many2one("product.product", "Option", required=True)
-    product_uom = fields.Many2one(
+    product_uom_id = fields.Many2one(
         "uom.uom",
         "Product Unit of Measure",
         default=_get_default_product_uom_id,

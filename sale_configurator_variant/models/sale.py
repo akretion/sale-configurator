@@ -21,55 +21,49 @@ class SaleOrderLine(models.Model):
         change_default=True,
         ondelete="restrict",
     )
-    is_variant_qty_need_compute = fields.Boolean(
-        compute="_compute_is_variant_qty_need_compute", store=True
+    is_variant_qty_need_recompute = fields.Boolean(
+        compute="_compute_is_variant_qty_need_recompute", store=True
     )
     parent_variant_qty = fields.Float(related="parent_variant_id.product_uom_qty",)
 
     @api.multi
     @api.depends("variant_ids.product_uom_qty")
-    def _compute_is_variant_qty_need_compute(self):
-        for record in self:
-            record.is_variant_qty_need_compute = True
+    def _compute_is_variant_qty_need_recompute(self):
+        records = self.filtered("variant_ids")
+        for record in records:
+            qty = record._get_child_qty()
+            record.is_variant_qty_need_recompute = qty != record.product_uom_qty
+
+    def _get_child_qty(self):
+        self.ensure_one()
+        return sum(self.variant_ids.mapped("product_uom_qty"))
 
     @api.multi
-    def _compute_parent_variant_qty(self):
+    def _set_parent_variant_qty(self):
         """
         This method is in charge of compute qty of parent variant
         sale order line
         """
-        records = self.filtered("is_variant_qty_need_compute")
+        records = self.filtered("is_variant_qty_need_recompute")
         for record in records:
             if record.variant_ids:
-                record.product_uom_qty = 0
-                for variant in self.variant_ids:
-                    record.product_uom_qty += variant.product_uom_qty
+                record.product_uom_qty = record._get_child_qty()
         return records
 
     def _recompute_done(self, field):
         super(SaleOrderLine, self)._recompute_done(field)
-        if field.name == "is_variant_qty_need_compute":
-            # TOFIX insure one error we use for loop
-            for var_qty in self.exists():
-                with_variant_qty = var_qty._compute_parent_variant_qty()
-            with_variant_qty.write({"is_variant_qty_need_compute": False})
+        if field.name == "is_variant_qty_need_recompute":
+            # TOFIX ensure one error raised by this method we use for loop
+            # check why it's raised
+            # for var_qty in self.exists():
+            with_variant_qty = self.exists()._set_parent_variant_qty()
+            with_variant_qty.write({"is_variant_qty_need_recompute": False})
 
     @api.multi
-    def open_sale_line_config_variant(self):
-        self.ensure_one()
-        view_id = self.env.ref(
-            "sale_configurator_variant.sale_order_line_config_variant_view_form"
-        ).id
-        return {
-            "name": _("variant Configurator"),
-            "type": "ir.actions.act_window",
-            "view_mode": "form",
-            "res_model": self._name,
-            "view_id": view_id,
-            "views": [(view_id, "form")],
-            "target": "new",
-            "res_id": self.id,
-        }
+    def open_sale_line_config_base(self):
+        res = super(SaleOrderLine, self).open_sale_line_config_base()
+        res["name"] = _("variant Configurator")
+        return res
 
     @api.model
     def _get_price_config_subtotal(self):

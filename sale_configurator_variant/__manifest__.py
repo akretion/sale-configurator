@@ -15,10 +15,7 @@
     "installable": True,
     "external_dependencies": {"python": [], "bin": []},
     "depends": ["sale_configurator_option"],
-    "data": [],
-    "demo": [
-        "demo/sale_demo.xml",
-        # "views/sale_view.xml",
-    ],
+    "data": ["views/sale_view.xml",],
+    "demo": ["demo/sale_demo.xml",],
     "qweb": [],
 }

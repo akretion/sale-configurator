@@ -19,9 +19,6 @@ class SaleOrderLine(models.Model):
     is_configurable_opt = fields.Boolean(
         "Is the product configurable Option ?", related="product_id.is_configurable_opt"
     )
-    pricelist_id = fields.Many2one(
-        related="order_id.pricelist_id", string="Pricelist", store=True, readonly=True
-    )
     option_unit_qty = fields.Float(
         string="Option Unit Qty",
         digits=dp.get_precision("Product Unit of Measure"),
@@ -38,21 +35,10 @@ class SaleOrderLine(models.Model):
     )
 
     @api.multi
-    def open_sale_line_config_option(self):
-        self.ensure_one()
-        view_id = self.env.ref(
-            "sale_configurator_option.sale_order_line_config_option_view_form"
-        ).id
-        return {
-            "name": _("Option Configurator"),
-            "type": "ir.actions.act_window",
-            "view_mode": "form",
-            "res_model": self._name,
-            "view_id": view_id,
-            "views": [(view_id, "form")],
-            "target": "new",
-            "res_id": self.id,
-        }
+    def open_sale_line_config_base(self):
+        res = super(SaleOrderLine, self).open_sale_line_config_base()
+        res["name"] = _("Option Configurator")
+        return res
 
     @api.model
     def _get_price_config_subtotal(self):
@@ -89,7 +75,7 @@ class SaleOrderLine(models.Model):
             "product_id": opt.product_id.id,
             "option_unit_qty": opt.opt_default_qty,
             "product_uom_qty": proportional_qty,
-            "product_uom": opt.product_uom,
+            "product_uom": opt.product_uom_id,
             "option_qty_type": opt.option_qty_type,
         }
 
@@ -97,7 +83,9 @@ class SaleOrderLine(models.Model):
     def product_id_change(self):
         res = super(SaleOrderLine, self).product_id_change()
         self.option_ids = False
+        self.is_configurable_parent_opt = True
         if self.product_id.is_configurable_opt:
+            self.is_configurable_parent_opt = True
             options = []
             for opt in self.product_id.configurable_option_ids:
                 if opt.opt_default_qty:
