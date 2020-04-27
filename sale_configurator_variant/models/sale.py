@@ -24,7 +24,9 @@ class SaleOrderLine(models.Model):
     is_variant_qty_need_recompute = fields.Boolean(
         compute="_compute_is_variant_qty_need_recompute", store=True
     )
-    parent_variant_qty = fields.Float(related="parent_variant_id.product_uom_qty",)
+    parent_variant_qty = fields.Float(
+        related="parent_variant_id.product_uom_qty", readonly=False
+    )
 
     @api.multi
     @api.depends("variant_ids.product_uom_qty")
@@ -33,6 +35,7 @@ class SaleOrderLine(models.Model):
         for record in records:
             qty = record._get_child_qty()
             record.is_variant_qty_need_recompute = qty != record.product_uom_qty
+            record._set_parent_variant_qty()
 
     def _get_child_qty(self):
         self.ensure_one()
@@ -53,9 +56,6 @@ class SaleOrderLine(models.Model):
     def _recompute_done(self, field):
         super(SaleOrderLine, self)._recompute_done(field)
         if field.name == "is_variant_qty_need_recompute":
-            # TOFIX ensure one error raised by this method we use for loop
-            # check why it's raised
-            # for var_qty in self.exists():
             with_variant_qty = self.exists()._set_parent_variant_qty()
             with_variant_qty.write({"is_variant_qty_need_recompute": False})
 
@@ -97,6 +97,7 @@ class SaleOrderLine(models.Model):
             "product_id": variant.id,
             "product_uom_qty": 1,
             "product_uom": variant.uom_id,
+            "name": self.get_sale_order_line_multiline_description_sale(variant),
         }
 
     @api.onchange("product_tmpl_id")
@@ -107,4 +108,28 @@ class SaleOrderLine(models.Model):
             for variant in self.product_tmpl_id.product_variant_ids:
                 variant_lines.append((0, 0, self._prepare_sale_line_variant(variant)))
             self.variant_ids = variant_lines
+        if self.product_tmpl_id:
+            # ToFIX set product_id to False raise error on[
+            #  _sql_constraints = accountable_required_fields
+            self.product_id = self.product_tmpl_id.product_variant_id
         return {}
+
+    def _get_sale_line_price_variant(self, variant):
+        price_unit = self.env["account.tax"]._fix_tax_included_price_company(
+            self._get_display_price(variant),
+            variant.taxes_id,
+            self.tax_id,
+            self.company_id,
+        )
+        return price_unit
+
+    @api.onchange("variant_ids")
+    def variant_id_change(self):
+        res = {}
+        for opt in self.variant_ids:
+            self._set_parent_variant_qty()
+            ctx = opt.env.context.copy()
+            ctx.update({"quantity": self.product_uom_qty})
+            variant = opt.product_id.with_context(ctx)
+            opt.price_unit = self._get_sale_line_price_variant(variant)
+        return res

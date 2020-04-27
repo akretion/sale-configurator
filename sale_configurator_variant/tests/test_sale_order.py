@@ -32,6 +32,7 @@ class SaleOrderCase(SavepointCase):
         cls.product_variant_4 = cls.env.ref("product.product_product_4d")
         cls.product_variant_5 = cls.env.ref("sale.product_product_4e")
         cls.product_variant_6 = cls.env.ref("sale.product_product_4f")
+        cls.pricelist = cls.env.ref("product.list0")
 
     def create_sale_line_parent(self, product_tmpl):
         sale_line = self.env["sale.order.line"].create(
@@ -79,3 +80,28 @@ class SaleOrderCase(SavepointCase):
         self.assertEqual(new_line.product_uom_qty, 6)
         new_line.variant_ids[0].product_uom_qty = 3
         self.assertEqual(new_line.product_uom_qty, 8)
+
+    def test_conf_product_variant_price_global_qty(self):
+        # Check if qty of one variant change price of other variant change
+        new_line = self.create_sale_line_parent(self.product_with_variant)
+        new_line.product_tmpl_id_change()
+        line_product_variant_1 = new_line.variant_ids.filtered(
+            lambda l: l.product_id == self.product_variant_1
+        )
+        self.assertEqual(line_product_variant_1.price_unit, 750)
+        picelist_item = self.env["product.pricelist.item"].create(
+            {
+                "pricelist_id": self.pricelist.id,
+                "applied_on": "1_product",
+                "product_tmpl_id": self.product_with_variant.id,
+                "compute_price": "percentage",
+                "percent_price": 20,
+                "min_quantity": 10,
+            }
+        )
+        line_product_variant_2 = new_line.variant_ids.filtered(
+            lambda l: l.product_id == self.product_variant_2
+        )
+        line_product_variant_2.product_uom_qty = 6
+        new_line.variant_id_change()
+        self.assertEqual(line_product_variant_1.price_unit, 600)

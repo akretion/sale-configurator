@@ -11,44 +11,63 @@
             ref="sale_configurator_base.sale_order_line_config_base_view_form"
         />
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="before">
+                <field name="product_tmpl_id" />
+            </xpath>
             <xpath expr="//field[@name='name']" position="after">
-                <div>
-                    <field name="is_configurable_parent_opt" invisible="1" />
-                    <label
-                        for="variant_ids"
-                        attrs="{'invisible': [('is_configurable_parent_opt', '=', False)]}"
-                    />
-                    <field
-                        name="variant_ids"
-                        context="{'line_product_id': product_id}"
-                        attrs="{'invisible': [('is_configurable_parent_opt', '=', False)]}"
-                    >
-                        <tree editable="bottom">
-                            <field name="product_id" options="{'no_create': True}" />
-                            <field
-                                name="product_uom_qty"
-                                string="Total Qty"
-                                force_save="1"
-                            />
-                            <field name="order_id" invisible="1" />
-                            <field
-                                name="parent_variant_qty"
-                                string="Parent Qty"
-                                invisible="0"
-                            />
-                            <field
-                                name="product_uom"
-                                options="{'no_open':True,'no_create':True}"
-                                groups="uom.group_uom"
-                            />
-                            <field
-                                name="price_subtotal"
-                                widget="monetary"
-                                invisible="0"
-                            />
-                        </tree>
-                    </field>
-                </div>
+                <field name="is_configurable_parent_opt" invisible="1" />
+                <label
+                    for="variant_ids"
+                    attrs="{'invisible': [('is_configurable_parent_opt', '=', False)]}"
+                />
+                <field
+                    name="variant_ids"
+                    context="{'line_product_id': product_id}"
+                    attrs="{'invisible': [('is_configurable_parent_opt', '=', False)]}"
+                >
+                    <tree editable="bottom">
+                        <field
+                            name="product_id"
+                            options="{'no_create': True}"
+                            domain="[('product_tmpl_id','=', parent.product_tmpl_id)]"
+                            context="{
+                            'partner_id':parent.order_partner_id,
+                            'quantity':parent.product_uom_qty,
+                            'pricelist':parent.pricelist_id,
+                            'uom':parent.product_uom,
+                            'company_id':parent.company_id}"
+                        />
+                        <field name="name" />
+                        <field
+                            name="product_uom_qty"
+                            context="{'partner_id':parent.order_partner_id,
+                            'quantity':parent.product_uom_qty,
+                            'pricelist':parent.pricelist_id,
+                            'uom':parent.product_uom,
+                            'company_id':parent.company_id}"
+                            string="Total Qty"
+                            force_save="1"
+                        />
+                        <field name="price_unit" />
+                        <field name="is_variant_qty_need_recompute" />
+                        <field name="order_id" invisible="1" />
+                        <field
+                            name="parent_variant_qty"
+                            string="Parent Qty"
+                            invisible="0"
+                        />
+                        <field
+                            name="product_uom"
+                            options="{'no_open':True,'no_create':True}"
+                            groups="uom.group_uom"
+                        />
+                        <field
+                            name="discount"
+                            groups="sale.group_discount_per_so_line"
+                        />
+                        <field name="price_subtotal" widget="monetary" invisible="0" />
+                    </tree>
+                </field>
             </xpath>
         </field>
     </record>

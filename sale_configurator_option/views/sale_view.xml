@@ -12,90 +12,60 @@
         />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='name']" position="after">
-                <div>
-                    <field name="is_configurable_parent_opt" invisible="1" />
-                    <label
-                        for="option_ids"
-                        attrs="{'invisible': [('is_configurable_parent_opt', '=', False)]}"
-                    />
-                    <field
-                        name="option_ids"
-                        context="{'line_product_id': product_id}"
-                        attrs="{'invisible': [('is_configurable_parent_opt', '=', False)]}"
-                    >
-                        <tree editable="bottom">
-                            <field name="product_id" options="{'no_create': True}" />
-                            <field name="option_unit_qty" />
-                            <field
-                                name="option_qty_type"
-                                string="Qty type"
-                                invisible="0"
-                            />
-                            <field
-                                name="product_uom_qty"
-                                string="Total Qty"
-                                attrs="{
-                                'readonly': [('option_qty_type', '=', 'proportional_qty')],
-                                }"
-                                force_save="1"
-                            />
-                            <field name="order_id" invisible="1" />
-                            <field
-                                name="parent_option_qty"
-                                string="Parent Qty"
-                                invisible="0"
-                            />
-                            <field
-                                name="product_uom"
-                                options="{'no_open':True,'no_create':True}"
-                                groups="uom.group_uom"
-                            />
-                            <field
-                                name="price_subtotal"
-                                widget="monetary"
-                                invisible="0"
-                            />
-                        </tree>
-                    </field>
-                </div>
+                <field name="is_configurable_parent_opt" invisible="1" />
+                <label
+                    for="option_ids"
+                    attrs="{'invisible': [('is_configurable_parent_opt', '=', False)]}"
+                />
+                <field
+                    name="option_ids"
+                    context="{'line_product_id': product_id}"
+                    attrs="{'invisible': [('is_configurable_parent_opt', '=', False)]}"
+                >
+                    <tree editable="bottom">
+                        <field
+                            name="product_id"
+                            options="{'no_create': True}"
+                            context="{'partner_id':parent.order_partner_id,
+                            'quantity':product_uom_qty,
+                            'pricelist':parent.pricelist_id,
+                            'uom':product_uom,
+                            'company_id':parent.company_id}"
+                        />
+                        <field name="option_unit_qty" />
+                        <field name="option_qty_type" string="Qty type" invisible="0" />
+                        <field
+                            name="product_uom_qty"
+                            context="{'partner_id':parent.order_partner_id,
+                            'quantity':product_uom_qty,
+                            'pricelist':parent.pricelist_id,
+                            'uom':product_uom,
+                            'company_id':parent.company_id}"
+                            string="Total Qty"
+                            attrs="{
+                            'readonly': [('option_qty_type', '=', 'proportional_qty')],
+                            }"
+                            force_save="1"
+                        />
+                        <field name="order_id" invisible="1" />
+                        <field
+                            name="parent_option_qty"
+                            string="Parent Qty"
+                            invisible="0"
+                        />
+                        <field
+                            name="product_uom"
+                            options="{'no_open':True,'no_create':True}"
+                            groups="uom.group_uom"
+                        />
+                        <field
+                            name="discount"
+                            groups="sale.group_discount_per_so_line"
+                        />
+                        <field name="price_subtotal" widget="monetary" invisible="0" />
+                    </tree>
+                </field>
             </xpath>
         </field>
     </record>
-    <!--record id="view_order_form" model="ir.ui.view">
-        <field name="model">sale.order</field>
-        <field name="inherit_id" ref="sale.view_order_form" />
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='order_line']" position="before">
-                <button
-                    name="%(action_sale_line_config_option)d"
-                    type="action"
-                    string="Add or Configrable Options"
-                    class="oe_edit_only oe_left"
-                    states="draft,sent"
-                    context="{'default_order_id': active_id,
-                      'default_name': '/', }"
-                />
-            </xpath>
-            <xpath expr="//form/field[@name='display_type']" position="before">
-                <field name="is_configurable_parent_opt" invisible="1" />
-            </xpath>
-            <xpath
-                expr="//field[@name='order_line']//tree/field[@name='price_subtotal']"
-                position="after"
-            >
-                <field name="is_configurable_parent_opt" invisible="0" />
-                <button
-                    name="open_sale_line_config_option"
-                    type="object"
-                    string="Modify Configrable Options"
-                    icon="fa-th"
-                    class="oe_edit_only"
-                    attrs="{'invisible': ['|', ('state', 'not in', ('draft', 'sent')), ('is_configurable_parent_opt', '=', False)]}"
-                />
-            </xpath>
-            <xpath expr="//field[@name='order_line']" position="attributes">
-                <attribute name="options">{'reload_on_button': true}</attribute>
-            </xpath>
-        </field>
-    </record-->
 </odoo>
