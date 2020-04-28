@@ -25,7 +25,6 @@ class SaleOrderLine(models.Model):
         default=1.0,
     )
     parent_option_qty = fields.Float(related="parent_option_id.product_uom_qty",)
-    force_option_qty = fields.Boolean("Force Option Qty",)
     option_qty_type = fields.Selection(
         [
             ("proportional_qty", "Proportional Qty"),
@@ -33,12 +32,6 @@ class SaleOrderLine(models.Model):
         ],
         string="Option qty Type",
     )
-
-    @api.multi
-    def open_sale_line_config_base(self):
-        res = super(SaleOrderLine, self).open_sale_line_config_base()
-        res["name"] = _("Option Configurator")
-        return res
 
     @api.model
     def _get_price_config_subtotal(self):

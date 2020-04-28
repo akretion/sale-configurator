@@ -35,7 +35,6 @@ class SaleOrderLine(models.Model):
         for record in records:
             qty = record._get_child_qty()
             record.is_variant_qty_need_recompute = qty != record.product_uom_qty
-            record._set_parent_variant_qty()
 
     def _get_child_qty(self):
         self.ensure_one()
@@ -58,12 +57,6 @@ class SaleOrderLine(models.Model):
         if field.name == "is_variant_qty_need_recompute":
             with_variant_qty = self.exists()._set_parent_variant_qty()
             with_variant_qty.write({"is_variant_qty_need_recompute": False})
-
-    @api.multi
-    def open_sale_line_config_base(self):
-        res = super(SaleOrderLine, self).open_sale_line_config_base()
-        res["name"] = _("variant Configurator")
-        return res
 
     @api.model
     def _get_price_config_subtotal(self):
