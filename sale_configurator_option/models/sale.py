@@ -32,6 +32,15 @@ class SaleOrderLine(models.Model):
         ],
         string="Option qty Type",
     )
+    product_option_id = fields.Many2one(
+        "product.configurator.option", "Product Option", ondelete="set null",
+    )
+
+    @api.onchange("product_option_id")
+    def product_option_id_change(self):
+        res= {}
+        self.product_id = self.product_option_id.product_id
+        return res
 
     @api.model
     def _get_price_config_subtotal(self):
@@ -70,6 +79,7 @@ class SaleOrderLine(models.Model):
             "product_uom_qty": proportional_qty,
             "product_uom": opt.product_uom_id,
             "option_qty_type": opt.option_qty_type,
+            "product_option_id": opt.id,
         }
 
     @api.onchange("product_id")
