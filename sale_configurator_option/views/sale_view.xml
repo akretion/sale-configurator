@@ -28,7 +28,7 @@
                             options="{'no_create': True}"
                             invisible="1"
                         />
-                       <field
+                        <field
                             name="product_id"
                             options="{'no_create': True}"
                             context="{'partner_id':parent.order_partner_id,

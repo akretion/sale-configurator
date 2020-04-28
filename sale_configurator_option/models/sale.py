@@ -38,7 +38,7 @@ class SaleOrderLine(models.Model):
 
     @api.onchange("product_option_id")
     def product_option_id_change(self):
-        res= {}
+        res = {}
         self.product_id = self.product_option_id.product_id
         return res
 
