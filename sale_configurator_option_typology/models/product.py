@@ -7,14 +7,19 @@ from odoo import fields, models
 
 
 class ProductConfiguratorOption(models.Model):
-     _inherit = "product.configurator.option"
+    _inherit = "product.configurator.option"
+
     typology_ids = fields.Many2many(
-        "product.configurator.option.typology", string="Option Typologies")
+        "product.configurator.option.typology",
+        "prod_configurator_option_configurator_option_typology_rel",
+        string="Option Typologies",
+    )
 
 
 class ProductConfiguratorOptionTypology(models.Model):
     _name = "product.configurator.option.typology"
 
     name = fields.Char(required=True, translate=True)
-    code = fields.Char(required=True)
+    code = fields.Char()
+    description = fields.Char()
     logo = fields.Binary(attachment=True)

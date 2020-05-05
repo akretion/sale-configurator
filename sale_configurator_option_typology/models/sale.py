@@ -4,9 +4,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 
-from odoo import _, api, fields, models
-
-from odoo.addons import decimal_precision as dp
+from odoo import api, fields, models
 
 
 class SaleOrderLine(models.Model):

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2020 Akretion (http://www.akretion.com).
+     @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <record id="product_configurator_option_typology_view_tree" model="ir.ui.view">
+        <field name="model">product.configurator.option.typology</field>
+        <field name="arch" type="xml">
+            <tree string="Configurator Option Typology">
+                <field name="name" />
+                <field name="code" />
+            </tree>
+        </field>
+    </record>
+    <record id="product_configurator_option_typology_view_form" model="ir.ui.view">
+        <field name="model">product.configurator.option.typology</field>
+        <field name="arch" type="xml">
+            <form string="Configurator Option Typology">
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <field name="code" />
+                        <field name="logo" widget="image" class="oe_avatar" />
+                        <field name="description" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="product_configurator_option_typology_view_search" model="ir.ui.view">
+        <field name="model">product.configurator.option.typology</field>
+        <field name="arch" type="xml">
+            <search string="Configurator Option Typology">
+                <field
+                    name="name"
+                    string="Typology"
+                    filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self),]"
+                />
+            </search>
+        </field>
+    </record>
+    <record
+        model="ir.actions.act_window"
+        id="act_open_product_configurator_option_typology_view"
+    >
+        <field name="name">Configurator Option Typology</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.configurator.option.typology</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field
+            name="search_view_id"
+            ref="product_configurator_option_typology_view_search"
+        />
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+    <record
+        model="ir.actions.act_window.view"
+        id="act_open_product_configurator_option_typology_view_form"
+    >
+        <field
+            name="act_window_id"
+            ref="act_open_product_configurator_option_typology_view"
+        />
+        <field name="sequence" eval="20" />
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="product_configurator_option_typology_view_form" />
+    </record>
+    <record
+        model="ir.actions.act_window.view"
+        id="act_open_product_configurator_option_typology_view_tree"
+    >
+        <field
+            name="act_window_id"
+            ref="act_open_product_configurator_option_typology_view"
+        />
+        <field name="sequence" eval="10" />
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="product_configurator_option_typology_view_tree" />
+    </record>
+    <menuitem
+        id="menu_product_configurator_option_typology"
+        parent="sale.menu_sales_config"
+        sequence="100"
+        action="act_open_product_configurator_option_typology_view"
+    />
+    <record model="ir.ui.view" id="product_template_form_view">
+        <field name="name">product.template.option.typology.form</field>
+        <field name="model">product.template</field>
+        <field
+            name="inherit_id"
+            ref="sale_configurator_option.product_template_form_view"
+        />
+        <field name="arch" type="xml">
+            <xpath
+                expr="//page[@name='config_options']//field[@name='product_uom_id']"
+                position="after"
+            >
+                <field name="typology_ids" widget="many2many_tags" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

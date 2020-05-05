@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record
+        id="sale_configurator_option.sale_order_line_option_1"
+        model="sale.order.line"
+    >
+        <field name="option_typology_id" ref="product_option_typology_1" />
+    </record>
+    <record
+        id="sale_configurator_option.sale_order_line_option_2"
+        model="sale.order.line"
+    >
+        <field name="option_typology_id" ref="product_option_typology_2" />
+    </record>
+    <record
+        id="sale_configurator_option.sale_order_line_option_3"
+        model="sale.order.line"
+    >
+        <field name="option_typology_id" ref="product_option_typology_3" />
+    </record>
+</odoo>
