@@ -95,10 +95,14 @@ class SaleOrderLine(models.Model):
                     options.append((0, 0, self._prepare_sale_line_option(opt)))
             self.option_ids = options
         if self.product_id.is_option:
-            product_tmpl_id =  self.product_id.product_tmpl_id
-            option_id = self.env['product.configurator.option'].search(
-                [('product_id', '=', self.product_id.id),
-                ('product_tmpl_id', '=', product_tmpl_id.id)], limit=1)
+            product_tmpl_id = self.product_id.product_tmpl_id
+            option_id = self.env["product.configurator.option"].search(
+                [
+                    ("product_id", "=", self.product_id.id),
+                    ("product_tmpl_id", "=", product_tmpl_id.id),
+                ],
+                limit=1,
+            )
             self.product_option_id = option_id
         return res
 

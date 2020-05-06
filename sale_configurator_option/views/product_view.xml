@@ -6,19 +6,22 @@
         <field name="inherit_id" ref="product.product_template_form_view" />
         <field name="arch" type="xml">
             <xpath expr="//page[@name='sales']" position="after">
-                <page
-                    name="config_options"
-                    string="Configurator Options"
-                    
-                >
+                <page name="config_options" string="Configurator Options">
                     <group name="options">
                         <group name="setting">
-                            <field name="is_configurable_opt"
-                                attrs="{'invisible': [('is_option','=', True)]}"/>
-                            <field name="is_option"
-                                attrs="{'invisible': [('is_configurable_opt','=', True)]}"/>
+                            <field
+                                name="is_configurable_opt"
+                                attrs="{'invisible': [('is_option','=', True)]}"
+                            />
+                            <field
+                                name="is_option"
+                                attrs="{'invisible': [('is_configurable_opt','=', True)]}"
+                            />
                         </group>
-                        <group string="Options" attrs="{'invisible': [('is_configurable_opt','=',False)]}">
+                        <group
+                            string="Options"
+                            attrs="{'invisible': [('is_configurable_opt','=',False)]}"
+                        >
                             <field
                                 name="configurable_option_ids"
                                 nolabel="1"
