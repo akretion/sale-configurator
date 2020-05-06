@@ -25,7 +25,9 @@ class ProductConfiguratorOption(models.Model):
         ondelete="cascade",
         required=True,
     )
-    product_id = fields.Many2one("product.product", "Option", required=True)
+    product_id = fields.Many2one("product.product", "Option",
+        required=True,
+        domain=[('is_option', '=', True)])
     product_uom_id = fields.Many2one(
         "uom.uom",
         "Product Unit of Measure",
@@ -86,6 +88,11 @@ class ProductConfiguratorOption(models.Model):
             }
         return res
 
+    _sql_constraints = {
+            ('product_tmpl_id_product_id_unique',
+                'UNIQUE(product_tmpl_id,product_id)',
+                "Option must be unique by configable product")
+            }
 
 class ProductTemplate(models.Model):
     _inherit = "product.template"
@@ -99,4 +106,8 @@ class ProductTemplate(models.Model):
         "product_tmpl_id",
         "Configurable Option Lines",
         copy=True,
+    )
+    is_option = fields.Boolean(
+        "Is an Option Product ?",
+        help="Chek this, if the product is an option used in configurable product",
     )

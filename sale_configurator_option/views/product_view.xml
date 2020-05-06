@@ -9,10 +9,16 @@
                 <page
                     name="config_options"
                     string="Configurator Options"
-                    attrs="{'invisible': [('sale_ok','=',False)]}"
+                    
                 >
                     <group name="options">
-                        <group string="Options">
+                        <group name="setting">
+                            <field name="is_configurable_opt"
+                                attrs="{'invisible': [('is_option','=', True)]}"/>
+                            <field name="is_option"
+                                attrs="{'invisible': [('is_configurable_opt','=', True)]}"/>
+                        </group>
+                        <group string="Options" attrs="{'invisible': [('is_configurable_opt','=',False)]}">
                             <field
                                 name="configurable_option_ids"
                                 nolabel="1"
