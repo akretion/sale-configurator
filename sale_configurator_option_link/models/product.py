@@ -34,11 +34,11 @@ class ProductConfiguratorOption(models.Model):
     @api.depends("included_by_product_id")
     def _compute_included_by_option_id(self):
         for option in self:
-            included_by_option_id = self.env["product.configurator.option"].search(
-                [
-                    ("product_id", "=", option.included_by_product_id.id),
-                    ("product_tmpl_id", "=", option.product_tmpl_id.id),
-                ],
-                limit=1,
+            included_by_option_ids = self.product_tmpl_id.configurable_option_ids.filtered(
+                lambda o: o.product_id == option.included_by_product_id
+            )
+
+            included_by_option_id = (
+                included_by_option_ids and included_by_option_ids[0] or False
             )
             option.included_by_option_id = included_by_option_id
