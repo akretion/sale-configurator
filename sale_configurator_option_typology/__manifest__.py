@@ -20,6 +20,6 @@
         "views/sale_view.xml",
         "security/ir.model.access.csv",
     ],
-    "demo": ["demo/product_demo.xml", "demo/sale_demo.xml",],
+    "demo": ["demo/product_demo.xml", "demo/sale_demo.xml"],
     "qweb": [],
 }
