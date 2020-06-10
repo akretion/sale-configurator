@@ -92,7 +92,7 @@ class ProductConfiguratorOption(models.Model):
         (
             "product_tmpl_id_product_id_unique",
             "UNIQUE(product_tmpl_id,product_id)",
-            "Option must be unique by configable product",
+            "Option must be unique by configurable product",
         )
     }
 

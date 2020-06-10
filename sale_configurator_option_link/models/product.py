@@ -12,7 +12,7 @@ class ProductConfiguratorOption(models.Model):
 
     included_by_option_id = fields.Many2one(
         "product.configurator.option",
-        "Inclueded by Option",
+        "Included by Option",
         compute="_compute_included_by_option_id",
         store=True,
     )
