@@ -36,6 +36,12 @@ class SaleOrderLine(models.Model):
         "product.configurator.option", "Product Option", ondelete="set null",
     )
 
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get("parent_option_id") and not "order_id" in vals:
+                vals["order_id"] = self.browse(vals["parent_option_id"]).order_id.id
+        return super().create(vals_list)
+
     @api.onchange("product_option_id")
     def product_option_id_change(self):
         res = {}
