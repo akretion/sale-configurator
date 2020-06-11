@@ -16,7 +16,7 @@ class SaleOrderLine(models.Model):
 
     @api.onchange("product_option_id")
     def product_option_id_change(self):
-        res = super(SaleOrderLine, self).product_option_id_change()
+        res = super().product_option_id_change()
         res["domain"] = {
             "option_typology_id": [
                 ("id", "in", self.product_option_id.typology_ids.ids)

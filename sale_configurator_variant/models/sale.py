@@ -53,7 +53,7 @@ class SaleOrderLine(models.Model):
         return records
 
     def _recompute_done(self, field):
-        super(SaleOrderLine, self)._recompute_done(field)
+        super()._recompute_done(field)
         if field.name == "is_variant_qty_need_recompute":
             with_variant_qty = self.exists()._set_parent_variant_qty()
             with_variant_qty.write({"is_variant_qty_need_recompute": False})
@@ -63,7 +63,7 @@ class SaleOrderLine(models.Model):
         """
         get the config subtotal amounts of the SO line.
         """
-        res = super(SaleOrderLine, self)._get_price_config_subtotal()
+        res = super()._get_price_config_subtotal()
         if self.parent_variant_id:
             res = 0
         elif self.variant_ids:
@@ -76,7 +76,7 @@ class SaleOrderLine(models.Model):
         """
         get the config subtotal amounts of the SO line.
         """
-        res = super(SaleOrderLine, self)._get_price_config_total()
+        res = super()._get_price_config_total()
         if self.parent_variant_id:
             res = 0
         elif self.variant_ids:
