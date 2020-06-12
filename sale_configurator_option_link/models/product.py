@@ -27,7 +27,8 @@ class ProductConfiguratorOption(models.Model):
     @api.multi
     @api.constrains("included_by_product_id", "included_by_option_id")
     def _check_included_by_product_id(self):
-        if self.filtered(lambda o: o.included_by_product_id and
+        if self.filtered(
+                lambda o: o.included_by_product_id and
                 not o.included_by_option_id):
             raise ValidationError(_("Included option must be defined first"))
 

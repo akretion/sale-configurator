@@ -4,8 +4,9 @@
 
 
 {
-    "name": "Sale Configurator Option Typology",
-    "summary": "Module to manage Option Typologies",
+    "name": "Sale Configurator Option Link",
+    "summary": ("Module to manage Link betwen Options"
+                " (the choise off one option add anthor option)"),
     "version": "12.0.1.0.0",
     "category": "Uncategorized",
     "website": "www.akretion.com",
@@ -17,8 +18,6 @@
     "depends": ["sale_configurator_option"],
     "data": [
         "views/product_view.xml",
-        # "views/sale_view.xml",
     ],
-    # "demo": ["demo/product_demo.xml", "demo/sale_demo.xml",],
     "qweb": [],
 }

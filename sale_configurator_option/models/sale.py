@@ -3,7 +3,6 @@
 # @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-
 from odoo import api, fields, models
 
 from odoo.addons import decimal_precision as dp
@@ -35,10 +34,50 @@ class SaleOrderLine(models.Model):
     product_option_id = fields.Many2one(
         "product.configurator.option", "Product Option", ondelete="set null",
     )
+    is_option_qty_need_recompute = fields.Boolean(
+        compute="_compute_is_option_qty_need_recompute", store=True
+    )
 
+    @api.multi
+    @api.depends("option_ids.product_uom_qty")
+    def _compute_is_option_qty_need_recompute(self):
+        records = self.filtered("option_ids")
+        for record in records:
+            qty = record._get_option_qty()
+            record.is_option_qty_need_recompute = qty != record.product_uom_qty
+
+    def _get_option_qty(self):
+        self.ensure_one()
+        product_uom_qty = 0.0
+        if self.parent_option_id:
+            if self.option_qty_type == "proportional_qty":
+                product_uom_qty = self.option_unit_qty * self.parent_option_qty
+            elif self.option_qty_type == "independent_qty":
+                product_uom_qty = self.option_unit_qty
+        return product_uom_qty
+
+    @api.multi
+    def _set_option_qty(self):
+        """
+        This method is in charge of compute qty option
+        sale order line
+        """
+        records = self.filtered("is_option_qty_need_recompute")
+        for record in records:
+            if record.parent_option_id:
+                record.product_uom_qty = record._get_option_qt()
+        return records
+
+    def _recompute_done(self, field):
+        super()._recompute_done(field)
+        if field.name == "is_option_qty_need_recompute":
+            with_option_qty = self.exists()._set_option_qty()
+            with_option_qty.write({"is_option_qty_need_recompute": False})
+
+    @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            if vals.get("parent_option_id") and not "order_id" in vals:
+            if vals.get("parent_option_id") and "order_id" not in vals:
                 vals["order_id"] = self.browse(vals["parent_option_id"]).order_id.id
         return super().create(vals_list)
 
@@ -112,15 +151,11 @@ class SaleOrderLine(models.Model):
     @api.onchange("product_uom", "option_unit_qty", "product_uom_qty")
     def product_option_qty_change(self):
         if self.parent_option_id:
-            if self.option_qty_type == "proportional_qty":
-                self.product_uom_qty = self.option_unit_qty * self.parent_option_qty
-            elif self.option_qty_type == "independent_qty":
-                self.product_uom_qty = self.option_unit_qty
+            self.product_uom_qty = self._get_option_qty()
         if self.option_ids:
             for opt in self.option_ids:
-                if opt.option_qty_type == "proportional_qty":
-                    opt.product_uom_qty = opt.option_unit_qty * self.product_uom_qty
-                    opt.product_uom_change()
+                opt.product_uom_qty = opt._get_option_qty()
+                opt.product_uom_change()
 
         res = super(SaleOrderLine, self).product_uom_change()
         return res

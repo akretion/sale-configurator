@@ -46,6 +46,7 @@ class SaleOrderCase(SavepointCase):
         self.assertEqual(self.sale.amount_tax, 16.5)
 
     def test_conf_total_amount_main_without_price(self):
+        self.line_with_opt._compute_config_amount()
         self.assertEqual(self.line_with_opt.price_config_subtotal, 110)
         self.assertEqual(self.line_with_opt.price_config_total, 126.5)
         self.assertEqual(self.line_opt_1.price_config_total, 0)
@@ -102,7 +103,7 @@ class SaleOrderCase(SavepointCase):
                         "product_id": self.product_option_2.id,
                         "option_qty_type": "proportional_qty",
                         })]
-                    })]
+                })]
             })
         lines = sale.order_line
         self.assertEqual(len(lines), 3)

@@ -89,7 +89,7 @@ class SaleOrderCase(SavepointCase):
             lambda l: l.product_id == self.product_variant_1
         )
         self.assertEqual(line_product_variant_1.price_unit, 750)
-        picelist_item = self.env["product.pricelist.item"].create(
+        self.env["product.pricelist.item"].create(
             {
                 "pricelist_id": self.pricelist.id,
                 "applied_on": "1_product",
