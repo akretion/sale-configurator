@@ -92,7 +92,7 @@ class SaleOrderLine(models.Model):
         """
         get the config subtotal amounts of the SO line.
         """
-        res = super(SaleOrderLine, self)._get_price_config_subtotal()
+        res = super()._get_price_config_subtotal()
         if self.parent_option_id:
             res = 0
         elif self.option_ids:
@@ -105,7 +105,7 @@ class SaleOrderLine(models.Model):
         """
         get the config subtotal amounts of the SO line.
         """
-        res = super(SaleOrderLine, self)._get_price_config_total()
+        res = super()._get_price_config_total()
         if self.parent_option_id:
             res = 0
         elif self.option_ids:
@@ -129,7 +129,7 @@ class SaleOrderLine(models.Model):
 
     @api.onchange("product_id")
     def product_id_change(self):
-        res = super(SaleOrderLine, self).product_id_change()
+        res = super().product_id_change()
         self.option_ids = False
         self.is_configurable_parent_opt = True
         if self.product_id.is_configurable_opt:
@@ -157,5 +157,5 @@ class SaleOrderLine(models.Model):
                 opt.product_uom_qty = opt._get_option_qty()
                 opt.product_uom_change()
 
-        res = super(SaleOrderLine, self).product_uom_change()
+        res = super().product_uom_change()
         return res
