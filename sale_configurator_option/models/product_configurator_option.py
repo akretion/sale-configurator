@@ -4,7 +4,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, fields, models
-
 from odoo.addons import decimal_precision as dp
 
 
@@ -17,13 +16,19 @@ class ProductConfiguratorOption(models.Model):
     def _get_default_product_uom_id(self):
         return self.env["uom.uom"].search([], limit=1, order="id").id
 
+    product_conf_tmpl_id = fields.Many2one(
+        "product.configurator.template",
+        "Parent Configurable Template",
+        auto_join=True,
+        index=True,
+        ondelete="cascade",
+    )
     product_tmpl_id = fields.Many2one(
         "product.template",
         "Parent Product Template",
         auto_join=True,
         index=True,
         ondelete="cascade",
-        required=True,
     )
     product_id = fields.Many2one(
         "product.product", "Option", required=True, domain=[("is_option", "=", True)]
@@ -96,21 +101,3 @@ class ProductConfiguratorOption(models.Model):
         )
     }
 
-
-class ProductTemplate(models.Model):
-    _inherit = "product.template"
-
-    is_configurable_opt = fields.Boolean(
-        "Is a Configurable Product ?",
-        help="Chek this, if the product is configurable with options",
-    )
-    configurable_option_ids = fields.One2many(
-        "product.configurator.option",
-        "product_tmpl_id",
-        "Configurable Option Lines",
-        copy=True,
-    )
-    is_option = fields.Boolean(
-        "Is an Option Product ?",
-        help="Chek this, if the product is an option used in configurable product",
-    )

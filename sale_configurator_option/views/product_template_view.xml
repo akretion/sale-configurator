@@ -15,12 +15,40 @@
                             />
                             <field
                                 name="is_option"
-                                attrs="{'invisible': [('is_configurable_opt','=', True)]}"
+                                attrs="{'invisible': [('is_configurable_opt', '=', True)]}"
+                            />
+                            <field
+                                name="product_conf_tmpl_id"
+                                attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
                             />
                         </group>
                         <group
-                            string="Options"
-                            attrs="{'invisible': [('is_configurable_opt','=',False)]}"
+                            name="local_options"
+                            string="Local Options"
+                            attrs="{'invisible': [('is_configurable_opt', '=', False),
+                              ('product_conf_tmpl_id', '=', True)]}"
+                        >
+                            <field
+                                name="local_configurable_option_ids"
+                                nolabel="1"
+                                mode="tree"
+                            >
+                                <tree string="Configurator Option" editable="bottom">
+                                    <field name="product_id" />
+                                    <field name="product_uom_id" />
+                                    <field name="sequence" invisible="1" />
+                                    <field name="opt_min_qty" />
+                                    <field name="opt_default_qty" />
+                                    <field name="opt_max_qty" />
+                                    <field name="option_qty_type" />
+                                </tree>
+                            </field>
+                            </group>
+                            <group
+                            name="template_options"
+                            string="Template Options"
+                            attrs="{'invisible': [('is_configurable_opt', '=', False),
+                              ('product_conf_tmpl_id', '=', False)]}"
                         >
                             <field
                                 name="configurable_option_ids"
@@ -38,6 +66,7 @@
                                 </tree>
                             </field>
                         </group>
+ 
                     </group>
                 </page>
             </xpath>
