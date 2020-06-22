@@ -100,4 +100,3 @@ class ProductConfiguratorOption(models.Model):
             "Option must be unique by configurable product",
         )
     }
-

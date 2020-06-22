@@ -139,13 +139,14 @@ class SaleOrderLine(models.Model):
                 if opt.opt_default_qty:
                     options.append((0, 0, self._prepare_sale_line_option(opt)))
             self.option_ids = options
-        if self.product_id.is_option:
+        if self.product_id.is_option and self.parent_option_id:
             product_tmpl_id = self.parent_option_id.product_id.product_tmpl_id
             option_ids = product_tmpl_id.configurable_option_ids.filtered(
                 lambda o: o.product_id == self.product_id
             )
             option_id = option_ids and option_ids[0] or False
             self.product_option_id = option_id
+            self.update(self.parent_option_id._prepare_sale_line_option(option_id))
         return res
 
     @api.onchange("product_uom", "option_unit_qty", "product_uom_qty")

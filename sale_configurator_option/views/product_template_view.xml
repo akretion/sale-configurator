@@ -8,7 +8,7 @@
             <xpath expr="//page[@name='sales']" position="after">
                 <page name="config_options" string="Configurator Options">
                     <group name="options">
-                        <group name="setting">
+                        <group name="setting" colspan="4">
                             <field
                                 name="is_configurable_opt"
                                 attrs="{'invisible': [('is_option','=', True)]}"
@@ -20,14 +20,15 @@
                             <field
                                 name="product_conf_tmpl_id"
                                 attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
-                            />
+                             colspan="2"/>
                         </group>
+                        <separator string="Configurator Options" colspan="4"/>
                         <group
                             name="local_options"
                             string="Local Options"
-                            attrs="{'invisible': [('is_configurable_opt', '=', False),
-                              ('product_conf_tmpl_id', '=', True)]}"
-                        >
+                            attrs="{'invisible': ['|', ('is_configurable_opt', '=', False),
+                              ('product_conf_tmpl_id', '!=', False)]}"
+                         colspan="4">
                             <field
                                 name="local_configurable_option_ids"
                                 nolabel="1"
@@ -47,9 +48,9 @@
                             <group
                             name="template_options"
                             string="Template Options"
-                            attrs="{'invisible': [('is_configurable_opt', '=', False),
+                            attrs="{'invisible': ['|', ('is_configurable_opt', '=', False),
                               ('product_conf_tmpl_id', '=', False)]}"
-                        >
+                         colspan="4">
                             <field
                                 name="configurable_option_ids"
                                 nolabel="1"
