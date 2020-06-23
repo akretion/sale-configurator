@@ -50,9 +50,7 @@
                                             <field name="product_id" />
                                             <field name="product_uom_id" />
                                             <field name="sequence" invisible="1" />
-                                            <field name="opt_min_qty" />
-                                            <field name="opt_default_qty" />
-                                            <field name="opt_max_qty" />
+                                            <field name="sale_default_qty" />
                                             <field name="option_qty_type" />
                                         </tree>
                                     </field>

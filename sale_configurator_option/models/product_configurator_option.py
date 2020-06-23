@@ -45,23 +45,12 @@ class ProductConfiguratorOption(models.Model):
     sequence = fields.Integer(
         "Sequence", default=1, help="Gives the sequence order when displaying."
     )
-    opt_min_qty = fields.Float(
-        string="Min Qty",
-        default=0,
-        digits=dp.get_precision("Product Unit of Measure"))
-    opt_default_qty = fields.Float(
+    sale_default_qty = fields.Float(
         string="Default Qty",
         oldname="default_qty",
         default=0,
         digits=dp.get_precision("Product Unit of Measure"),
         help="This is the default quantity set to the sale line option ",
-    )
-    opt_max_qty = fields.Float(
-        string="Max Qty",
-        oldname="max_qty",
-        default=1,
-        digits=dp.get_precision("Product Unit of Measure"),
-        help="High limit authorised in the sale line option",
     )
     option_qty_type = fields.Selection(
         [

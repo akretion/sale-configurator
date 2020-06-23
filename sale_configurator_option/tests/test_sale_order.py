@@ -76,8 +76,8 @@ class SaleOrderCase(SavepointCase):
         opt_2 = self.env.ref("sale_configurator_option.product_configurator_option_2")
 
         qties = {
-            opt_1.product_id: opt_1.opt_default_qty,
-            opt_2.product_id: opt_2.opt_default_qty,
+            opt_1.product_id: opt_1.sale_default_qty,
+            opt_2.product_id: opt_2.sale_default_qty,
         }
         for line_opt in new_line.option_ids:
             self.assertEqual(

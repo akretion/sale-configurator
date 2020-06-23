@@ -119,13 +119,13 @@ class SaleOrderLine(models.Model):
         return res
 
     def _prepare_sale_line_option(self, opt):
-        proportional_qty = opt.opt_default_qty
+        proportional_qty = opt.sale_default_qty
         if opt.option_qty_type == "proportional_qty":
-            proportional_qty = opt.opt_default_qty * self.product_uom_qty
+            proportional_qty = opt.sale_default_qty * self.product_uom_qty
         return {
             "order_id": self.order_id.id,
             "product_id": opt.product_id.id,
-            "option_unit_qty": opt.opt_default_qty,
+            "option_unit_qty": opt.sale_default_qty,
             "product_uom_qty": proportional_qty,
             "product_uom": opt.product_uom_id,
             "option_qty_type": opt.option_qty_type,
@@ -141,7 +141,7 @@ class SaleOrderLine(models.Model):
             self.is_configurable_parent_opt = True
             options = []
             for opt in self.product_id.configurable_option_ids:
-                if opt.opt_default_qty:
+                if opt.sale_default_qty:
                     options.append((0, 0, self._prepare_sale_line_option(opt)))
             self.option_ids = options
         if self.product_id.is_option and self.parent_option_id:
