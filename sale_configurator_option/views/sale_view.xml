@@ -36,7 +36,7 @@
                             'pricelist':parent.pricelist_id,
                             'uom':product_uom,
                             'company_id':parent.company_id}"
-                            domain="[('is_option', '=', True),]"
+                            domain="[('is_option', '=', True),('option_of_product_ids', '=', parent.product_id)]"
                         />
                         <field name="option_unit_qty" />
                         <field name="option_qty_type" string="Qty type" invisible="0" />

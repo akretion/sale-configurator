@@ -31,8 +31,8 @@ class ProductConfiguratorOption(models.Model):
         ondelete="cascade",
     )
     product_id = fields.Many2one(
-        "product.product", "Option", required=True, domain=[("is_option", "=", True)]
-    )
+        "product.product", "Option", required=True, domain=[
+            ("is_option", "=", True)])
     product_uom_id = fields.Many2one(
         "uom.uom",
         "Product Unit of Measure",
@@ -46,8 +46,9 @@ class ProductConfiguratorOption(models.Model):
         "Sequence", default=1, help="Gives the sequence order when displaying."
     )
     opt_min_qty = fields.Float(
-        string="Min Qty", default=0, digits=dp.get_precision("Product Unit of Measure")
-    )
+        string="Min Qty",
+        default=0,
+        digits=dp.get_precision("Product Unit of Measure"))
     opt_default_qty = fields.Float(
         string="Default Qty",
         oldname="default_qty",
