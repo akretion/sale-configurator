@@ -18,7 +18,7 @@
     "data": [
         "views/product_configurator_template_view.xml",
         "views/product_template_view.xml",
-        # "views/sale_view.xml",
+        "views/sale_view.xml",
     ],
     # "demo": ["demo/product_demo.xml", "demo/sale_demo.xml"],
     "qweb": [],

@@ -4,73 +4,29 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
     <record id="sale_order_line_config_option_view_form" model="ir.ui.view">
-        <field name="name">sale.order.line.config.option.form</field>
+        <field name="name">sale.order.line.config.option.qty.form</field>
         <field name="model">sale.order.line</field>
         <field
             name="inherit_id"
-            ref="sale_configurator_base.sale_order_line_config_base_view_form"
+            ref="sale_configurator_option.sale_order_line_config_option_view_form"
         />
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='name']" position="after">
-                <field name="is_configurable_parent_opt" invisible="1" />
-                <label
-                    for="option_ids"
-                    attrs="{'invisible': [('is_configurable_parent_opt', '=', False)]}"
-                />
-                <field
-                    name="option_ids"
-                    context="{'line_product_id': product_id}"
-                    attrs="{'invisible': [('is_configurable_parent_opt', '=', False)]}"
-                >
-                    <tree editable="bottom">
-                        <field
-                            name="product_option_id"
-                            options="{'no_create': True}"
-                            invisible="1"
-                        />
-                        <field
-                            name="product_id"
-                            options="{'no_create': True}"
-                            context="{'partner_id':parent.order_partner_id,
-                            'quantity':product_uom_qty,
-                            'pricelist':parent.pricelist_id,
-                            'uom':product_uom,
-                            'company_id':parent.company_id}"
-                            domain="[('is_option', '=', True),('option_of_product_ids', '=', parent.product_id)]"
-                        />
-                        <field name="option_unit_qty" />
-                        <field name="option_qty_type" string="Qty type" invisible="0" />
-                        <field
-                            name="product_uom_qty"
-                            context="{'partner_id':parent.order_partner_id,
-                            'quantity':product_uom_qty,
-                            'pricelist':parent.pricelist_id,
-                            'uom':product_uom,
-                            'company_id':parent.company_id}"
-                            string="Total Qty"
-                            attrs="{
-                            'readonly': [('option_qty_type', '=', 'proportional_qty')],
-                            }"
-                            force_save="1"
-                        />
-                        <field name="order_id" invisible="1" />
-                        <field
-                            name="parent_option_qty"
-                            string="Parent Qty"
-                            invisible="0"
-                        />
-                        <field
-                            name="product_uom"
-                            options="{'no_open':True,'no_create':True}"
-                            groups="uom.group_uom"
-                        />
-                        <field
-                            name="discount"
-                            groups="sale.group_discount_per_so_line"
-                        />
-                        <field name="price_subtotal" widget="monetary" invisible="0" />
-                    </tree>
-                </field>
+            <xpath expr="//field[@name='option_ids']/tree/field[@name='option_unit_qty']" position="after">
+               <field name="sale_min_qty"/>
+               <field name="is_qty_less_min_qty" invisible="1"/>
+               <field name="force_sale_min_qty" invisible="1"/>
+               <field name="sale_max_qty"/>
+               <field name="is_qty_bigger_max_qty" invisible="1"/>
+               <field name="force_sale_max_qty" invisible="1"/>
+               <field name="is_qty_not_multiple_qty" invisible="1"/>
+            </xpath>
+
+            <xpath expr="//field[@name='option_ids']/tree" position="attributes">>
+                <attribute name="decoration-danger">is_qty_less_min_qty ==  True and force_sale_min_qty == False</attribute>
+                <attribute name="decoration-warning">is_qty_less_min_qty ==  True and force_sale_min_qty == True</attribute>
+                <attribute name="decoration-danger">is_qty_bigger_max_qty ==  True and force_sale_max_qty == False</attribute>
+                <attribute name="decoration-warning">is_qty_bigger_max_qty ==  True and force_sale_max_qty == True</attribute>
+                <attribute name="decoration-danger">is_qty_not_multiple_qty == True</attribute>
             </xpath>
         </field>
     </record>
