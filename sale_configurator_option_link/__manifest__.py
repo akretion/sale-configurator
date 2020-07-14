@@ -5,8 +5,10 @@
 
 {
     "name": "Sale Configurator Option Link",
-    "summary": ("Module to manage Link betwen Options"
-                " (the choise off one option add anthor option)"),
+    "summary": (
+        "Module to manage Link betwen Options"
+        " (the choise off one option add anthor option)"
+    ),
     "version": "12.0.1.0.0",
     "category": "Uncategorized",
     "website": "www.akretion.com",
@@ -16,8 +18,6 @@
     "installable": True,
     "external_dependencies": {"python": [], "bin": []},
     "depends": ["sale_configurator_option"],
-    "data": [
-        "views/product_view.xml",
-    ],
+    "data": ["views/product_view.xml"],
     "qweb": [],
 }

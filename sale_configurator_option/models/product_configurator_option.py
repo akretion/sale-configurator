@@ -4,6 +4,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, fields, models
+
 from odoo.addons import decimal_precision as dp
 
 
@@ -31,8 +32,8 @@ class ProductConfiguratorOption(models.Model):
         ondelete="cascade",
     )
     product_id = fields.Many2one(
-        "product.product", "Option", required=True, domain=[
-            ("is_option", "=", True)])
+        "product.product", "Option", required=True, domain=[("is_option", "=", True)]
+    )
     product_uom_id = fields.Many2one(
         "uom.uom",
         "Product Unit of Measure",

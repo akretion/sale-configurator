@@ -20,15 +20,17 @@
                             <field
                                 name="product_conf_tmpl_id"
                                 attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
-                             colspan="2"/>
+                                colspan="2"
+                            />
                         </group>
-                        <separator string="Configurator Options" colspan="4"/>
+                        <separator string="Configurator Options" colspan="4" />
                         <group
                             name="local_options"
                             string="Local Options"
                             attrs="{'invisible': ['|', ('is_configurable_opt', '=', False),
                               ('product_conf_tmpl_id', '!=', False)]}"
-                         colspan="4">
+                            colspan="4"
+                        >
                             <field
                                 name="local_configurable_option_ids"
                                 nolabel="1"
@@ -42,13 +44,14 @@
                                     <field name="option_qty_type" />
                                 </tree>
                             </field>
-                            </group>
-                            <group
+                        </group>
+                        <group
                             name="template_options"
                             string="Template Options"
                             attrs="{'invisible': ['|', ('is_configurable_opt', '=', False),
                               ('product_conf_tmpl_id', '=', False)]}"
-                         colspan="4">
+                            colspan="4"
+                        >
                             <field
                                 name="configurable_option_ids"
                                 nolabel="1"
@@ -63,7 +66,6 @@
                                 </tree>
                             </field>
                         </group>
- 
                     </group>
                 </page>
             </xpath>

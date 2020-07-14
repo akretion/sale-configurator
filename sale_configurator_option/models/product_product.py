@@ -10,29 +10,28 @@ class ProductProduct(models.Model):
     _inherit = "product.product"
 
     option_of_product_ids = fields.Many2many(
-        comodel_name='product.product',
-        compute='_compute_option_of_product_ids',
-        search='_search_option_of_product_ids',
-        )
+        comodel_name="product.product",
+        compute="_compute_option_of_product_ids",
+        search="_search_option_of_product_ids",
+    )
 
     @api.multi
     def _compute_option_of_product_ids(self):
         for record in self:
-            option_lines = self.env['product.configurator.option'].search([
-                ('product_id', '=', record.id)
-                ])
-            products = self.env['product.product'].browse(False)
+            option_lines = self.env["product.configurator.option"].search(
+                [("product_id", "=", record.id)]
+            )
+            products = self.env["product.product"].browse(False)
             for option_line in option_lines:
                 if option_line.product_tmpl_id:
-                    products |=\
-                        option_line.product_tmpl_id.product_variant_ids
+                    products |= option_line.product_tmpl_id.product_variant_ids
             record.option_of_product_ids = products.ids
 
     def _search_option_of_product_ids(self, operator, value):
-        if operator != '=':
+        if operator != "=":
             raise UserError(_("Operator %s not supported") % operator)
         else:
-            product = self.env['product.product'].browse(value)
+            product = self.env["product.product"].browse(value)
             return [
-                ('id', 'in',
-                 product.mapped('configurable_option_ids.product_id').ids)]
+                ("id", "in", product.mapped("configurable_option_ids.product_id").ids)
+            ]

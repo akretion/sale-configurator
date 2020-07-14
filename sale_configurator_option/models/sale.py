@@ -14,20 +14,16 @@ class SaleOrderLine(models.Model):
     parent_option_id = fields.Many2one(
         "sale.order.line", "Parent Option", ondelete="cascade", index=True
     )
-    option_ids = fields.One2many(
-        "sale.order.line",
-        "parent_option_id",
-        "Options")
+    option_ids = fields.One2many("sale.order.line", "parent_option_id", "Options")
     is_configurable_opt = fields.Boolean(
-        "Is the product configurable Option ?",
-        related="product_id.is_configurable_opt")
+        "Is the product configurable Option ?", related="product_id.is_configurable_opt"
+    )
     option_unit_qty = fields.Float(
         string="Option Unit Qty",
         digits=dp.get_precision("Product Unit of Measure"),
         default=1.0,
     )
-    parent_option_qty = fields.Float(
-        related="parent_option_id.product_uom_qty",)
+    parent_option_qty = fields.Float(related="parent_option_id.product_uom_qty",)
     option_qty_type = fields.Selection(
         [
             ("proportional_qty", "Proportional Qty"),
@@ -82,8 +78,7 @@ class SaleOrderLine(models.Model):
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get("parent_option_id") and "order_id" not in vals:
-                vals["order_id"] = self.browse(
-                    vals["parent_option_id"]).order_id.id
+                vals["order_id"] = self.browse(vals["parent_option_id"]).order_id.id
         return super().create(vals_list)
 
     @api.onchange("product_option_id")
@@ -151,8 +146,7 @@ class SaleOrderLine(models.Model):
             )
             option_id = option_ids and option_ids[0] or False
             self.product_option_id = option_id
-            self.update(
-                self.parent_option_id._prepare_sale_line_option(option_id))
+            self.update(self.parent_option_id._prepare_sale_line_option(option_id))
         return res
 
     @api.onchange("product_uom", "option_unit_qty", "product_uom_qty")

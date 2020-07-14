@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
+
 from odoo.addons import decimal_precision as dp
 
 
@@ -10,9 +11,8 @@ class ProductConfiguratorOption(models.Model):
     _inherit = "product.configurator.option"
 
     sale_min_qty = fields.Float(
-        string="Min Qty",
-        default=0,
-        digits=dp.get_precision("Product Unit of Measure"))
+        string="Min Qty", default=0, digits=dp.get_precision("Product Unit of Measure")
+    )
     sale_max_qty = fields.Float(
         string="Max Qty",
         oldname="max_qty",

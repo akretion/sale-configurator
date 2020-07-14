@@ -87,24 +87,41 @@ class SaleOrderCase(SavepointCase):
             )
 
     def test_create_sale_with_option_ids(self):
-        sale = self.env["sale.order"].create({
-            "partner_id": self.env.ref("base.res_partner_1").id,
-            "order_line": [(0, 0, {
-                "product_id": self.product_with_option.id,
-                "product_uom_qty": 2,
-                "option_ids": [
-                    (0, 0, {
-                        "option_unit_qty": 5,
-                        "product_id": self.product_option_1.id,
-                        "option_qty_type": "proportional_qty",
-                        }),
-                    (0, 0, {
-                        "option_unit_qty": 2,
-                        "product_id": self.product_option_2.id,
-                        "option_qty_type": "proportional_qty",
-                        })]
-                })]
-            })
+        sale = self.env["sale.order"].create(
+            {
+                "partner_id": self.env.ref("base.res_partner_1").id,
+                "order_line": [
+                    (
+                        0,
+                        0,
+                        {
+                            "product_id": self.product_with_option.id,
+                            "product_uom_qty": 2,
+                            "option_ids": [
+                                (
+                                    0,
+                                    0,
+                                    {
+                                        "option_unit_qty": 5,
+                                        "product_id": self.product_option_1.id,
+                                        "option_qty_type": "proportional_qty",
+                                    },
+                                ),
+                                (
+                                    0,
+                                    0,
+                                    {
+                                        "option_unit_qty": 2,
+                                        "product_id": self.product_option_2.id,
+                                        "option_qty_type": "proportional_qty",
+                                    },
+                                ),
+                            ],
+                        },
+                    )
+                ],
+            }
+        )
         lines = sale.order_line
         self.assertEqual(len(lines), 3)
         self.assertEqual(lines[0].product_uom_qty, 2)

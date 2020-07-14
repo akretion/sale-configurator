@@ -18,8 +18,7 @@ class ProductTemplate(models.Model):
         help="Chek this, if the product is an option used in configurable product",
     )
     product_conf_tmpl_id = fields.Many2one(
-        "product.configurator.template",
-        "Related Configurable Template",
+        "product.configurator.template", "Related Configurable Template",
     )
     local_configurable_option_ids = fields.One2many(
         "product.configurator.option",
@@ -39,8 +38,10 @@ class ProductTemplate(models.Model):
     def _compute_configurable_option_ids(self):
         for template in self:
             if template.product_conf_tmpl_id:
-                template.configurable_option_ids =\
+                template.configurable_option_ids = (
                     template.product_conf_tmpl_id.configurable_option_ids
+                )
             else:
-                template.configurable_option_ids =\
+                template.configurable_option_ids = (
                     template.local_configurable_option_ids
+                )

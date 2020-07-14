@@ -11,10 +11,7 @@
     "author": " Akretion",
     "license": "AGPL-3",
     "installable": True,
-    "depends": [
-        "sale_configurator_option",
-        "sale_restricted_qty",
-        ],
+    "depends": ["sale_configurator_option", "sale_restricted_qty"],
     "data": [
         "views/product_configurator_template_view.xml",
         "views/product_template_view.xml",
