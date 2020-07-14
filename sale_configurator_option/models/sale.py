@@ -39,12 +39,13 @@ class SaleOrderLine(models.Model):
     )
 
     @api.multi
-    @api.depends("option_ids.product_uom_qty")
+    @api.depends("product_uom_qty")
     def _compute_is_option_qty_need_recompute(self):
-        records = self.filtered("option_ids")
+        records = self.mapped("option_ids") + self
         for record in records:
-            qty = record._get_option_qty()
-            record.is_option_qty_need_recompute = qty != record.product_uom_qty
+            if record.parent_option_id:
+                qty = record._get_option_qty()
+                record.is_option_qty_need_recompute = qty != record.product_uom_qty
 
     def _get_option_qty(self):
         self.ensure_one()
@@ -65,7 +66,7 @@ class SaleOrderLine(models.Model):
         records = self.filtered("is_option_qty_need_recompute")
         for record in records:
             if record.parent_option_id:
-                record.product_uom_qty = record._get_option_qt()
+                record.product_uom_qty = record._get_option_qty()
         return records
 
     def _recompute_done(self, field):
