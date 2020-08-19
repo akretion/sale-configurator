@@ -21,9 +21,7 @@ class SaleOrderLine(models.Model):
         readonly=True,
         store=True,
     )
-    pricelist_id = fields.Many2one(
-        related="order_id.pricelist_id", string="Pricelist", store=True, readonly=True
-    )
+    pricelist_id = fields.Many2one(related="order_id.pricelist_id", string="Pricelist")
     is_configurable_parent_opt = fields.Boolean(
         "Line is parent of configurable Option ?",
     )
