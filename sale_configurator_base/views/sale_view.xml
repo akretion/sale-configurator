@@ -194,4 +194,12 @@
             </xpath>
         </field>
     </record>
+
+    <menuitem
+        id="menu_product_configurator"
+        parent="sale.menu_sale_config"
+        sequence="100"
+        name="Product Configurator"
+    />
+
 </odoo>

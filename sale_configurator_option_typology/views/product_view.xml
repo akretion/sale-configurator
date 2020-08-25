@@ -81,7 +81,7 @@
     </record>
     <menuitem
         id="menu_product_configurator_option_typology"
-        parent="sale.prod_config_main"
+        parent="sale_configurator_base.menu_product_configurator"
         sequence="100"
         action="act_open_product_configurator_option_typology_view"
     />

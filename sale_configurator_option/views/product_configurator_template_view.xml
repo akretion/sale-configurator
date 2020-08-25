@@ -156,7 +156,7 @@
         action="product_configurator_template_action"
         id="menu_configurator_template"
         name="Product configurator Templates"
-        parent="sale.product_menu_catalog"
+        parent="sale_configurator_base.menu_product_configurator"
         sequence="10"
     />
 </odoo>
