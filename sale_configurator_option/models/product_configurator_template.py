@@ -13,7 +13,7 @@ class ProductConfiguratorTemplate(models.Model):
     _order = "name"
 
     name = fields.Char("Name", index=True, required=True, translate=True)
-    default_code = fields.Char("Internal Reference", index=True)
+    code = fields.Char("Internal Reference", index=True)
     description = fields.Text("Description", translate=True)
 
     active = fields.Boolean(

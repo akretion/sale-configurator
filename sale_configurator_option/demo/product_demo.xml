@@ -2,25 +2,25 @@
 <odoo>
     <record id="product_with_option" model="product.product">
         <field name="name">Product With option</field>
-        <field name="default_code">PWO</field>
+        <field name="code">PWO</field>
         <field name="is_configurable_opt">True</field>
         <field name="lst_price">0</field>
     </record>
     <record id="product_option_1" model="product.product">
         <field name="name">Option 1</field>
-        <field name="default_code">OPT1</field>
+        <field name="code">OPT1</field>
         <field name="lst_price">10</field>
         <field name="is_option">True</field>
     </record>
     <record id="product_option_2" model="product.product">
         <field name="name">Option 2</field>
-        <field name="default_code">OPT2</field>
+        <field name="code">OPT2</field>
         <field name="lst_price">20</field>
         <field name="is_option">True</field>
     </record>
     <record id="product_option_3" model="product.product">
         <field name="name">Option 3</field>
-        <field name="default_code">OPT3</field>
+        <field name="code">OPT3</field>
         <field name="lst_price">30</field>
         <field name="is_option">True</field>
     </record>

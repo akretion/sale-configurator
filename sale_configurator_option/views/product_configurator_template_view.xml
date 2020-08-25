@@ -5,7 +5,7 @@
         <field name="model">product.configurator.template</field>
         <field name="arch" type="xml">
             <tree string="Product">
-                <field name="default_code" />
+                <field name="code" />
                 <field name="name" />
                 <field name="active" invisible="1" />
             </tree>
@@ -104,7 +104,7 @@
                 <field
                     name="name"
                     string="Configurator Template"
-                    filter_domain="['|', ('default_code', 'ilike', self), ('name', 'ilike', self), ]"
+                    filter_domain="['|', ('code', 'ilike', self), ('name', 'ilike', self), ]"
                 />
                 <field
                     name="configurable_option_ids"
