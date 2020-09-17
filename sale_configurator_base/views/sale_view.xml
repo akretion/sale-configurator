@@ -145,6 +145,27 @@
                         <field name="state" invisible="1" />
                     </group>
                 </sheet>
+                <footer>
+                    <button
+                        name="save_add_product_and_close"
+                        string="Save &amp; Close"
+                        type="object"
+                        class="btn-primary"
+                    />
+                    <button
+                        name="save_add_product_and_new"
+                        string="Save &amp; New"
+                        type="object"
+                        class="btn-primary"
+                    />
+                    <button
+                        name="cancel"
+                        string="Cancel"
+                        class="btn-secondary"
+                        special="cancel"
+                    />
+
+                </footer>
             </form>
         </field>
     </record>

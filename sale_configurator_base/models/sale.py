@@ -39,15 +39,20 @@ class SaleOrderLine(models.Model):
                 }
             )
 
-    @api.multi
+    def save_add_product_and_close(self):
+        return {"type": "ir.actions.act_window_close"}
+
+    def save_add_product_and_new(self):
+        return self.browse().open_sale_line_config_base()
+
     def open_sale_line_config_base(self):
-        self.ensure_one()
         view_id = self.env.ref(
             "sale_configurator_base.sale_order_line_config_base_view_form"
         ).id
         return {
             "name": _("Base Configurator"),
             "type": "ir.actions.act_window",
+            "context": self._context,
             "view_mode": "form",
             "res_model": self._name,
             "view_id": view_id,
