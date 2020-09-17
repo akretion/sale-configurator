@@ -164,8 +164,8 @@
                 <button
                     name="%(action_sale_line_config_base)d"
                     type="action"
-                    string="Add or Configrable bases"
-                    class="oe_edit_only oe_left"
+                    string="Add Configurable Product"
+                    class="btn-primary oe_edit_only oe_left"
                     states="draft,sent"
                     context="{'default_order_id': active_id,
                       'default_name': '/', }"
@@ -183,7 +183,7 @@
                 <button
                     name="open_sale_line_config_base"
                     type="object"
-                    string="Modify Configrable bases"
+                    string="Modify Configuration"
                     icon="fa-th"
                     class="oe_edit_only"
                     attrs="{'invisible': ['|', ('state', 'not in', ('draft', 'sent')), ('is_configurable_parent_opt', '=', False)]}"

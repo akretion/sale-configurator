@@ -23,7 +23,6 @@
                                 colspan="2"
                             />
                         </group>
-                        <separator string="Configurator Options" colspan="4" />
                         <group
                             name="local_options"
                             string="Local Options"

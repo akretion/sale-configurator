@@ -11,6 +11,11 @@
             ref="sale_configurator_base.sale_order_line_config_base_view_form"
         />
         <field name="arch" type="xml">
+            <xpath expr="//group/group/field[@name='product_id']" position="attributes">
+                <attribute
+                    name="domain"
+                >[("is_configurable_opt", "=", True)]</attribute>
+            </xpath>
             <xpath expr="//field[@name='name']" position="after">
                 <field name="is_configurable_parent_opt" invisible="1" />
                 <label
@@ -54,11 +59,6 @@
                             force_save="1"
                         />
                         <field name="order_id" invisible="1" />
-                        <field
-                            name="parent_option_qty"
-                            string="Parent Qty"
-                            invisible="0"
-                        />
                         <field
                             name="product_uom"
                             options="{'no_open':True,'no_create':True}"
