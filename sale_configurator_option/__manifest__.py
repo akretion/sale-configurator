@@ -16,6 +16,7 @@
     "depends": ["sale_configurator_base"],
     "data": [
         "views/sale_view.xml",
+        "views/product_configurator_option_view.xml",
         "views/product_template_view.xml",
         "views/product_configurator_template_view.xml",
         "security/ir.model.access.csv",

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+
     <record model="ir.ui.view" id="product_template_form_view">
         <field name="name">product.template.option.form</field>
         <field name="model">product.template</field>
@@ -34,15 +35,7 @@
                                 name="local_configurable_option_ids"
                                 nolabel="1"
                                 mode="tree"
-                            >
-                                <tree string="Configurator Option" editable="bottom">
-                                    <field name="product_id" />
-                                    <field name="product_uom_id" />
-                                    <field name="sequence" invisible="1" />
-                                    <field name="sale_default_qty" />
-                                    <field name="option_qty_type" />
-                                </tree>
-                            </field>
+                            />
                         </group>
                         <group
                             name="template_options"
@@ -55,15 +48,7 @@
                                 name="configurable_option_ids"
                                 nolabel="1"
                                 mode="tree"
-                            >
-                                <tree string="Configurator Option" editable="bottom">
-                                    <field name="product_id" />
-                                    <field name="product_uom_id" />
-                                    <field name="sequence" invisible="1" />
-                                    <field name="sale_default_qty" />
-                                    <field name="option_qty_type" />
-                                </tree>
-                            </field>
+                            />
                         </group>
                     </group>
                 </page>

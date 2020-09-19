@@ -85,20 +85,4 @@
         sequence="100"
         action="act_open_product_configurator_option_typology_view"
     />
-    <record model="ir.ui.view" id="product_template_form_view">
-        <field name="name">product.template.option.typology.form</field>
-        <field name="model">product.template</field>
-        <field
-            name="inherit_id"
-            ref="sale_configurator_option.product_template_form_view"
-        />
-        <field name="arch" type="xml">
-            <xpath
-                expr="//page[@name='config_options']//field[@name='product_uom_id']"
-                position="after"
-            >
-                <field name="typology_ids" widget="many2many_tags" />
-            </xpath>
-        </field>
-    </record>
 </odoo>

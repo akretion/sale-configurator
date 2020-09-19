@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="product_configurator_option_view_tree" model="ir.ui.view">
+        <field name="model">product.configurator.option</field>
+        <field name="arch" type="xml">
+            <tree string="Option" editable="bottom">
+                <field name="product_id" />
+                <field name="product_uom_id" />
+                <field name="sequence" invisible="1" />
+                <field name="sale_default_qty" />
+                <field name="option_qty_type" />
+            </tree>
+        </field>
+    </record>
+
+</odoo>
