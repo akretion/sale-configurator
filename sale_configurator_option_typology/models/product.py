@@ -18,6 +18,7 @@ class ProductConfiguratorOption(models.Model):
 
 class ProductConfiguratorOptionTypology(models.Model):
     _name = "product.configurator.option.typology"
+    _description = "Product Configurator Option Typology"
 
     name = fields.Char(required=True, translate=True)
     code = fields.Char()

@@ -33,7 +33,7 @@
                                 force_save="1"
                             />
                             <field name="invoice_status" invisible="1" />
-                            <field name="is_configurable_parent_opt" invisible="0" />
+                            <field name="is_configurable_parent_opt" invisible="1" />
                             <field name="qty_to_invoice" invisible="1" />
                             <field name="qty_delivered_manual" invisible="1" />
                             <field name="qty_delivered_method" invisible="1" />

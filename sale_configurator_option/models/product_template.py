@@ -23,7 +23,7 @@ class ProductTemplate(models.Model):
     local_configurable_option_ids = fields.One2many(
         "product.configurator.option",
         "product_tmpl_id",
-        "Configurable Option Lines",
+        "Specific Configurable Option Lines",
         copy=True,
     )
     configurable_option_ids = fields.One2many(
