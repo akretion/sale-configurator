@@ -20,7 +20,6 @@
                     <group>
                         <field name="name" />
                         <field name="code" />
-                        <field name="logo" widget="image" class="oe_avatar" />
                     </group>
                 </sheet>
             </form>

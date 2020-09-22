@@ -8,8 +8,8 @@
             ref="sale_configurator_option.product_configurator_option_view_tree"
         />
     <field name="arch" type="xml">
-        <field name="option_qty_type" position="after">
-            <field name="typology_ids" widget="many2many_tags" />
+        <field name="product_id" position="before">
+            <field name="area_id" />
         </field>
     </field>
 </record>
