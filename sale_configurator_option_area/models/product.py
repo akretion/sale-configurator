@@ -9,18 +9,13 @@ from odoo import fields, models
 class ProductConfiguratorOption(models.Model):
     _inherit = "product.configurator.option"
 
-    typology_ids = fields.Many2many(
-        "product.configurator.option.typology",
-        "prod_configurator_option_configurator_option_typology_rel",
-        string="Option Typologies",
-    )
+    area_id = fields.Many2one("product.configurator.option.area", string="Area",)
 
 
-class ProductConfiguratorOptionTypology(models.Model):
-    _name = "product.configurator.option.typology"
-    _description = "Product Configurator Option Typology"
+class ProductConfiguratorOptionArea(models.Model):
+    _name = "product.configurator.option.area"
+    _description = "Product Configurator Option Area"
 
     name = fields.Char(required=True, translate=True)
     code = fields.Char()
     description = fields.Char()
-    logo = fields.Binary(attachment=True)
