@@ -34,6 +34,14 @@ class ProductConfiguratorOption(models.Model):
 
     area_id = fields.Many2one("product.configurator.option.area", string="Area")
 
+    _sql_constraints = {
+        (
+            "product_tmpl_id_product_id_unique",
+            "UNIQUE(product_tmpl_id,product_id,area_id)",
+            "Option and Area must be unique by configurable product",
+        )
+    }
+
 
 class ProductConfiguratorOptionArea(models.Model):
     _name = "product.configurator.option.area"
