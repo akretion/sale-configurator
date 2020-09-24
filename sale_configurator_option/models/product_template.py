@@ -17,6 +17,11 @@ class ProductTemplate(models.Model):
         "Is an Option Product ?",
         help="Check this, if the product is an option used in configurable product",
     )
+    sale_alone_forbidden = fields.Boolean(
+        "Is only an option",
+        help="This product can't be sold without a configuration",
+        default=False,
+    )
     product_conf_tmpl_id = fields.Many2one(
         "product.configurator.template",
         "Related Configurable Template",
