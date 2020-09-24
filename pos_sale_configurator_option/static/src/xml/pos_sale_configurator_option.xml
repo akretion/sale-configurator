@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template>
+
+    <t t-name="OrderlineWithConfigOptions" t-extend="Orderline">
+        <t t-jquery="span.product-name" t-operation="append">
+            <button>Configure</button>
+        </t>
+        <t t-jquery="ul.info-list" t-operation="append">
+            <t t-foreach="line.selected_options" t-as="config_option">
+                <li class="info config_option">
+                    <t t-esc="config_option.quantity"/> <t t-esc="config_option.description"/>
+                </li>
+            </t>
+        </t>
+    </t>
+
+    <t t-name="SelectConfigOptionPopupWidget">
+        <div class="modal-dialog">
+            <div class="popup popup-select-config-option">
+                <div class="select-area" t-if="widget.product">
+                    <p class="message"><t t-esc="widget.product.display_name"/></p>
+                    <div class="config_option">
+                        <table>
+                            <tr>
+                                <th colspan="3">Quantity</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Notes</th>
+                            </tr>
+                            <t t-foreach="widget.config_options" t-as="operation">
+                                <tr class="element" t-att-data-config_option_id="operation.id"
+                                    t-att-data-product_id="product.id">
+                                    <td><button t-att-data-delta="-1" class="down" ><i class="fa fa-minus"></i></button></td>
+                                    <td><input type="text" class="quantity" t-att-value="operation.sale_default_qty" t-att-data-min="operation.sale_min_qty" t-att-data-max="operation.sale_max_qty"/></td>
+                                    <td><button t-att-data-delta="1" class="up"><i class="fa fa-plus"></i></button></td>
+                                    <td class="description"><t t-esc="operation.product.display_name"/></td>
+                                    <td class="price"><t t-esc="widget.format_currency(operation.product.get_price(widget.pricelist))"/></td>
+                                    <td><textarea class="notes" onkeypress="event.stopPropagation()" value=""/></td>
+                                </tr>
+                            </t>
+                        </table>
+                    </div>
+                </div>
+                <div class="footer" style="height=20%">
+                    <div class="button confirm">
+                        Save
+                    </div>
+                    <div class="button cancel">
+                        Cancel
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+
+</template>
