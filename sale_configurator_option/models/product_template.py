@@ -10,12 +10,17 @@ class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     is_configurable_opt = fields.Boolean(
-        "Is a Configurable Product ?",
+        "Is configurable",
         help="Chek this, if the product is configurable with options",
     )
     is_option = fields.Boolean(
-        "Is an Option Product ?",
+        "Is an Option Product",
         help="Chek this, if the product is an option used in configurable product",
+    )
+    sale_alone_forbidden = fields.Boolean(
+        "Is only an option",
+        help="This product can't be sold without a configuration",
+        default=False,
     )
     product_conf_tmpl_id = fields.Many2one(
         "product.configurator.template",
