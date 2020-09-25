@@ -1,1 +1,2 @@
 sale-workflow https://github.com/akretion/sale-workflow.git 12.0_imp_sale_min_qty
+odoo-pim https://github.com/shopinvader/odoo-pim 12.0
