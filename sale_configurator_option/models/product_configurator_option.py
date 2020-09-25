@@ -62,6 +62,17 @@ class ProductConfiguratorOption(models.Model):
         default="proportional_qty",
         required=True,
     )
+    used_on_product_tmpl_ids = fields.Many2many(
+        comodel_name="product.template",
+        string="Used on product template",
+        compute="_compute_used_on_product_template",
+    )
+
+    def _compute_used_on_product_template(self):
+        for record in self:
+            record.used_on_product_tmpl_ids = (
+                record.product_tmpl_id + record.product_conf_tmpl_id.product_tmpl_ids
+            )
 
     @api.onchange("product_id")
     def onchange_product_id(self):

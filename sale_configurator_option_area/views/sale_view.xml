@@ -14,7 +14,10 @@
                 expr="//field[@name='option_ids']/tree/field[@name='product_id']"
                 position="before"
             >
-                <field name="option_area_id" />
+                <field
+                    name="option_area_id"
+                    domain="[('product_ids', '=', parent.product_id)]"
+                />
             </xpath>
             <xpath
                 expr="//field[@name='option_ids']/tree/field[@name='product_id']"

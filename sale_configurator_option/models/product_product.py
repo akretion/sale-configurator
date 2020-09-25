@@ -9,25 +9,20 @@ from odoo.exceptions import UserError
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
-    option_of_product_ids = fields.Many2many(
+    used_on_product_ids = fields.Many2many(
         comodel_name="product.product",
-        compute="_compute_option_of_product_ids",
-        search="_search_option_of_product_ids",
+        compute="_compute_used_on_product_ids",
+        search="_search_used_on_product_ids",
     )
 
     @api.multi
-    def _compute_option_of_product_ids(self):
+    def _compute_used_on_product_ids(self):
         for record in self:
-            option_lines = self.env["product.configurator.option"].search(
-                [("product_id", "=", record.id)]
+            record.used_on_product_ids = record.mapped(
+                "used_on_product_tmpl.product_variant_ids"
             )
-            products = self.env["product.product"].browse(False)
-            for option_line in option_lines:
-                if option_line.product_tmpl_id:
-                    products |= option_line.product_tmpl_id.product_variant_ids
-            record.option_of_product_ids = products.ids
 
-    def _search_option_of_product_ids(self, operator, value):
+    def _search_used_on_product_ids(self, operator, value):
         if operator != "=":
             raise UserError(_("Operator %s not supported") % operator)
         else:

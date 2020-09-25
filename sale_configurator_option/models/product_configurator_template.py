@@ -28,3 +28,6 @@ class ProductConfiguratorTemplate(models.Model):
         "Configurable Option Lines",
         copy=True,
     )
+    product_tmpl_ids = fields.One2many(
+        "product.template", "product_conf_tmpl_id", "Product Tmpl"
+    )
