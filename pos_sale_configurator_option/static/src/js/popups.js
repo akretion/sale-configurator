@@ -162,16 +162,16 @@ odoo.define('pos_sale_configurator_option.views', function (require) {
 
                 // Chain operations screen
                 // todo refactor with product scree widget
-                var options = this.pos.db.get_options(product.id);
+                var options = self.pos.db.get_options(product.id);
                 if (options.length > 0) {
                     var params = {
                         product: product,
                         config_options: options,
-                        pricelist: this._get_active_pricelist(),
+                        pricelist: self._get_active_pricelist(),
                         configure_line_id: false,
                         selected_operations: []
                     };
-                    self.gui.show_popup('select-operation', params);
+                    self.gui.show_popup('select-config-option', params);
                 }
             };
         },
