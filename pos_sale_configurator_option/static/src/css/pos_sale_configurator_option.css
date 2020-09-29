@@ -4,31 +4,34 @@
     left:5%;
     width: 90%;
     top:5%;
-    height: 670px;
+    height: 85%;
 }
 
-.pos div.config-options {
+.pos div.config_option {
     width: 100%;
+    overflow: hidden;
     overflow-y: auto;
-    height: 550px;
+    /*height: 550px;*/
     text-align: center;
 }
 
-.pos .config-options table {
+.pos .config_option table {
     table-layout: auto;
     width: 100%;
     border: 1px solid darkgray;
     border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:20px;
 }
 
-.pos .config-options td, .pos .config-options th {
+.pos .config_option td, .pos .config_option th {
     border: 1px solid darkgray;
 }
 
-.pos .config-options tr:hover td {
+.pos .config_option tr:hover td {
     background: lightgray;
 }
-
 .pos .element button.add{
     font-size: 1.3em;
     font-weight: bold;
@@ -36,8 +39,9 @@
 
 .pos .element .description{
     max-width: 400px;
+    min-width: 250px;
     text-align: left;
-    padding: 5px;
+    padding: 15px;
 }
 
 .pos .element button.remove{
@@ -50,8 +54,19 @@
     font-weight: bold;
     text-align: center;
     width: 40px;
+    min-height: 50px;
+    max-height: 50px;
 }
 
 .pos .element textarea{
     width: 95%;
+}
+
+.pos .element button.down {
+    min-height: 50px;
+    max-height: 50px;
+}
+.pos .element button.up {
+    min-height: 50px;
+    max-height: 50px;
 }
