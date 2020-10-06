@@ -46,6 +46,9 @@ class ProductConfiguratorOption(models.Model):
     sequence = fields.Integer(
         "Sequence", default=1, help="Gives the sequence order when displaying."
     )
+    is_default_option = fields.Boolean(
+        help="Add this option by default."
+    )
     sale_default_qty = fields.Float(
         string="Default Qty",
         oldname="default_qty",

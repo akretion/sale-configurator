@@ -195,6 +195,9 @@
             <xpath expr="//form/field[@name='display_type']" position="before">
                 <field name="is_configurable_parent_opt" invisible="1" />
             </xpath>
+            <xpath expr="//field[@name='order_line']//tree" position="attributes">
+                <attribute name="decoration-info">is_configurable_parent_opt</attribute>
+            </xpath>
             <xpath
                 expr="//field[@name='order_line']//tree/field[@name='price_subtotal']"
                 position="after"
@@ -206,7 +209,6 @@
                     type="object"
                     string="Modify Configuration"
                     icon="fa-th"
-                    class="oe_edit_only"
                     attrs="{'invisible': ['|', ('state', 'not in', ('draft', 'sent')), ('is_configurable_parent_opt', '=', False)]}"
                 />
             </xpath>

@@ -10,6 +10,7 @@
                 <field name="sequence" invisible="1" />
                 <field name="sale_default_qty" />
                 <field name="option_qty_type" />
+                <field name="is_default_option" />
             </tree>
         </field>
     </record>
