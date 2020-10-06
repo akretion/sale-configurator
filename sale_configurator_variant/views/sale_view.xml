@@ -12,18 +12,28 @@
         />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='product_id']" position="before">
-                <field name="product_tmpl_id" />
+                <field name="is_multi_variant_line" />
+                <field name="product_tmpl_id"
+                    attrs="{'invisible': [('is_multi_variant_line', '=', False)],
+                    'required': [('is_multi_variant_line', '=', True)]}"/>
             </xpath>
+            <xpath expr="//field[@name='product_id']" position="attributes">
+                <field name="is_multi_variant_line" />
+                <attribute name="attrs">{'readonly': [('product_updatable', '=', False)],
+                    'invisible': [('is_multi_variant_line', '=',True)],
+                    'required': [('display_type', '=', False)]}</attribute>
+            </xpath>
+
             <xpath expr="//field[@name='name']" position="after">
                 <field name="is_configurable_parent_opt" invisible="1" />
                 <label
                     for="variant_ids"
-                    attrs="{'invisible': [('is_configurable_parent_opt', '=', False)]}"
+                    attrs="{'invisible': ['|', ('is_configurable_parent_opt', '=', False), ('is_multi_variant_line', '=', False)]}"
                 />
                 <field
                     name="variant_ids"
-                    context="{'line_product_id': product_id}"
-                    attrs="{'invisible': [('is_configurable_parent_opt', '=', False)]}"
+                    context="{'line_product_id': product_id, 'order_id': order_id}"
+                    attrs="{'invisible': ['|', ('is_configurable_parent_opt', '=', False), ('is_multi_variant_line', '=', False)]}"
                 >
                     <tree editable="bottom">
                         <field
@@ -33,6 +43,7 @@
                             context="{
                             'partner_id':parent.order_partner_id,
                             'quantity':parent.product_uom_qty,
+                            'order_id': parent.order_id,
                             'pricelist':parent.pricelist_id,
                             'uom':parent.product_uom,
                             'company_id':parent.company_id}"

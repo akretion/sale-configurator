@@ -26,14 +26,21 @@ class SaleOrderLine(models.Model):
     parent_variant_qty = fields.Float(
         related="parent_variant_id.product_uom_qty", readonly=False
     )
+    is_multi_variant_line = fields.Boolean(
+        "Multi variant",
+        )
 
     @api.multi
-    @api.depends("variant_ids.product_uom_qty")
+    @api.depends("variant_ids.product_uom_qty", "product_uom_qty")
     def _compute_is_variant_qty_need_recompute(self):
-        records = self.filtered("variant_ids")
-        for record in records:
-            qty = record._get_child_qty()
-            record.is_variant_qty_need_recompute = qty != record.product_uom_qty
+        for variant_line in self:
+            if variant_line.parent_variant_id:
+                variant_line = variant_line.parent_variant_id
+            records = variant_line.filtered("variant_ids")
+
+            for record in records:
+                qty = variant_line._get_child_qty()
+                record.is_variant_qty_need_recompute = qty != record.product_uom_qty
 
     def _get_child_qty(self):
         self.ensure_one()
@@ -95,11 +102,11 @@ class SaleOrderLine(models.Model):
     @api.onchange("product_tmpl_id")
     def product_tmpl_id_change(self):
         self.variant_ids = False
-        if self.product_tmpl_id.product_variant_count > 1:
-            variant_lines = []
-            for variant in self.product_tmpl_id.product_variant_ids:
-                variant_lines.append((0, 0, self._prepare_sale_line_variant(variant)))
-            self.variant_ids = variant_lines
+        # if self.product_tmpl_id.product_variant_count > 1:
+            # variant_lines = []
+            # for variant in self.product_tmpl_id.product_variant_ids:
+                # variant_lines.append((0, 0, self._prepare_sale_line_variant(variant)))
+            # self.variant_ids = variant_lines
         if self.product_tmpl_id:
             # ToFIX set product_id to False raise error on[
             #  _sql_constraints = accountable_required_fields
@@ -124,4 +131,14 @@ class SaleOrderLine(models.Model):
             ctx.update({"quantity": self.product_uom_qty})
             variant = opt.product_id.with_context(ctx)
             opt.price_unit = self._get_sale_line_price_variant(variant)
+        return res
+
+    @api.onchange("product_id")
+    def product_id_change(self):
+        res = super().product_id_change()
+        order_id = self.env.context.get('order_id')
+        if not self.order_id and order_id:
+            self.order_id = order_id
+        if self.product_tmpl_id:
+            self.name = self.product_tmpl_id.name
         return res
