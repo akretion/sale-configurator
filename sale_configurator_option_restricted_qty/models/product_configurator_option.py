@@ -16,7 +16,7 @@ class ProductConfiguratorOption(models.Model):
     sale_max_qty = fields.Float(
         string="Max Qty",
         oldname="max_qty",
-        default=1,
+        default=0,
         digits=dp.get_precision("Product Unit of Measure"),
         help="High limit authorised in the sale line option",
     )
