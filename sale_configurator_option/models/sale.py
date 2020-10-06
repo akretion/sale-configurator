@@ -115,7 +115,6 @@ class SaleOrderLine(models.Model):
         return res
 
     def _prepare_sale_line_option(self, opt):
-
         if opt:
             proportional_qty = opt.sale_default_qty
             if opt.option_qty_type == "proportional_qty":
