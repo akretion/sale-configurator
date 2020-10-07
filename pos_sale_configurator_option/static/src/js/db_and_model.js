@@ -72,8 +72,6 @@ odoo.define('pos_sale_configurator_option.db_and_model', function (require) {
             //create a lookup by id
             options = {}
             config_options.forEach(function (opt) {
-                opt.sale_max_qty= 7;
-                opt.sale_min_qty = 3;
                 options[opt.id] = opt;
             });
             self.db.config_options = options;
