@@ -151,10 +151,8 @@ odoo.define('pos_sale_configurator_option.views', function (require) {
         init: function(parent, options) {
             var self = this;
             this._super(parent, options);
-            this.click_variant_handler_original = this.click_variant_handler;
             this.click_variant_handler = function(event) {
                 var product_id = this.dataset['variantId'];
-                self.click_variant_handler_original.call(this, event);
                 var product = self.pos.db.get_product_by_id(product_id);
                 var order = self.pos.get('selectedOrder');
                 var last_orderline =
