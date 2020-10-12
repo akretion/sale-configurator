@@ -151,6 +151,7 @@ odoo.define('pos_sale_configurator_option.views', function (require) {
         init: function(parent, options) {
             var self = this;
             this._super(parent, options);
+            this.click_variant_handler_original = this.click_variant_handler;
             this.click_variant_handler = function(event) {
                 var product_id = this.dataset['variantId'];
                 var product = self.pos.db.get_product_by_id(product_id);
@@ -170,6 +171,8 @@ odoo.define('pos_sale_configurator_option.views', function (require) {
                         selected_operations: []
                     };
                     self.gui.show_popup('select-config-option', params);
+                } else {
+                    self.click_variant_handler_original.call(this, event);
                 }
             };
         },
