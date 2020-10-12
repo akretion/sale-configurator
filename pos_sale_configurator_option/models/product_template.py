@@ -11,7 +11,7 @@ class ProductTemplate(models.Model):
     sale_alone_forbidden = fields.Boolean(compute="_compute_sale_alone_forbidden")
 
     # TODO make this configurable
-    api.depends("is_option")
+    @api.depends("is_option")
     def _compute_sale_alone_forbidden(self):
         for record in self:
             record.sale_alone_forbidden = record.is_option
