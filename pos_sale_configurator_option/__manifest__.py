@@ -19,7 +19,7 @@
         "sale_configurator_option",
         "pos_product_template",
         "pos_sale_order",
-        # "sale_configurator_option_restricted_qty"
+        "sale_configurator_option_restricted_qty"
     ],
     "data": ["views/pos_sale_configurator_option.xml"],
     "demo": [],
