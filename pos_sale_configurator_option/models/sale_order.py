@@ -17,6 +17,7 @@ class SaleOrder(models.Model):
             "product_id": int(option["product_id"]),
             "option_unit_qty": int(option["quantity"]),
             "option_qty_type": "proportional_qty",
+            "product_option_id": int(option["id"]),
             "name": description,
         }
 
