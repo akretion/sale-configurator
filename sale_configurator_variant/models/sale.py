@@ -26,9 +26,7 @@ class SaleOrderLine(models.Model):
     parent_variant_qty = fields.Float(
         related="parent_variant_id.product_uom_qty", readonly=False
     )
-    is_multi_variant_line = fields.Boolean(
-        "Multi variant",
-        )
+    is_multi_variant_line = fields.Boolean("Multi variant",)
 
     @api.multi
     @api.depends("variant_ids.product_uom_qty", "product_uom_qty")
@@ -103,10 +101,10 @@ class SaleOrderLine(models.Model):
     def product_tmpl_id_change(self):
         self.variant_ids = False
         # if self.product_tmpl_id.product_variant_count > 1:
-            # variant_lines = []
-            # for variant in self.product_tmpl_id.product_variant_ids:
-                # variant_lines.append((0, 0, self._prepare_sale_line_variant(variant)))
-            # self.variant_ids = variant_lines
+        # variant_lines = []
+        # for variant in self.product_tmpl_id.product_variant_ids:
+        # variant_lines.append((0, 0, self._prepare_sale_line_variant(variant)))
+        # self.variant_ids = variant_lines
         if self.product_tmpl_id:
             # ToFIX set product_id to False raise error on[
             #  _sql_constraints = accountable_required_fields
@@ -136,7 +134,7 @@ class SaleOrderLine(models.Model):
     @api.onchange("product_id")
     def product_id_change(self):
         res = super().product_id_change()
-        order_id = self.env.context.get('order_id')
+        order_id = self.env.context.get("order_id")
         if not self.order_id and order_id:
             self.order_id = order_id
         if self.product_tmpl_id:
