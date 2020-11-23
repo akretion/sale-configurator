@@ -22,9 +22,17 @@ class SaleOrderLine(models.Model):
         store=True,
     )
     pricelist_id = fields.Many2one(related="order_id.pricelist_id", string="Pricelist")
-    is_configurable_parent_opt = fields.Boolean(
-        "Line is parent of configurable Option ?",
+    is_configurable = fields.Boolean(
+        "Line is a configurable Product ?", compute="_compute_is_configurable",
     )
+
+    @api.depends("product_id")
+    def _compute_is_configurable(self):
+        for record in self:
+            record.is_configurable = record._is_line_configurable()
+
+    def _is_line_configurable(self):
+        return False
 
     @api.depends("price_subtotal", "price_total")
     def _compute_config_amount(self):

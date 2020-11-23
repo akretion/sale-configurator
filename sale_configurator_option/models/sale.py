@@ -38,8 +38,16 @@ class SaleOrderLine(models.Model):
         compute="_compute_is_option_qty_need_recompute", store=True
     )
 
+    def _is_line_configurable(self):
+        if self.is_configurable_opt:
+            return True
+        else:
+            return super()._is_line_configurable()
+
     @api.multi
-    @api.depends("product_uom_qty")
+    @api.depends(
+        "product_uom_qty", "option_unit_qty", "parent_option_id.product_uom_qty"
+    )
     def _compute_is_option_qty_need_recompute(self):
         records = self.mapped("option_ids") + self
         for record in records:
@@ -87,6 +95,12 @@ class SaleOrderLine(models.Model):
         res = {}
         self.product_id = self.product_option_id.product_id
         return res
+
+    @api.depends(
+        "option_ids.price_subtotal", "option_ids.price_total", "parent_option_id"
+    )
+    def _compute_config_amount(self):
+        super()._compute_config_amount()
 
     @api.model
     def _get_price_config_subtotal(self):
@@ -137,9 +151,7 @@ class SaleOrderLine(models.Model):
     def product_id_change(self):
         res = super().product_id_change()
         self.option_ids = False
-        self.is_configurable_parent_opt = False
         if self.product_id.is_configurable_opt:
-            self.is_configurable_parent_opt = True
             options = []
             for opt in self.product_id.configurable_option_ids:
                 if opt.is_default_option:

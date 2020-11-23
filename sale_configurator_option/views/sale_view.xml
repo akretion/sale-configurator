@@ -17,15 +17,15 @@
                 >[("is_configurable_opt", "=", True)]</attribute>
             </xpath>
             <xpath expr="//field[@name='name']" position="after">
-                <field name="is_configurable_parent_opt" invisible="1" />
+                <field name="is_configurable_opt" invisible="1" />
                 <label
                     for="option_ids"
-                    attrs="{'invisible': [('is_configurable_parent_opt', '=', False)]}"
+                    attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
                 />
                 <field
                     name="option_ids"
                     context="{'line_product_id': product_id}"
-                    attrs="{'invisible': [('is_configurable_parent_opt', '=', False)]}"
+                    attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
                 >
                     <tree editable="bottom">
                         <field

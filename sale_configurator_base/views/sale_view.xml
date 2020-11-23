@@ -33,7 +33,7 @@
                                 force_save="1"
                             />
                             <field name="invoice_status" invisible="1" />
-                            <field name="is_configurable_parent_opt" invisible="1" />
+                            <field name="is_configurable" invisible="1" />
                             <field name="qty_to_invoice" invisible="1" />
                             <field name="qty_delivered_manual" invisible="1" />
                             <field name="qty_delivered_method" invisible="1" />
@@ -193,23 +193,23 @@
                 />
             </xpath>
             <xpath expr="//form/field[@name='display_type']" position="before">
-                <field name="is_configurable_parent_opt" invisible="1" />
+                <field name="is_configurable" invisible="1" />
             </xpath>
             <xpath expr="//field[@name='order_line']//tree" position="attributes">
-                <attribute name="decoration-info">is_configurable_parent_opt</attribute>
+                <attribute name="decoration-info">is_configurable</attribute>
             </xpath>
             <xpath
                 expr="//field[@name='order_line']//tree/field[@name='price_subtotal']"
                 position="after"
             >
                 <field name="price_config_subtotal" invisible="0" />
-                <field name="is_configurable_parent_opt" invisible="1" />
+                <field name="is_configurable" invisible="1" />
                 <button
                     name="open_sale_line_config_base"
                     type="object"
                     string="Modify Configuration"
                     icon="fa-th"
-                    attrs="{'invisible': ['|', ('state', 'not in', ('draft', 'sent')), ('is_configurable_parent_opt', '=', False)]}"
+                    attrs="{'invisible': ['|', ('state', 'not in', ('draft', 'sent')), ('is_configurable', '=', False)]}"
                 />
             </xpath>
             <xpath expr="//field[@name='order_line']" position="attributes">

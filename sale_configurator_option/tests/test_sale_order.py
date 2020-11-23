@@ -44,23 +44,30 @@ class SaleOrderCase(SavepointCase):
         self.assertEqual(self.sale.amount_total, 126.50)
         self.assertEqual(self.sale.amount_untaxed, 110)
         self.assertEqual(self.sale.amount_tax, 16.5)
-
-    def test_conf_total_amount_main_without_price(self):
-        self.line_with_opt._compute_config_amount()
         self.assertEqual(self.line_with_opt.price_config_subtotal, 110)
-        self.assertEqual(self.line_with_opt.price_config_total, 126.5)
-        self.assertEqual(self.line_opt_1.price_config_total, 0)
-        self.assertEqual(self.line_opt_2.price_config_total, 0)
-        self.assertEqual(self.line_opt_3.price_config_total, 0)
+        self.assertEqual(self.line_with_opt.price_config_total, 126.50)
 
-    def test_conf_total_amount_main_with_price(self):
-        # Set price to product with option and check totals
+    def test_change_price_unit_option(self):
+        self.line_opt_1.price_unit = 40
+        self.assertEqual(self.line_opt_1.price_subtotal, 80)
+        self.assertEqual(self.line_with_opt.price_config_subtotal, 170)
+
+    def test_change_price_unit_main(self):
         self.line_with_opt.price_unit = 100
         self.assertEqual(self.line_with_opt.price_config_subtotal, 210)
         self.assertEqual(self.line_with_opt.price_config_total, 241.5)
-        self.assertEqual(self.line_opt_1.price_config_total, 0)
-        self.assertEqual(self.line_opt_2.price_config_total, 0)
-        self.assertEqual(self.line_opt_3.price_config_total, 0)
+
+    def test_change_option_qty(self):
+        self.line_opt_1.option_unit_qty = 10
+        self.assertEqual(self.line_opt_1.product_uom_qty, 10)
+        self.assertEqual(self.line_opt_1.price_subtotal, 100)
+        self.assertEqual(self.line_with_opt.price_config_subtotal, 190)
+
+    def test_change_main_qty(self):
+        self.line_with_opt.product_uom_qty = 2
+        self.assertEqual(self.line_opt_1.product_uom_qty, 4)
+        self.assertEqual(self.line_opt_1.price_subtotal, 40)
+        self.assertEqual(self.line_with_opt.price_config_subtotal, 220)
 
     def test_conf_product_change_option(self):
         new_line = self.create_sale_line(self.product_with_option)
@@ -125,5 +132,11 @@ class SaleOrderCase(SavepointCase):
         lines = sale.order_line
         self.assertEqual(len(lines), 3)
         self.assertEqual(lines[0].product_uom_qty, 2)
+        self.assertTrue(lines[0].is_configurable)
+        self.assertEqual(lines[0].price_config_subtotal, 180)
+
         self.assertEqual(lines[1].product_uom_qty, 10)
+        self.assertEqual(lines[1].price_subtotal, 100)
+
         self.assertEqual(lines[2].product_uom_qty, 4)
+        self.assertEqual(lines[2].price_subtotal, 80)
