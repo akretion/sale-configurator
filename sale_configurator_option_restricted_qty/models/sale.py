@@ -10,6 +10,7 @@ class SaleOrderLine(models.Model):
 
     def _get_sale_restricted_qty(self):
         res = super()._get_sale_restricted_qty()
-        res["sale_min_qty"] = self.product_option_id.sale_min_qty
-        res["sale_max_qty"] = self.product_option_id.sale_max_qty
+        if self.product_option_id:
+            res["sale_min_qty"] = self.product_option_id.sale_min_qty
+            res["sale_max_qty"] = self.product_option_id.sale_max_qty
         return res

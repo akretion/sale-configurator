@@ -11,20 +11,29 @@ class ProductConfiguratorOption(models.Model):
     _inherit = "product.configurator.option"
 
     sale_min_qty = fields.Float(
-        string="Min Qty", default=0, digits=dp.get_precision("Product Unit of Measure")
+        compute="_compute_sale_restricted_qty",
+        store=True,
+        string="Min Qty", digits=dp.get_precision("Product Unit of Measure")
+    )
+    manual_sale_min_qty = fields.Float(
+        string="Manual Min Qty", digits=dp.get_precision("Product Unit of Measure")
     )
     sale_max_qty = fields.Float(
+        compute="_compute_sale_restricted_qty",
+        store=True,
         string="Max Qty",
-        oldname="max_qty",
-        default=0,
         digits=dp.get_precision("Product Unit of Measure"),
         help="High limit authorised in the sale line option",
     )
+    manual_sale_max_qty = fields.Float(
+        string="Manual Max Qty", digits=dp.get_precision("Product Unit of Measure")
+    )
 
-    @api.onchange("product_id")
-    def onchange_product_id(self):
-        res = super().onchange_product_id()
-        if self.product_id:
-            self.sale_min_qty = self.product_id.sale_min_qty
-            self.sale_max_qty = self.product_id.sale_max_qty
-        return res
+    @api.depends("manual_sale_min_qty", "manual_sale_max_qty", "product_id",
+        "product_id.sale_min_qty")
+    def _compute_sale_restricted_qty(self):
+        for opt in self:
+            opt.sale_min_qty = opt.manual_sale_min_qty or\
+                opt.product_id.sale_min_qty or 0
+            opt.sale_max_qty = opt.manual_sale_max_qty or\
+                    opt.product_id.sale_max_qty or 0
