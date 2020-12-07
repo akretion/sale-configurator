@@ -85,6 +85,9 @@
                                 />
                             </div>
                             <field name="price_unit" />
+                            <field name="sequence" invisible="1" />
+                        </group>
+                        <group attrs="{'invisible': [('display_type', '!=', False)]}">
                             <label
                                 for="discount"
                                 groups="sale.group_discount_per_so_line"
@@ -94,10 +97,7 @@
                                 groups="sale.group_discount_per_so_line"
                             >
                                     <field name="discount" class="oe_inline" /> %%
-                                </div>
-                            <field name="sequence" invisible="1" />
-                        </group>
-                        <group attrs="{'invisible': [('display_type', '!=', False)]}">
+                            </div>
                             <field
                                 name="tax_id"
                                 widget="many2many_tags"
