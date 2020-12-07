@@ -26,7 +26,9 @@ class SaleOrderLine(models.Model):
     parent_variant_qty = fields.Float(
         related="parent_variant_id.product_uom_qty", readonly=False
     )
-    is_multi_variant_line = fields.Boolean("Multi variant",)
+    is_multi_variant_line = fields.Boolean(
+        "Multi variant",
+    )
 
     @api.multi
     @api.depends("variant_ids.product_uom_qty", "product_uom_qty")

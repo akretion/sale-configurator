@@ -23,7 +23,9 @@ class SaleOrderLine(models.Model):
         digits=dp.get_precision("Product Unit of Measure"),
         default=1.0,
     )
-    parent_option_qty = fields.Float(related="parent_option_id.product_uom_qty",)
+    parent_option_qty = fields.Float(
+        related="parent_option_id.product_uom_qty",
+    )
     option_qty_type = fields.Selection(
         [
             ("proportional_qty", "Proportional Qty"),
@@ -32,7 +34,9 @@ class SaleOrderLine(models.Model):
         string="Option qty Type",
     )
     product_option_id = fields.Many2one(
-        "product.configurator.option", "Product Option", ondelete="set null",
+        "product.configurator.option",
+        "Product Option",
+        ondelete="set null",
     )
     is_option_qty_need_recompute = fields.Boolean(
         compute="_compute_is_option_qty_need_recompute", store=True

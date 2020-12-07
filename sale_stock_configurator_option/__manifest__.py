@@ -8,7 +8,7 @@
     "summary": "Sale Stock glue module for sale configurator",
     "version": "12.0.1.0.0",
     "category": "Uncategorized",
-    "website": "www.akretion.com",
+    "website": "https://github.com/akretion/sale-configurator",
     "author": " Akretion",
     "license": "AGPL-3",
     "application": False,

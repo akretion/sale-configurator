@@ -7,7 +7,7 @@
     "summary": "Manage Restricted Qty on Sale configurator",
     "version": "12.0.1.0.0",
     "category": "Sale",
-    "website": "www.akretion.com",
+    "website": "https://github.com/akretion/sale-configurator",
     "author": " Akretion",
     "license": "AGPL-3",
     "installable": True,

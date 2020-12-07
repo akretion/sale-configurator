@@ -8,7 +8,7 @@
     "summary": "Extend sale configurator to manage product variant",
     "version": "12.0.1.0.0",
     "category": "Sale",
-    "website": "www.akretion.com",
+    "website": "https://github.com/akretion/sale-configurator",
     "author": " Akretion",
     "license": "AGPL-3",
     "application": False,

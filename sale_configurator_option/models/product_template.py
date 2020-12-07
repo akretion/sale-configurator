@@ -18,7 +18,8 @@ class ProductTemplate(models.Model):
         help="Chek this, if the product is an option used in configurable product",
     )
     product_conf_tmpl_id = fields.Many2one(
-        "product.configurator.template", "Related Configurable Template",
+        "product.configurator.template",
+        "Related Configurable Template",
     )
     local_configurable_option_ids = fields.One2many(
         "product.configurator.option",

@@ -23,7 +23,8 @@ class SaleOrderLine(models.Model):
     )
     pricelist_id = fields.Many2one(related="order_id.pricelist_id", string="Pricelist")
     is_configurable = fields.Boolean(
-        "Line is a configurable Product ?", compute="_compute_is_configurable",
+        "Line is a configurable Product ?",
+        compute="_compute_is_configurable",
     )
 
     @api.depends("product_id")
