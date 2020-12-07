@@ -13,7 +13,8 @@ class ProductConfiguratorOption(models.Model):
     sale_min_qty = fields.Float(
         compute="_compute_sale_restricted_qty",
         store=True,
-        string="Min Qty", digits=dp.get_precision("Product Unit of Measure")
+        string="Min Qty",
+        digits=dp.get_precision("Product Unit of Measure"),
     )
     manual_sale_min_qty = fields.Float(
         string="Manual Min Qty", digits=dp.get_precision("Product Unit of Measure")
@@ -29,11 +30,17 @@ class ProductConfiguratorOption(models.Model):
         string="Manual Max Qty", digits=dp.get_precision("Product Unit of Measure")
     )
 
-    @api.depends("manual_sale_min_qty", "manual_sale_max_qty", "product_id",
-        "product_id.sale_min_qty")
+    @api.depends(
+        "manual_sale_min_qty",
+        "manual_sale_max_qty",
+        "product_id",
+        "product_id.sale_min_qty",
+    )
     def _compute_sale_restricted_qty(self):
         for opt in self:
-            opt.sale_min_qty = opt.manual_sale_min_qty or\
-                opt.product_id.sale_min_qty or 0
-            opt.sale_max_qty = opt.manual_sale_max_qty or\
-                    opt.product_id.sale_max_qty or 0
+            opt.sale_min_qty = (
+                opt.manual_sale_min_qty or opt.product_id.sale_min_qty or 0
+            )
+            opt.sale_max_qty = (
+                opt.manual_sale_max_qty or opt.product_id.sale_max_qty or 0
+            )

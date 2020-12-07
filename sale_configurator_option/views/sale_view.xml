@@ -29,8 +29,8 @@
                 >
                     <tree editable="bottom">
                         <field name="sequence" widget="handle" />
-                        <field name="display_type" invisible="1"/>
-                        <field name="product_updatable" invisible="1"/>
+                        <field name="display_type" invisible="1" />
+                        <field name="product_updatable" invisible="1" />
                         <field
                             name="product_option_id"
                             options="{'no_create': True}"
@@ -49,7 +49,7 @@
                                 'quantity':product_uom_qty,
                                 'pricelist':parent.pricelist_id,
                                 'uom':product_uom,
-                                'company_id':parent.company_id, 
+                                'company_id':parent.company_id,
                                 'default_lst_price': price_unit,
                             }"
                             domain="[('is_option', '=', True),('used_on_product_ids', '=', parent.product_id)]"
@@ -70,8 +70,8 @@
                             force_save="1"
                         />
                         <field name="order_id" invisible="1" />
-                        <field name="qty_invoiced" invisible="1"/>
-                        <field name="qty_to_invoice" invisible="1"/>
+                        <field name="qty_invoiced" invisible="1" />
+                        <field name="qty_to_invoice" invisible="1" />
                         <field
                             name="product_uom"
                             force_save="1"
@@ -100,14 +100,25 @@
                             domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
                             attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
                         />
-                        <field name="discount" groups="sale.group_discount_per_so_line"/>
-                        <field name="price_subtotal" widget="monetary" groups="account.group_show_line_subtotals_tax_excluded"/>
-                        <field name="price_total" widget="monetary" groups="account.group_show_line_subtotals_tax_included"/>
-                        <field name="state" invisible="1"/>
-                        <field name="invoice_status" invisible="1"/>
-                        <field name="customer_lead" invisible="1"/>
-                        <field name="currency_id" invisible="1"/>
-                        <field name="price_tax" invisible="1"/>
+                        <field
+                            name="discount"
+                            groups="sale.group_discount_per_so_line"
+                        />
+                        <field
+                            name="price_subtotal"
+                            widget="monetary"
+                            groups="account.group_show_line_subtotals_tax_excluded"
+                        />
+                        <field
+                            name="price_total"
+                            widget="monetary"
+                            groups="account.group_show_line_subtotals_tax_included"
+                        />
+                        <field name="state" invisible="1" />
+                        <field name="invoice_status" invisible="1" />
+                        <field name="customer_lead" invisible="1" />
+                        <field name="currency_id" invisible="1" />
+                        <field name="price_tax" invisible="1" />
                     </tree>
                 </field>
             </xpath>
