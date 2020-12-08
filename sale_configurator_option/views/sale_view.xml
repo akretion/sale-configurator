@@ -28,7 +28,6 @@
                     attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
                 >
                     <tree editable="bottom">
-                        <field name="sequence" widget="handle" />
                         <field name="display_type" invisible="1" />
                         <field name="product_updatable" invisible="1" />
                         <field
