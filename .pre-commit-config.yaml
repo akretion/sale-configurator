@@ -25,13 +25,16 @@ repos:
         entry: found forbidden files; remove them
         language: fail
         files: "\\.rej$"
-  - repo: https://github.com/oca/maintainer-tools
-    rev: f1b5595
-    hooks:
-      # update the NOT INSTALLABLE ADDONS section above
-      - id: oca-update-pre-commit-excluded-addons
-      - id: oca-fix-manifest-website
-        args: ["https://github.com/akretion/sale-configurator"]
+
+    #TODO FIXME broken on CI
+    #- repo: https://github.com/oca/maintainer-tools
+    #  rev: f1b5595
+    #  hooks:
+    #    # update the NOT INSTALLABLE ADDONS section above
+    #    - id: oca-update-pre-commit-excluded-addons
+    #    - id: oca-fix-manifest-website
+    #      args: ["https://github.com/akretion/sale-configurator"]
+
   - repo: https://github.com/myint/autoflake
     rev: v1.4
     hooks:
