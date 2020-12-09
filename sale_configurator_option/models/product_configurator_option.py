@@ -5,8 +5,6 @@
 
 from odoo import _, api, fields, models
 
-from odoo.addons import decimal_precision as dp
-
 
 class ProductConfiguratorOption(models.Model):
     _name = "product.configurator.option"
