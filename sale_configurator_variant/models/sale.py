@@ -102,11 +102,6 @@ class SaleOrderLine(models.Model):
     @api.onchange("product_tmpl_id")
     def product_tmpl_id_change(self):
         self.variant_ids = False
-        # if self.product_tmpl_id.product_variant_count > 1:
-        # variant_lines = []
-        # for variant in self.product_tmpl_id.product_variant_ids:
-        # variant_lines.append((0, 0, self._prepare_sale_line_variant(variant)))
-        # self.variant_ids = variant_lines
         if self.product_tmpl_id:
             # ToFIX set product_id to False raise error on[
             #  _sql_constraints = accountable_required_fields

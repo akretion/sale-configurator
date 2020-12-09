@@ -34,6 +34,28 @@ class SaleOrderCase(SavepointCase):
         cls.product_variant_6 = cls.env.ref("sale.product_product_4f")
         cls.pricelist = cls.env.ref("product.list0")
 
+    def _conf_product_add_variants(self, sale_line):
+        default_variants = [
+            self.product_variant_1,
+            self.product_variant_2,
+            self.product_variant_3,
+            self.product_variant_4,
+            self.product_variant_5,
+            self.product_variant_6,
+        ]
+        for prod in default_variants:
+            vrt_vals = {
+                "order_id": sale_line.order_id.id,
+                "product_id": prod.id,
+                "product_uom": prod.uom_id.id,
+                "product_uom_qty": 1,
+                "parent_variant_id": sale_line.id,
+                "price_unit": prod.list_price,
+            }
+            new_vrt = sale_line.create(vrt_vals)
+            new_vrt.product_id_change()
+            new_vrt.product_uom_change()
+
     def create_sale_line_parent(self, product_tmpl):
         sale_line = self.env["sale.order.line"].create(
             {
@@ -60,23 +82,10 @@ class SaleOrderCase(SavepointCase):
         self.assertEqual(self.line_variant_2.price_config_total, 0)
         self.assertEqual(self.line_variant_3.price_config_total, 0)
 
-    def test_conf_product_change_variant(self):
-        new_line = self.create_sale_line_parent(self.product_with_variant)
-        new_line.product_tmpl_id_change()
-        product_ids = set(new_line.variant_ids.mapped("product_id.id"))
-        default_variants = {
-            self.product_variant_1.id,
-            self.product_variant_2.id,
-            self.product_variant_3.id,
-            self.product_variant_4.id,
-            self.product_variant_5.id,
-            self.product_variant_6.id,
-        }
-        self.assertEqual(product_ids, default_variants)
-
     def test_conf_product_variant_qty(self):
         new_line = self.create_sale_line_parent(self.product_with_variant)
         new_line.product_tmpl_id_change()
+        self._conf_product_add_variants(new_line)
         self.assertEqual(new_line.product_uom_qty, 6)
         new_line.variant_ids[0].product_uom_qty = 3
         self.assertEqual(new_line.product_uom_qty, 8)
@@ -85,6 +94,7 @@ class SaleOrderCase(SavepointCase):
         # Check if qty of one variant change price of other variant change
         new_line = self.create_sale_line_parent(self.product_with_variant)
         new_line.product_tmpl_id_change()
+        self._conf_product_add_variants(new_line)
         line_product_variant_1 = new_line.variant_ids.filtered(
             lambda l: l.product_id == self.product_variant_1
         )
