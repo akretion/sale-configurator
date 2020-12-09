@@ -55,7 +55,7 @@ class SaleOrderCase(SavepointCase):
     def test_change_price_unit_main(self):
         self.line_with_opt.price_unit = 100
         self.assertEqual(self.line_with_opt.price_config_subtotal, 210)
-        self.assertEqual(self.line_with_opt.price_config_total, 225.0)
+        self.assertEqual(self.line_with_opt.price_config_total, 241.5)
 
     def test_change_option_qty(self):
         self.line_opt_1.option_unit_qty = 10
