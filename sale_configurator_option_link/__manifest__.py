@@ -18,6 +18,6 @@
     "installable": True,
     "external_dependencies": {"python": [], "bin": []},
     "depends": ["sale_configurator_option"],
-    "data": ["views/product_view.xml"],
+    "data": ["views/product_configurator_option_view.xml"],
     "qweb": [],
 }
