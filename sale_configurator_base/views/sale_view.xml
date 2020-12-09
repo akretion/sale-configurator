@@ -204,6 +204,11 @@
             >
                 <field name="price_config_subtotal" invisible="0" />
                 <field name="is_configurable" invisible="1" />
+            </xpath>
+            <xpath
+                expr="//field[@name='order_line']//tree/field[@name='sequence']"
+                position="after"
+            >
                 <button
                     name="open_sale_line_config_base"
                     type="object"
