@@ -8,6 +8,37 @@ from odoo import api, fields, models
 from odoo.addons import decimal_precision as dp
 
 
+class SaleOrder(models.Model):
+    _inherit = "sale.order"
+
+    def sync_sequence(self):
+        for record in self:
+            count = 0
+            for line in record.order_line.sorted("sequence"):
+                if not line.parent_option_id:
+                    line.sequence = count
+                    count += 1
+                    for option in line.option_ids:
+                        option.sequence = count
+                        count += 1
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        records.sync_sequence()
+        return records
+
+    def write(self, vals):
+        super().write(vals)
+        if "order_line" in vals:
+            self.sync_sequence()
+        return True
+
+    @api.onchange("order_line")
+    def onchange_sale_line_sequence(self):
+        self.sync_sequence()
+
+
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 

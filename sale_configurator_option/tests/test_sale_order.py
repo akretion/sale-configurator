@@ -140,3 +140,51 @@ class SaleOrderCase(SavepointCase):
 
         self.assertEqual(lines[2].product_uom_qty, 4)
         self.assertEqual(lines[2].price_subtotal, 80)
+
+    def test_order_line_order_create(self):
+        sale = self.env["sale.order"].create(
+            {
+                "partner_id": self.env.ref("base.res_partner_1").id,
+                "order_line": [
+                    (
+                        0,
+                        0,
+                        {
+                            "sequence": 10,
+                            "product_id": self.product_with_option.id,
+                            "product_uom_qty": 2,
+                            "option_ids": [
+                                (
+                                    0,
+                                    0,
+                                    {
+                                        "sequence": 1,
+                                        "option_unit_qty": 5,
+                                        "product_id": self.product_option_1.id,
+                                        "option_qty_type": "proportional_qty",
+                                    },
+                                ),
+                                (
+                                    0,
+                                    0,
+                                    {
+                                        "sequence": 20,
+                                        "option_unit_qty": 2,
+                                        "product_id": self.product_option_2.id,
+                                        "option_qty_type": "proportional_qty",
+                                    },
+                                ),
+                            ],
+                        },
+                    )
+                ],
+            }
+        )
+        sale.refresh()
+        lines = sale.order_line
+        self.assertEqual(lines[0].sequence, 0)
+        self.assertFalse(lines[0].parent_option_id)
+        self.assertEqual(lines[1].sequence, 1)
+        self.assertTrue(lines[1].parent_option_id)
+        self.assertEqual(lines[2].sequence, 2)
+        self.assertTrue(lines[1].parent_option_id)
