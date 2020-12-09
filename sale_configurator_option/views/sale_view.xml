@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2020 Akretion (http://www.akretion.com).
+     @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <record id="sale_order_line_config_option_view_form" model="ir.ui.view">
+        <field name="name">sale.order.line.config.option.form</field>
+        <field name="model">sale.order.line</field>
+        <field
+            name="inherit_id"
+            ref="sale_configurator_base.sale_order_line_config_base_view_form"
+        />
+        <field name="arch" type="xml">
+            <xpath expr="//group/group/field[@name='product_id']" position="attributes">
+                <attribute
+                    name="domain"
+                >[("is_configurable_opt", "=", True)]</attribute>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="is_configurable_opt" invisible="1" />
+                <label
+                    for="option_ids"
+                    attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
+                />
+                <field
+                    name="option_ids"
+                    context="{'line_product_id': product_id}"
+                    attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
+                >
+                    <tree editable="bottom">
+                        <field name="display_type" invisible="1" />
+                        <field name="product_updatable" invisible="1" />
+                        <field
+                            name="product_option_id"
+                            options="{'no_create': True}"
+                            invisible="1"
+                        />
+                        <field
+                            name="product_id"
+                            attrs="{
+                                'readonly': [('product_updatable', '=', False)],
+                                'required': [('display_type', '=', False)],
+                            }"
+                            force_save="1"
+                            options="{'no_create': True}"
+                            context="{
+                                'partner_id':parent.order_partner_id,
+                                'quantity':product_uom_qty,
+                                'pricelist':parent.pricelist_id,
+                                'uom':product_uom,
+                                'company_id':parent.company_id,
+                                'default_lst_price': price_unit,
+                            }"
+                            domain="[('is_option', '=', True),('used_on_product_ids', '=', parent.product_id)]"
+                        />
+                        <field name="option_unit_qty" />
+                        <field name="option_qty_type" string="Qty type" invisible="1" />
+                        <field
+                            name="product_uom_qty"
+                            context="{'partner_id':parent.order_partner_id,
+                            'quantity':product_uom_qty,
+                            'pricelist':parent.pricelist_id,
+                            'uom':product_uom,
+                            'company_id':parent.company_id}"
+                            string="Total Qty"
+                            attrs="{
+                            'readonly': [('option_qty_type', '=', 'proportional_qty')],
+                            }"
+                            force_save="1"
+                        />
+                        <field name="order_id" invisible="1" />
+                        <field name="qty_invoiced" invisible="1" />
+                        <field name="qty_to_invoice" invisible="1" />
+                        <field
+                            name="product_uom"
+                            force_save="1"
+                            attrs="{
+                                'readonly': [('state', 'in', ('sale','done', 'cancel'))],
+                                'required': [('display_type', '=', False)],
+                            }"
+                            context="{'company_id': parent.company_id}"
+                            groups="uom.group_uom"
+                            options="{'no_open':True,'no_create':True}"
+                        />
+                        <field
+                            name="analytic_tag_ids"
+                            groups="analytic.group_analytic_tags"
+                            widget="many2many_tags"
+                            options="{'color_field': 'color'}"
+                        />
+                        <field
+                            name="price_unit"
+                            attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
+                        />
+                        <field
+                            name="tax_id"
+                            widget="many2many_tags"
+                            options="{'no_create': True}"
+                            domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
+                            attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
+                        />
+                        <field
+                            name="discount"
+                            groups="sale.group_discount_per_so_line"
+                        />
+                        <field
+                            name="price_subtotal"
+                            widget="monetary"
+                            groups="account.group_show_line_subtotals_tax_excluded"
+                        />
+                        <field
+                            name="price_total"
+                            widget="monetary"
+                            groups="account.group_show_line_subtotals_tax_included"
+                        />
+                        <field name="state" invisible="1" />
+                        <field name="invoice_status" invisible="1" />
+                        <field name="customer_lead" invisible="1" />
+                        <field name="currency_id" invisible="1" />
+                        <field name="price_tax" invisible="1" />
+                    </tree>
+                </field>
+            </xpath>
+        </field>
+    </record>
+</odoo>

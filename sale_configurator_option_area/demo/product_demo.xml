@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="product_option_area_1" model="product.configurator.option.area">
+        <field name="name">Zone 1</field>
+        <field name="code">OPTZ1</field>
+    </record>
+    <record id="product_option_area_2" model="product.configurator.option.area">
+        <field name="name">Zone 2</field>
+        <field name="code">OPTZ2</field>
+    </record>
+    <record id="product_option_area_3" model="product.configurator.option.area">
+        <field name="name">Zone 3</field>
+        <field name="code">OPTZ3</field>
+    </record>
+    <record
+        id="sale_configurator_option.product_configurator_option_1"
+        model="product.configurator.option"
+    >
+        <field name="area_id" ref="product_option_area_1" />
+    </record>
+    <record
+        id="sale_configurator_option.product_configurator_option_2"
+        model="product.configurator.option"
+    >
+        <field name="area_id" ref="product_option_area_2" />
+    </record>
+    <record
+        id="sale_configurator_option.product_configurator_option_3"
+        model="product.configurator.option"
+    >
+        <field name="area_id" ref="product_option_area_3" />
+    </record>
+</odoo>

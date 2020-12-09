@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2020 Akretion (http://www.akretion.com).
+     @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <record model="ir.ui.view" id="product_configurator_option_view_tree">
+        <field name="model">product.configurator.option</field>
+        <field
+            name="inherit_id"
+            ref="sale_configurator_option.product_configurator_option_view_tree"
+        />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='option_qty_type']" position="after">
+                <field name="included_by_product_id" />
+                <field name="included_by_option_id" invisible="1" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

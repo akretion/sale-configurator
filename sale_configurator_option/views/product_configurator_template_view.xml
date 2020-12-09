@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="product_configurator_template_tree_view" model="ir.ui.view">
+        <field name="name">product.configurator.template.tree</field>
+        <field name="model">product.configurator.template</field>
+        <field name="arch" type="xml">
+            <tree string="Product">
+                <field name="code" />
+                <field name="name" />
+                <field name="active" invisible="1" />
+            </tree>
+        </field>
+    </record>
+    <record id="product_configurator_template_form_view" model="ir.ui.view">
+        <field name="name">product.configurator.template.form</field>
+        <field name="model">product.configurator.template</field>
+        <field name="arch" type="xml">
+            <form string="Product">
+                <sheet>
+                    <field name="id" invisible="True" />
+                    <div class="oe_button_box" name="button_box">
+                        <button
+                            name="toggle_active"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-archive"
+                        >
+                            <field
+                                name="active"
+                                widget="boolean_button"
+                                options='{"terminology": "archive"}'
+                            />
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label
+                            class="oe_edit_only"
+                            for="name"
+                            string="Configurator Template Name"
+                        />
+                        <h1>
+                            <field
+                                name="name"
+                                placeholder="Configurator Template Name"
+                            />
+                        </h1>
+                    </div>
+                    <notebook>
+                        <page
+                            string="Configurable Options"
+                            name="configurable_option_ids"
+                        >
+                            <group name="option_settings">
+                                <field
+                                    name="configurable_option_ids"
+                                    nolabel="1"
+                                    colspan="4"
+                                    mode="tree"
+                                />
+                                <field
+                                    name="description"
+                                    colspan="4"
+                                    nolabel="1"
+                                    placeholder="This note is only for internal purposes."
+                                />
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" />
+                    <field name="activity_ids" widget="mail_activity" />
+                    <field name="message_ids" widget="mail_thread" />
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="product_configurator_template_search_view" model="ir.ui.view">
+        <field name="name">product.configurator.template.search</field>
+        <field name="model">product.configurator.template</field>
+        <field name="arch" type="xml">
+            <search string="Configurator option Templates">
+                <field
+                    name="name"
+                    string="Configurator Template"
+                    filter_domain="['|', ('code', 'ilike', self), ('name', 'ilike', self), ]"
+                />
+                <field
+                    name="configurable_option_ids"
+                    string="Option"
+                    filter_domain="[('Product.product_id', 'ilike', self)]"
+                />
+                <separator />
+                <filter
+                    string="Archived"
+                    name="inactive"
+                    domain="[('active','=',False)]"
+                />
+                <separator />
+                <filter
+                    string="Late Activities"
+                    name="activities_overdue"
+                    domain="[('activity_ids.date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"
+                    help="Show all records which has next action date is before today"
+                />
+                <filter
+                    string="Today Activities"
+                    name="activities_today"
+                    domain="[('activity_ids.date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"
+                />
+                <filter
+                    string="Future Activities"
+                    name="activities_upcoming_all"
+                    domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))
+                    ]"
+                />
+            </search>
+        </field>
+    </record>
+    <record id="product_configurator_template_action" model="ir.actions.act_window">
+        <field name="name">Configurator Option Templates</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.configurator.template</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="product_configurator_template_tree_view" />
+        <field name="search_view_id" ref="product_configurator_template_search_view" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new product configurator cemplate
+        </p>
+        </field>
+    </record>
+    <menuitem
+        action="product_configurator_template_action"
+        id="menu_configurator_template"
+        name="Product configurator Templates"
+        parent="sale_configurator_base.menu_product_configurator"
+        sequence="10"
+    />
+</odoo>

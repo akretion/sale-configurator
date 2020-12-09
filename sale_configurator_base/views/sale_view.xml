@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2020 Akretion (http://www.akretion.com).
+     @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <record id="sale_order_line_config_base_view_form" model="ir.ui.view">
+        <field name="name">sale.order.line.config.base.form</field>
+        <field name="model">sale.order.line</field>
+        <field name="arch" type="xml">
+            <form string="Sale Order Line base Configurator">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="display_name" readonly="1" />
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="display_type" invisible="1" />
+                        <field name="order_id" invisible="1" />
+                        <field name="sequence" invisible="1" />
+                        <field name="order_partner_id" invisible="1" />
+                        <field name="pricelist_id" invisible="1" />
+                        <field name="company_id" invisible="1" />
+                        <group attrs="{'invisible': [('display_type', '!=', False)]}">
+                            <field name="product_updatable" invisible="1" />
+                            <field
+                                name="product_id"
+                                context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':pricelist_id, 'uom':product_uom, 'company_id': company_id}"
+                                attrs="{
+                                    'readonly': [('product_updatable', '=', False)],
+                                    'required': [('display_type', '=', False)],
+                                }"
+                                force_save="1"
+                            />
+                            <field name="invoice_status" invisible="1" />
+                            <field name="is_configurable" invisible="1" />
+                            <field name="qty_to_invoice" invisible="1" />
+                            <field name="qty_delivered_manual" invisible="1" />
+                            <field name="qty_delivered_method" invisible="1" />
+                            <field name="price_total" invisible="1" />
+                            <field name="price_tax" invisible="1" />
+                            <field name="price_subtotal" invisible="1" />
+                            <label for="product_uom_qty" string="Ordered Quantity" />
+                            <div>
+                                <field
+                                    context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':pricelist_id, 'uom':product_uom, 'uom_qty_change':True, 'company_id': company_id}"
+                                    name="product_uom_qty"
+                                    class="oe_inline"
+                                />
+                                <field
+                                    name="product_uom"
+                                    force_save="1"
+                                    groups="uom.group_uom"
+                                    class="oe_inline oe_no_button"
+                                    attrs="{
+                                            'readonly': [('state', 'in', ('sale', 'done', 'cancel'))],
+                                            'required': [('display_type', '=', False)],
+                                        }"
+                                />
+                            </div>
+                            <label
+                                for="qty_delivered"
+                                string="Delivered Quantity"
+                                attrs="{'invisible': [('state', 'not in', ['sale', 'done'])]}"
+                            />
+                            <div
+                                attrs="{'invisible': [('state', 'not in', ['sale', 'done'])]}"
+                            >
+                                <field
+                                    name="qty_delivered"
+                                    attrs="{'readonly': [('qty_delivered_method', '!=', 'manual')]}"
+                                />
+                            </div>
+                            <label
+                                for="qty_invoiced"
+                                string="Invoiced Quantity"
+                                attrs="{'invisible': [('state', 'not in', ['sale', 'done'])]}"
+                            />
+                            <div
+                                attrs="{'invisible': [('state', 'not in', ['sale', 'done'])]}"
+                            >
+                                <field
+                                    name="qty_invoiced"
+                                    attrs="{'invisible': [('state', 'not in', ['sale', 'done'])]}"
+                                />
+                            </div>
+                            <field name="price_unit" />
+                            <field name="sequence" invisible="1" />
+                        </group>
+                        <group attrs="{'invisible': [('display_type', '!=', False)]}">
+                            <label
+                                for="discount"
+                                groups="sale.group_discount_per_so_line"
+                            />
+                            <div
+                                name="discount"
+                                groups="sale.group_discount_per_so_line"
+                            >
+                                    <field name="discount" class="oe_inline" /> %%
+                            </div>
+                            <field
+                                name="tax_id"
+                                widget="many2many_tags"
+                                options="{'no_create': True}"
+                                context="{'search_view_ref': 'account.account_tax_view_search'}"
+                                domain="[('type_tax_use','=','sale'),('company_id','=',company_id)]"
+                                attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
+                            />
+                            <label for="customer_lead" />
+                            <div>
+                                    <field
+                                    name="customer_lead"
+                                    class="oe_inline"
+                                /> days
+                                </div>
+                            <label
+                                for="analytic_tag_ids"
+                                groups="analytic.group_analytic_tags"
+                            />
+                            <div>
+                                <field
+                                    name="analytic_tag_ids"
+                                    widget="many2many_tags"
+                                    groups="analytic.group_analytic_tags"
+                                    options="{'color_field': 'color'}"
+                                />
+                            </div>
+                        </group>
+                        <label
+                            for="name"
+                            string="Description"
+                            attrs="{'invisible': [('display_type', '!=', False)]}"
+                        />
+                        <label
+                            for="name"
+                            string="Section Name (eg. Products, Services)"
+                            attrs="{'invisible': [('display_type', '!=', 'line_section')]}"
+                        />
+                        <label
+                            for="name"
+                            string="Note"
+                            attrs="{'invisible': [('display_type', '!=', 'line_note')]}"
+                        />
+                        <field name="name" />
+                        <field name="state" invisible="1" />
+                    </group>
+                </sheet>
+                <footer>
+                    <button
+                        name="save_add_product_and_close"
+                        string="Save &amp; Close"
+                        type="object"
+                        class="btn-primary"
+                    />
+                    <button
+                        name="save_add_product_and_new"
+                        string="Save &amp; New"
+                        type="object"
+                        class="btn-primary"
+                    />
+                    <button
+                        name="cancel"
+                        string="Cancel"
+                        class="btn-secondary"
+                        special="cancel"
+                    />
+
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_sale_line_config_base">
+        <field name="name">Sale Line Configure bases</field>
+        <field name="res_model">sale.order.line</field>
+        <field name="view_mode">form</field>
+        <field name="view_type">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="sale_order_line_config_base_view_form" />
+    </record>
+    <record id="view_order_form" model="ir.ui.view">
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']" position="before">
+                <button
+                    name="%(action_sale_line_config_base)d"
+                    type="action"
+                    string="Add Configurable Product"
+                    class="btn-primary oe_edit_only oe_left"
+                    states="draft,sent"
+                    context="{'default_order_id': active_id,
+                      'default_name': '/', }"
+                />
+            </xpath>
+            <xpath expr="//form/field[@name='display_type']" position="before">
+                <field name="is_configurable" invisible="1" />
+            </xpath>
+            <xpath expr="//field[@name='order_line']//tree" position="attributes">
+                <attribute name="decoration-info">is_configurable</attribute>
+            </xpath>
+            <xpath
+                expr="//field[@name='order_line']//tree/field[@name='price_subtotal']"
+                position="after"
+            >
+                <field name="price_config_subtotal" invisible="0" />
+                <field name="is_configurable" invisible="1" />
+            </xpath>
+            <xpath
+                expr="//field[@name='order_line']//tree/field[@name='sequence']"
+                position="after"
+            >
+                <button
+                    name="open_sale_line_config_base"
+                    type="object"
+                    string="Modify Configuration"
+                    icon="fa-th"
+                    attrs="{'invisible': ['|', ('state', 'not in', ('draft', 'sent')), ('is_configurable', '=', False)]}"
+                />
+            </xpath>
+            <xpath expr="//field[@name='order_line']" position="attributes">
+                <attribute name="bases">{'reload_on_button': true}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_product_configurator"
+        parent="sale.menu_sale_config"
+        sequence="100"
+        name="Product Configurator"
+    />
+
+</odoo>
