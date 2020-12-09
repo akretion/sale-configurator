@@ -165,13 +165,13 @@ class SaleOrderLine(models.Model):
 
     def _prepare_sale_line_option(self, opt):
         if opt:
-            proportional_qty = opt.sale_default_qty
+            proportional_qty = 1.0
             if opt.option_qty_type == "proportional_qty":
-                proportional_qty = opt.sale_default_qty * self.product_uom_qty
+                proportional_qty = 1.0 * self.product_uom_qty
             return {
                 "order_id": self.order_id.id,
                 "product_id": opt.product_id.id,
-                "option_unit_qty": opt.sale_default_qty,
+                "option_unit_qty": 1.0,
                 "product_uom_qty": proportional_qty,
                 "product_uom": opt.product_uom_id,
                 "option_qty_type": opt.option_qty_type,

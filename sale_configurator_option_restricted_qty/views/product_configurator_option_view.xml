@@ -7,7 +7,7 @@
             ref="sale_configurator_option.product_configurator_option_view_tree"
         />
         <field name="arch" type="xml">
-            <field name="sale_default_qty" position="after">
+            <field name="option_qty_type" position="before">
                 <field name="sale_min_qty" />
                 <field name="manual_sale_min_qty" />
                 <field name="sale_max_qty" />

@@ -8,7 +8,6 @@
                 <field name="product_id" />
                 <field name="product_uom_id" />
                 <field name="sequence" invisible="1" />
-                <field name="sale_default_qty" />
                 <field name="option_qty_type" />
                 <field name="is_default_option" />
             </tree>
