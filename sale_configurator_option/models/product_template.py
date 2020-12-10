@@ -34,7 +34,6 @@ class ProductTemplate(models.Model):
         copy=True,
     )
 
-    @api.multi
     @api.depends("product_conf_tmpl_id")
     def _compute_configurable_option_ids(self):
         for template in self:

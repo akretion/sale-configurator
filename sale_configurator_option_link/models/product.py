@@ -24,7 +24,6 @@ class ProductConfiguratorOption(models.Model):
         "product.configurator.option", "included_by_option_id"
     )
 
-    @api.multi
     @api.constrains("included_by_product_id", "included_by_option_id")
     def _check_included_by_product_id(self):
         if self.filtered(
@@ -32,7 +31,6 @@ class ProductConfiguratorOption(models.Model):
         ):
             raise ValidationError(_("Included option must be defined first"))
 
-    @api.multi
     @api.depends("included_by_product_id")
     def _compute_included_by_option_id(self):
         for option in self:

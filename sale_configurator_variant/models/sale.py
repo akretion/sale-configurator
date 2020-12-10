@@ -30,7 +30,6 @@ class SaleOrderLine(models.Model):
         "Multi variant",
     )
 
-    @api.multi
     @api.depends("variant_ids.product_uom_qty", "product_uom_qty")
     def _compute_is_variant_qty_need_recompute(self):
         for variant_line in self:
@@ -46,7 +45,6 @@ class SaleOrderLine(models.Model):
         self.ensure_one()
         return sum(self.variant_ids.mapped("product_uom_qty"))
 
-    @api.multi
     def _set_parent_variant_qty(self):
         """
         This method is in charge of compute qty of parent variant

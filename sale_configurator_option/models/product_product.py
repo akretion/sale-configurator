@@ -15,7 +15,6 @@ class ProductProduct(models.Model):
         search="_search_used_on_product_ids",
     )
 
-    @api.multi
     def _compute_used_on_product_ids(self):
         for record in self:
             record.used_on_product_ids = record.mapped(

@@ -79,7 +79,6 @@ class SaleOrderLine(models.Model):
         else:
             return super()._is_line_configurable()
 
-    @api.multi
     @api.depends(
         "product_uom_qty", "option_unit_qty", "parent_option_id.product_uom_qty"
     )
@@ -100,7 +99,6 @@ class SaleOrderLine(models.Model):
                 product_uom_qty = self.option_unit_qty
         return product_uom_qty
 
-    @api.multi
     def _set_option_qty(self):
         """
         This method is in charge of compute qty option

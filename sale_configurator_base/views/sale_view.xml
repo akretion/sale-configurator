@@ -173,7 +173,6 @@
         <field name="name">Sale Line Configure bases</field>
         <field name="res_model">sale.order.line</field>
         <field name="view_mode">form</field>
-        <field name="view_type">form</field>
         <field name="target">new</field>
         <field name="view_id" ref="sale_order_line_config_base_view_form" />
     </record>

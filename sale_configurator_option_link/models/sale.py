@@ -9,7 +9,6 @@ from odoo import api, models
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    @api.multi
     def _set_included_options(self):
         sale_options = self.option_ids.mapped("product_option_id")
         included_option = sale_options.mapped("included_option_ids")
