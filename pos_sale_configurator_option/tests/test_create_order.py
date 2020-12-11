@@ -6,7 +6,6 @@ from odoo.addons.pos_sale_order.tests.common import CommonCase
 
 
 class TestCreateOrder(CommonCase):
-
     @classmethod
     def _get_pos_line(cls):
         cls.line_opt_1 = cls.env.ref(
@@ -23,37 +22,46 @@ class TestCreateOrder(CommonCase):
         )
 
         res, amount = super()._get_pos_line()
-        res.append([0, 0, {
-            "price_unit": 180,
-            "product_id": cls.product_with_option.id,
-            "tax_ids": [[6, 0, []]],
-            "qty": 2,
-            'config': {
-                'selected_options': [
-                    {
-                        'price': 10,
-                        'id': '1',
-                        'product_id': cls.line_opt_1.id,
-                        'description': cls.line_opt_1.name,
-                        'notes': 'My note',
-                        'quantity': 5,
-                    }, {
-                        'price': 20,
-                        'id': '2',
-                        'product_id': cls.line_opt_2.id,
-                        'description': cls.line_opt_2.name,
-                        'notes': '',
-                        'quantity': 3,
-                    }, {
-                        'price': 5,
-                        'id': '3',
-                        'product_id': cls.line_opt_3.id,
-                        'description': cls.line_opt_3.name,
-                        'notes': '',
-                        'quantity': 4,
+        res.append(
+            [
+                0,
+                0,
+                {
+                    "price_unit": 180,
+                    "product_id": cls.product_with_option.id,
+                    "tax_ids": [[6, 0, []]],
+                    "qty": 2,
+                    "config": {
+                        "selected_options": [
+                            {
+                                "price": 10,
+                                "id": "1",
+                                "product_id": cls.line_opt_1.id,
+                                "description": cls.line_opt_1.name,
+                                "notes": "My note",
+                                "quantity": 5,
+                            },
+                            {
+                                "price": 20,
+                                "id": "2",
+                                "product_id": cls.line_opt_2.id,
+                                "description": cls.line_opt_2.name,
+                                "notes": "",
+                                "quantity": 3,
+                            },
+                            {
+                                "price": 5,
+                                "id": "3",
+                                "product_id": cls.line_opt_3.id,
+                                "description": cls.line_opt_3.name,
+                                "notes": "",
+                                "quantity": 4,
+                            },
+                        ]
                     },
-                ]},
-            }])
+                },
+            ]
+        )
         amount += 360
         return res, amount
 

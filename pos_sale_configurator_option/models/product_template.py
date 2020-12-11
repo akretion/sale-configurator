@@ -6,7 +6,7 @@ from odoo import api, fields, models
 
 
 class ProductTemplate(models.Model):
-    _inherit = 'product.template'
+    _inherit = "product.template"
 
     sale_alone_forbidden = fields.Boolean(compute="_compute_sale_alone_forbidden")
 
