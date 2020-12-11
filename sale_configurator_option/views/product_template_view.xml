@@ -23,8 +23,10 @@
                                 attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
                                 colspan="2"
                             />
-                            <field name="sale_alone_forbidden"
-                                attrs="{'invisible': [('is_configurable_opt', '=', True)]}" />
+                            <field
+                                name="sale_alone_forbidden"
+                                attrs="{'invisible': [('is_configurable_opt', '=', True)]}"
+                            />
                         </group>
                         <group
                             name="local_options"

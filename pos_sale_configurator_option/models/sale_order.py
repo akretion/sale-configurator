@@ -6,7 +6,7 @@ from odoo import _, api, fields, models
 
 
 class SaleOrder(models.Model):
-    _inherit = 'sale.order'
+    _inherit = "sale.order"
 
     def _prepare_pos_option(self, option):
         if option["notes"]:
