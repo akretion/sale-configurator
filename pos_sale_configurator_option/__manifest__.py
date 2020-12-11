@@ -6,7 +6,7 @@
 {
     "name": "POS Sale Configurator Option",
     "summary": "Sell configuration from the Point Of Sale",
-    "version": "12.0.1.0.0",
+    "version": "14.0.1.0.0",
     "category": "Uncategorized",
     "website": "www.akretion.com",
     "author": " Akretion",
