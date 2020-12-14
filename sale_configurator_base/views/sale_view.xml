@@ -212,7 +212,6 @@
                 <button
                     name="open_sale_line_config_base"
                     type="object"
-                    string="Modify Configuration"
                     icon="fa-th"
                     attrs="{'invisible': ['|', ('state', 'not in', ('draft', 'sent')), ('is_configurable', '=', False)]}"
                 />
