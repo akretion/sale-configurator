@@ -12,11 +12,17 @@ class SaleOrder(models.Model):
         return self.order_line.filtered(lambda s: not s.parent_option_id)
 
     def _prepare_pos_json_line_option(self, option_sol):
+        option = (
+            option_sol.parent_option_id.product_id.configurable_option_ids.filtered(
+                lambda o: o.product_id == option_sol.product_id
+            )
+        )
+        # TODO FIXME IN V14 option_sol.product_option_id.id
         return {
-            "id": option_sol.product_option_id.id,
+            "id": option.id,
             "product_id": option_sol.product_id.id,
             "description": option_sol.name,
-            "quantity": option_sol.product_uom_qty,
+            "quantity": option_sol.option_unit_qty,
             "price": option_sol.price_unit,
             "notes": "",  # note have been merged into description
         }

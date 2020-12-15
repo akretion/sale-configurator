@@ -28,16 +28,16 @@ odoo.define('pos_sale_configurator_option.db_and_model', function (require) {
         get_config_option: function(config_option_id) {
             var config_option = this.config_options[config_option_id]
             return {
-                'id': config_option_id, 
+                'id': config_option_id,
                 'product': this.get_product_by_id(config_option.product_id[0]),
                 // todo necessaire  d'avoir product ?
                 'product_uom_id': config_option.product_uom_id,
-                'sale_default_qty': config_option.sale_default_qty,
+                'sale_default_qty': 0,
                 'sale_min_qty': config_option.sale_min_qty,
-                'sale_max_qty': config_option.sale_max_qty,
+                'sale_max_qty': config_option.sale_max_qty || 1000,
             }
         }
-    });        
+    });
 
     models.PosModel.prototype.models.some(function (model) {
         if (model.model !== 'product.product') { // template ?
@@ -59,12 +59,11 @@ odoo.define('pos_sale_configurator_option.db_and_model', function (require) {
     models.load_models([{
         model: 'product.configurator.option',
         fields: [
-            'product_id', 
+            'product_id',
             'product_uom_id',
             'sequence',
-            'sale_default_qty',
-            'option_qty_type', 
-            // from sale_configurator_option_restricted_qty 
+            'option_qty_type',
+            // from sale_configurator_option_restricted_qty
             'sale_min_qty',
             'sale_max_qty'
         ],
