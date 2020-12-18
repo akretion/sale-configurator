@@ -9,15 +9,27 @@
         <xpath expr="." position="inside">
             <script
                 type="text/javascript"
-                src="/pos_sale_configurator_option/static/src/js/main.js"
+                src="/pos_sale_configurator_option/static/src/js/models.js"
             />
             <script
                 type="text/javascript"
-                src="/pos_sale_configurator_option/static/src/js/db_and_model.js"
+                src="/pos_sale_configurator_option/static/src/js/db.js"
             />
             <script
                 type="text/javascript"
-                src="/pos_sale_configurator_option/static/src/js/popups.js"
+                src="/pos_sale_configurator_option/static/src/js/ProductWidget.js"
+            />
+            <script
+                type="text/javascript"
+                src="/pos_sale_configurator_option/static/src/js/SelectConfigOptionPopup.js"
+            />
+            <script
+                type="text/javascript"
+                src="/pos_sale_configurator_option/static/src/js/ProductScreen.js"
+            />
+            <script
+                type="text/javascript"
+                src="/pos_sale_configurator_option/static/src/js/Orderline.js"
             />
         </xpath>
     </template>
