@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates id="template" xml:space="preserve">
+
+    <t
+        t-name="OrderlineOptions"
+        t-inherit="point_of_sale.Orderline"
+        t-inherit-mode="extension"
+        owl="1"
+    >
+        <xpath expr="//ul" position="after">
+            <button t-on-click="configure">Configure</button>
+            <ul>
+                <li
+                    t-foreach="props.line.selected_options"
+                    t-as="option"
+                    t-key="option.id"
+                >
+                     <t t-esc="option.qty" /> <t t-esc="option.product.name" />
+                </li>
+            </ul>
+        </xpath>
+    </t>
+
+</templates>
