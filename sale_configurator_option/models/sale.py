@@ -5,8 +5,6 @@
 
 from odoo import api, fields, models
 
-from odoo.addons import decimal_precision as dp
-
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
@@ -51,7 +49,7 @@ class SaleOrderLine(models.Model):
     )
     option_unit_qty = fields.Float(
         string="Option Unit Qty",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         default=1.0,
     )
     option_qty_type = fields.Selection(
