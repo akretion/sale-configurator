@@ -24,6 +24,6 @@ class SaleOrderCase(SavepointCase):
         picking = self.sale.picking_ids
         for move in picking.move_lines:
             move.quantity_done = move.product_qty
-        picking.action_done()
+        picking.button_validate()
         for line in self.sale.order_line:
             self.assertEqual(line.qty_delivered, line.product_uom_qty)
