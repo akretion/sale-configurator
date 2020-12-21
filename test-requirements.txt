@@ -1,2 +1,3 @@
 odoo14-addon-sale_restricted_qty @ git+https://github.com/OCA/sale-workflow@refs/pull/1370/head#subdirectory=setup/sale_restricted_qty
 odoo14-addon-sale_order_pricelist_tax @ git+https://github.com/akretion/sale-workflow@14.0-IMP-pricelist-tax_homogeneous_tax#subdirectory=setup/sale_order_pricelist_tax
+odoo14-addon-pos_backend_partner @ git+https://github.com/oca/pos@refs/pull/575/head#subdirectory=setup/pos_backend_partner
