@@ -16,7 +16,7 @@
     "auto_install": True,
     "external_dependencies": {"python": [], "bin": []},
     "depends": [
-        "sale_configurator_option",
+        "sale_stock_configurator_option",
         "pos_sale_order",
         "sale_configurator_option_restricted_qty",
     ],
