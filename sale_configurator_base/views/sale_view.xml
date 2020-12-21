@@ -15,6 +15,7 @@
                         </h1>
                     </div>
                     <group>
+                        <field name="product_uom_category_id" invisible="1" />
                         <field name="display_type" invisible="1" />
                         <field name="order_id" invisible="1" />
                         <field name="sequence" invisible="1" />
@@ -90,11 +91,11 @@
                         <group attrs="{'invisible': [('display_type', '!=', False)]}">
                             <label
                                 for="discount"
-                                groups="sale.group_discount_per_so_line"
+                                groups="product.group_discount_per_so_line"
                             />
                             <div
                                 name="discount"
-                                groups="sale.group_discount_per_so_line"
+                                groups="product.group_discount_per_so_line"
                             >
                                     <field name="discount" class="oe_inline" /> %%
                             </div>
@@ -211,7 +212,6 @@
                 <button
                     name="open_sale_line_config_base"
                     type="object"
-                    string="Modify Configuration"
                     icon="fa-th"
                     attrs="{'invisible': ['|', ('state', 'not in', ('draft', 'sent')), ('is_configurable', '=', False)]}"
                 />

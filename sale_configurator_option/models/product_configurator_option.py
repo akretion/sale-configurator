@@ -36,7 +36,6 @@ class ProductConfiguratorOption(models.Model):
         "uom.uom",
         "Product Unit of Measure",
         default=_get_default_product_uom_id,
-        oldname="product_uom",
         required=True,
         help="Unit of Measure (Unit of Measure) is the unit of measurement"
         " for the inventory control",

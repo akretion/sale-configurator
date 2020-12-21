@@ -116,13 +116,13 @@ class SaleOrderCase(SavepointCase):
         self.assertEqual(len(lines), 3)
         self.assertEqual(lines[0].product_uom_qty, 2)
         self.assertTrue(lines[0].is_configurable)
-        self.assertEqual(lines[0].price_config_subtotal, 180)
-
         self.assertEqual(lines[1].product_uom_qty, 10)
         self.assertEqual(lines[1].price_subtotal, 100)
 
         self.assertEqual(lines[2].product_uom_qty, 4)
         self.assertEqual(lines[2].price_subtotal, 80)
+
+        self.assertEqual(lines[0].price_config_subtotal, 180)
 
     def test_order_line_order_create(self):
         sale = self.env["sale.order"].create(

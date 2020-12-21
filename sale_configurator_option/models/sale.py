@@ -5,8 +5,6 @@
 
 from odoo import api, fields, models
 
-from odoo.addons import decimal_precision as dp
-
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
@@ -51,11 +49,8 @@ class SaleOrderLine(models.Model):
     )
     option_unit_qty = fields.Float(
         string="Option Unit Qty",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         default=1.0,
-    )
-    parent_option_qty = fields.Float(
-        related="parent_option_id.product_uom_qty",
     )
     option_qty_type = fields.Selection(
         [
@@ -69,8 +64,10 @@ class SaleOrderLine(models.Model):
         "Product Option",
         ondelete="set null",
     )
-    is_option_qty_need_recompute = fields.Boolean(
-        compute="_compute_is_option_qty_need_recompute", store=True
+    product_uom_qty = fields.Float(
+        compute="_compute_product_uom_qty",
+        readonly=False,
+        store=True,
     )
 
     def _is_line_configurable(self):
@@ -82,46 +79,27 @@ class SaleOrderLine(models.Model):
     @api.depends(
         "product_uom_qty", "option_unit_qty", "parent_option_id.product_uom_qty"
     )
-    def _compute_is_option_qty_need_recompute(self):
-        records = self.mapped("option_ids") + self
-        for record in records:
+    def _compute_product_uom_qty(self):
+        for record in self:
             if record.parent_option_id:
-                qty = record._get_option_qty()
-                record.is_option_qty_need_recompute = qty != record.product_uom_qty
-
-    def _get_option_qty(self):
-        self.ensure_one()
-        product_uom_qty = 0.0
-        if self.parent_option_id:
-            if self.option_qty_type == "proportional_qty":
-                product_uom_qty = self.option_unit_qty * self.parent_option_qty
-            elif self.option_qty_type == "independent_qty":
-                product_uom_qty = self.option_unit_qty
-        return product_uom_qty
-
-    def _set_option_qty(self):
-        """
-        This method is in charge of compute qty option
-        sale order line
-        """
-        records = self.filtered("is_option_qty_need_recompute")
-        for record in records:
-            if record.parent_option_id:
-                record.product_uom_qty = record._get_option_qty()
-        return records
-
-    def _recompute_done(self, field):
-        super()._recompute_done(field)
-        if field.name == "is_option_qty_need_recompute":
-            with_option_qty = self.exists()._set_option_qty()
-            with_option_qty.write({"is_option_qty_need_recompute": False})
+                if record.option_qty_type == "proportional_qty":
+                    record.product_uom_qty = (
+                        record.option_unit_qty * record.parent_option_id.product_uom_qty
+                    )
+                elif record.option_qty_type == "independent_qty":
+                    record.product_uom_qty = record.option_unit_qty
 
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get("parent_option_id") and "order_id" not in vals:
                 vals["order_id"] = self.browse(vals["parent_option_id"]).order_id.id
-        return super().create(vals_list)
+        lines = super().create(vals_list)
+        # For weird reason it seem that the product_uom_qty have been not recomputed
+        # correctly. Recompute is only triggered in the onchange
+        # and the onchange do not propagate the qty
+        lines._compute_product_uom_qty()
+        return lines
 
     @api.onchange("product_option_id")
     def product_option_id_change(self):
@@ -171,7 +149,7 @@ class SaleOrderLine(models.Model):
                 "product_id": opt.product_id.id,
                 "option_unit_qty": 1.0,
                 "product_uom_qty": proportional_qty,
-                "product_uom": opt.product_uom_id,
+                "product_uom": opt.product_uom_id.id,
                 "option_qty_type": opt.option_qty_type,
                 "product_option_id": opt.id,
             }
@@ -198,16 +176,4 @@ class SaleOrderLine(models.Model):
             option_id = option_ids and option_ids[0] or False
             self.product_option_id = option_id
             self.update(self.parent_option_id._prepare_sale_line_option(option_id))
-        return res
-
-    @api.onchange("product_uom", "option_unit_qty", "product_uom_qty")
-    def product_option_qty_change(self):
-        if self.parent_option_id:
-            self.product_uom_qty = self._get_option_qty()
-        if self.option_ids:
-            for opt in self.option_ids:
-                opt.product_uom_qty = opt._get_option_qty()
-                opt.product_uom_change()
-
-        res = super().product_uom_change()
         return res

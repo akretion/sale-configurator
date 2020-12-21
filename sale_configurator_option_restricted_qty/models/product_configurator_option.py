@@ -4,8 +4,6 @@
 
 from odoo import api, fields, models
 
-from odoo.addons import decimal_precision as dp
-
 
 class ProductConfiguratorOption(models.Model):
     _inherit = "product.configurator.option"
@@ -14,20 +12,20 @@ class ProductConfiguratorOption(models.Model):
         compute="_compute_sale_restricted_qty",
         store=True,
         string="Min Qty",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
     )
     manual_sale_min_qty = fields.Float(
-        string="Manual Min Qty", digits=dp.get_precision("Product Unit of Measure")
+        string="Manual Min Qty", digits="Product Unit of Measure"
     )
     sale_max_qty = fields.Float(
         compute="_compute_sale_restricted_qty",
         store=True,
         string="Max Qty",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         help="High limit authorised in the sale line option",
     )
     manual_sale_max_qty = fields.Float(
-        string="Manual Max Qty", digits=dp.get_precision("Product Unit of Measure")
+        string="Manual Max Qty", digits="Product Unit of Measure"
     )
 
     @api.depends(
