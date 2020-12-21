@@ -1,4 +1,10 @@
 odoo14-addon-sale_restricted_qty @ git+https://github.com/OCA/sale-workflow@refs/pull/1370/head#subdirectory=setup/sale_restricted_qty
+odoo14-addon-pos_sale_order @ git+https://github.com/akretion/pos-sale-order@refs/pull/7/head#subdirectory=setup/pos_sale_order
+odoo14-addon-pos_sale_order_load @ git+https://github.com/akretion/pos-sale-order@refs/pull/7/head#subdirectory=setup/pos_sale_order_load
+odoo14-addon-sale-delivery-state @ git+https://github.com/oca/sale-workflow@refs/pull/1372/head#subdirectory=setup/sale_delivery_state
+odoo14-addon-pos_backend_communication @ git+https://github.com/oca/pos@refs/pull/574/head#subdirectory=setup/pos_backend_communication
+odoo14-addon-pos_backend_partner @ git+https://github.com/oca/pos@refs/pull/575/head#subdirectory=setup/pos_backend_partner
+odoo14-addon-sale_invoice_policy @ git+https://github.com/oca/sale-workflow@refs/pull/1385/head#subdirectory=setup/sale_invoice_policy
 #odoo14-addon-pim @ git+https://github.com/shopinvader/odoo-pim@12.0#subdirectory=setup/pim
 #odoo14-addon-attribute_set @ git+https://github.com/shopinvader/odoo-pim@12.0#subdirectory=setup/attribute_set
 #odoo14-addon-product_attribute_set @ git+https://github.com/shopinvader/odoo-pim@12.0#subdirectory=setup/product_attribute_set
