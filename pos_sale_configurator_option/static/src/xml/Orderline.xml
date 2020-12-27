@@ -8,14 +8,17 @@
         owl="1"
     >
         <xpath expr="//ul" position="after">
-            <button t-on-click="configure">Configure</button>
+            <button
+                t-on-click="configure"
+                t-if="props.line.product.configurable_option_ids.length"
+            >Configure</button>
             <ul>
                 <li
                     t-foreach="props.line.selected_options"
                     t-as="option"
                     t-key="option.id"
                 >
-                     <t t-esc="option.qty" /> <t t-esc="option.product.name" />
+                     <t t-esc="option.qty" /> <t t-esc="option.product.display_name" />
                 </li>
             </ul>
         </xpath>
