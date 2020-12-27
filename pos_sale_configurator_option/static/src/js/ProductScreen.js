@@ -12,7 +12,7 @@ odoo.define("pos_sale_configurator_option.ProductScreen", function (require) {
         class PSCOProductScreen extends ProductScreen {
             async _clickProduct(event) {
                 var product = event.detail;
-                if (product.configurable_option_ids) {
+                if (!product.configurable_option_ids.length) {
                     return super._clickProduct(event);
                 }
                 var ret = await this.showPopup("SelectConfigOptionPopup", {
