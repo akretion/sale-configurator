@@ -25,6 +25,11 @@ odoo.define("pos_sale_configurator_option.SelectConfigOptionPopup", function (re
             return this.env.pos.db.get_options(product.id).map((option) => {
                 var candidate = selectedLookup[option.id] || {};
                 var product = this.env.pos.db.get_product_by_id(option.product_id);
+                if (!product) {
+                    throw new Error(
+                        `Config Product ${option.product_id} not available in pos.`
+                    );
+                }
                 return {
                     // Copy what we want to edit in the view
                     id: option.id,
