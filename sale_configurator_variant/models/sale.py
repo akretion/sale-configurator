@@ -30,6 +30,21 @@ class SaleOrderLine(models.Model):
         "Multi variant",
     )
 
+    def _is_children_line(self):
+        return super()._is_children_line() or bool(self.parent_variant_id)
+
+    def _sort_children_line(self, count):
+        for variant in self.variant_ids:
+            variant.sequence = count
+            count += 1
+        super()._sort_children_line(count)
+
+    def _is_line_configurable(self):
+        if self.parent_variant_id:
+            return False
+        else:
+            return super()._is_line_configurable()
+
     @api.multi
     @api.depends("variant_ids.product_uom_qty", "product_uom_qty")
     def _compute_is_variant_qty_need_recompute(self):
