@@ -24,12 +24,14 @@ class SaleOrderLine(models.Model):
         selection_add=[("option_proportional", "Proportional Option")]
     )
 
-    def _action_launch_stock_rule(self):
+    def _action_launch_stock_rule(self, previous_product_uom_qty=False):
         for line in self:
             if line.parent_option_id:
                 continue
             else:
-                super(SaleOrderLine, line)._action_launch_stock_rule()
+                super(SaleOrderLine, line)._action_launch_stock_rule(
+                    previous_product_uom_qty=previous_product_uom_qty
+                )
         return True
 
     @api.depends("parent_option_id.qty_delivered")
