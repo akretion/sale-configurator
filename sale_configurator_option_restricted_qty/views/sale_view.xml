@@ -11,6 +11,55 @@
             ref="sale_configurator_option.sale_order_line_config_option_view_form"
         />
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='price_unit']" position="after">
+                <field name="sale_min_qty" />
+                <field name="sale_multiple_qty" />
+                <field name="is_qty_less_min_qty" invisible="1" />
+                <field name="force_sale_min_qty" invisible="1" />
+                <field name="sale_max_qty" />
+                <field name="is_qty_bigger_max_qty" invisible="1" />
+                <field name="force_sale_max_qty" invisible="1" />
+               <field name="is_qty_not_multiple_qty" invisible="1" />
+               <span
+                    name="label_min_qty_recommended"
+                    class="o_form_label"
+                    colspan="2"
+                    attrs="{'invisible': ['|',  ('is_qty_less_min_qty','=', False),
+                     '&amp;', ('is_qty_less_min_qty','=', True), ('force_sale_min_qty','=', False,)]}"
+                    style="background-color:yellow"
+                >Min Quantity Recommended</span>
+                 <span
+                    name="label_min_qty_required"
+                    class="o_form_label"
+                    colspan="2"
+                    attrs="{'invisible': ['|',  ('is_qty_less_min_qty','=', False),
+                     '&amp;', ('is_qty_less_min_qty','=', True), ('force_sale_min_qty','=', True,)]}"
+                    style="background-color:red"
+                >Min Quantity Required</span>
+                 <span
+                    name="label_multiple_qty_required"
+                    class="o_form_label"
+                    colspan="2"
+                    attrs="{'invisible': [('is_qty_not_multiple_qty','=', False)]}"
+                    style="background-color:red"
+                >Multiple Quantity Required</span>
+                 <span
+                    name="label_max_qty_recommended"
+                    class="o_form_label"
+                    colspan="2"
+                    attrs="{'invisible': ['|',  ('is_qty_bigger_max_qty','=', False),
+                     '&amp;', ('is_qty_bigger_max_qty','=', True), ('force_sale_max_qty','=', False,)]}"
+                    style="background-color:yellow"
+                >Max Quantity Recommended</span>
+                 <span
+                    name="label_max_qty_exceeded"
+                    class="o_form_label"
+                    colspan="2"
+                    attrs="{'invisible': ['|',  ('is_qty_bigger_max_qty','=', True),
+                     '&amp;', ('is_qty_bigger_max_qty','=', True), ('force_sale_max_qty','=', True,)]}"
+                    style="background-color:red"
+                >Max Quantity Exceeded</span>
+           </xpath>
             <xpath
                 expr="//field[@name='option_ids']/tree/field[@name='option_unit_qty']"
                 position="after"

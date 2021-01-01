@@ -26,6 +26,7 @@ class SaleOrderCase(SavepointCase):
         cls.product_with_variant = cls.env.ref(
             "product.product_product_4_product_template"
         )
+        cls.product_with_variant.is_configurable_opt = True
         cls.product_variant_1 = cls.env.ref("product.product_product_4")
         cls.product_variant_2 = cls.env.ref("product.product_product_4b")
         cls.product_variant_3 = cls.env.ref("product.product_product_4c")
@@ -69,6 +70,14 @@ class SaleOrderCase(SavepointCase):
             }
         )
         return sale_line
+
+    def test_is_configurable(self):
+        new_line = self.create_sale_line_parent(self.product_with_variant)
+        new_line.product_tmpl_id_change()
+        self._conf_product_add_variants(new_line)
+        for line in new_line.variant_ids:
+            self.assertFalse(line.is_configurable)
+        self.assertTrue(new_line.is_configurable)
 
     def test_total_amount(self):
         self.assertEqual(self.sale.amount_total, 6850.80)

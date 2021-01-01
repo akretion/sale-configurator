@@ -13,12 +13,10 @@ class SaleOrder(models.Model):
         for record in self:
             count = 0
             for line in record.order_line.sorted("sequence"):
-                if not line.parent_option_id:
+                if not line._is_children_line():
                     line.sequence = count
                     count += 1
-                    for option in line.option_ids:
-                        option.sequence = count
-                        count += 1
+                    line._sort_children_line(count)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -69,6 +67,14 @@ class SaleOrderLine(models.Model):
         readonly=False,
         store=True,
     )
+
+    def _is_children_line(self):
+        return bool(self.parent_option_id)
+
+    def _sort_children_line(self, count):
+        for option in self.option_ids:
+            option.sequence = count
+            count += 1
 
     def _is_line_configurable(self):
         if self.is_configurable_opt:
