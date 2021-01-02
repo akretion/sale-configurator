@@ -68,7 +68,7 @@ class SaleOrderLine(models.Model):
         types = self._get_child_type_sort()
         types.sort()
         for _position, child_type in types:
-            for line in self.child_ids:
+            for line in self.child_ids.sorted("sequence"):
                 if line.child_type == child_type:
                     line.sequence = count
                     count += 1

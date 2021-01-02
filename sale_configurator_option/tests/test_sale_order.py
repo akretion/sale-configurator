@@ -141,7 +141,7 @@ class SaleOrderCase(SavepointCase):
                                     0,
                                     0,
                                     {
-                                        "sequence": 1,
+                                        "sequence": 30,
                                         "option_unit_qty": 5,
                                         "product_id": self.product_option_1.id,
                                         "option_qty_type": "proportional_qty",
@@ -169,5 +169,7 @@ class SaleOrderCase(SavepointCase):
         self.assertFalse(lines[0].parent_id)
         self.assertEqual(lines[1].sequence, 1)
         self.assertTrue(lines[1].parent_id)
+        self.assertEqual(lines[1].product_id, self.product_option_2)
         self.assertEqual(lines[2].sequence, 2)
         self.assertTrue(lines[1].parent_id)
+        self.assertEqual(lines[2].product_id, self.product_option_1)
