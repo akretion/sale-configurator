@@ -26,7 +26,7 @@ class SaleOrderLine(models.Model):
 
     def _action_launch_stock_rule(self, previous_product_uom_qty=False):
         for line in self:
-            if line.parent_option_id:
+            if line.child_type == "option":
                 continue
             else:
                 super(SaleOrderLine, line)._action_launch_stock_rule(
@@ -34,11 +34,11 @@ class SaleOrderLine(models.Model):
                 )
         return True
 
-    @api.depends("parent_option_id.qty_delivered")
+    @api.depends("parent_id.qty_delivered")
     def _compute_qty_delivered(self):
         for line in self:
             if line.qty_delivered_method == "option_proportional":
-                parent = line.parent_option_id
+                parent = line.parent_id
                 if parent.qty_delivered == parent.product_uom_qty:
                     line.qty_delivered = line.product_uom_qty
                 else:
@@ -56,10 +56,10 @@ class SaleOrderLine(models.Model):
     def _get_compute_delivered_method(self):
         return "option_proportional"
 
-    @api.depends("parent_option_id")
+    @api.depends("parent_id")
     def _compute_qty_delivered_method(self):
         for line in self:
-            if line.parent_option_id:
+            if line.child_type == "option":
                 line.qty_delivered_method = line._get_compute_delivered_method()
             else:
                 super(SaleOrderLine, line)._compute_qty_delivered_method()

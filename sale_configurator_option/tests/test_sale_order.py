@@ -166,8 +166,8 @@ class SaleOrderCase(SavepointCase):
         sale.refresh()
         lines = sale.order_line
         self.assertEqual(lines[0].sequence, 0)
-        self.assertFalse(lines[0].parent_option_id)
+        self.assertFalse(lines[0].parent_id)
         self.assertEqual(lines[1].sequence, 1)
-        self.assertTrue(lines[1].parent_option_id)
+        self.assertTrue(lines[1].parent_id)
         self.assertEqual(lines[2].sequence, 2)
-        self.assertTrue(lines[1].parent_option_id)
+        self.assertTrue(lines[1].parent_id)
