@@ -62,12 +62,6 @@
                     name="domain"
                 >[('is_option', '=', True),('used_on_product_ids', '=', parent.product_id)]</attribute>
             </xpath>
-            <xpath
-                expr="//field[@name='option_ids']/tree/field[@name='price_config_subtotal']"
-                position="attributes"
-            >
-                <attribute name="invisible">1</attribute>
-            </xpath>
         </field>
     </record>
 
