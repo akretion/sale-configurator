@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template
+        id="assets_backend_inherit_sale_configurator_base"
+        inherit_id="web.assets_backend"
+        name="Sale backend assets"
+    >
+        <xpath expr="link[last()]" position="after">
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/sale_configurator_base/static/src/scss/sale_order.scss"
+            />
+        </xpath>
+    </template>
+</odoo>

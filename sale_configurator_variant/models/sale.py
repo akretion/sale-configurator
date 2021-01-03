@@ -30,14 +30,10 @@ class SaleOrderLine(models.Model):
         "Multi variant",
     )
 
-    def _is_children_line(self):
-        return super()._is_children_line() or bool(self.parent_variant_id)
-
-    def _sort_children_line(self, count):
-        for variant in self.variant_ids:
-            variant.sequence = count
-            count += 1
-        super()._sort_children_line(count)
+    def _get_child_type_sort(self):
+        res = super()._get_child_type_sort()
+        res.append((10, "variant"))
+        return res
 
     def _is_line_configurable(self):
         if self.parent_variant_id:
@@ -76,32 +72,6 @@ class SaleOrderLine(models.Model):
         if field.name == "is_variant_qty_need_recompute":
             with_variant_qty = self.exists()._set_parent_variant_qty()
             with_variant_qty.write({"is_variant_qty_need_recompute": False})
-
-    @api.model
-    def _get_price_config_subtotal(self):
-        """
-        get the config subtotal amounts of the SO line.
-        """
-        res = super()._get_price_config_subtotal()
-        if self.parent_variant_id:
-            res = 0
-        elif self.variant_ids:
-            for variant in self.variant_ids:
-                res += variant.price_subtotal
-        return res
-
-    @api.model
-    def _get_price_config_total(self):
-        """
-        get the config subtotal amounts of the SO line.
-        """
-        res = super()._get_price_config_total()
-        if self.parent_variant_id:
-            res = 0
-        elif self.variant_ids:
-            for variant in self.variant_ids:
-                res += variant.price_total
-        return res
 
     def _prepare_sale_line_variant(self, variant):
         return {
