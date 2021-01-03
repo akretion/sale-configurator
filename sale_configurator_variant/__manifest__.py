@@ -12,10 +12,10 @@
     "author": " Akretion",
     "license": "AGPL-3",
     "application": False,
-    "installable": True,
+    "installable": False,
     "external_dependencies": {"python": [], "bin": []},
     "depends": ["sale_configurator_option"],
-    # "data": ["views/sale_view.xml"],
+    "data": ["views/sale_view.xml"],
     "demo": ["demo/sale_demo.xml"],
     "qweb": [],
 }
