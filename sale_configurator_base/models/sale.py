@@ -2,8 +2,20 @@
 # @author Sébastien BEAU <sebastien.beau@akretion.com>
 # @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+import ast
+
+from lxml import etree
 
 from odoo import _, api, fields, models
+from odoo.osv import expression
+
+
+# TODO put this in a box tool module
+def update_attrs(node, add_attrs):
+    attrs = ast.literal_eval(node.get("attrs", "{}").replace("\n", "").strip())
+    for key in add_attrs:
+        attrs[key] = expression.OR([attrs.get(key, []), add_attrs[key]])
+    node.set("attrs", str(attrs))
 
 
 class SaleOrder(models.Model):
@@ -11,12 +23,12 @@ class SaleOrder(models.Model):
 
     def sync_sequence(self):
         for record in self:
-            count = 0
+            done = []
             for line in record.order_line.sorted("sequence"):
                 if not line.parent_id:
-                    line.sequence = count
-                    count += 1
-                    line._sort_children_line(count)
+                    line.sequence = len(done)
+                    done.append(line)
+                    line._sort_children_line(done)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -33,6 +45,38 @@ class SaleOrder(models.Model):
     @api.onchange("order_line")
     def onchange_sale_line_sequence(self):
         self.sync_sequence()
+
+    @api.model
+    def _fields_view_get(
+        self, view_id=None, view_type="form", toolbar=False, submenu=False
+    ):
+        """ fields_view_get comes from Model (not AbstractModel) """
+        res = super()._fields_view_get(
+            view_id=view_id,
+            view_type=view_type,
+            toolbar=toolbar,
+            submenu=submenu,
+        )
+        if view_type == "form" and not self._context.get("force_original_sale_form"):
+            doc = etree.XML(res["arch"])
+            for field in doc.xpath("//field[@name='order_line']/tree/field"):
+                if field.get("name") != "sequence":
+                    update_attrs(
+                        field,
+                        {
+                            "readonly": [
+                                "|",
+                                ("parent_id", "!=", False),
+                                ("is_configurable", "=", True),
+                            ]
+                        },
+                    )
+                if field.get("name") == "product_id":
+                    field.set("class", field.get("class", "") + " product")
+                if field.get("name") == "name":
+                    field.set("class", field.get("class", "") + " description")
+            res["arch"] = etree.tostring(doc, pretty_print=True)
+        return res
 
 
 class SaleOrderLine(models.Model):
@@ -56,6 +100,12 @@ class SaleOrderLine(models.Model):
         store=True,
     )
     pricelist_id = fields.Many2one(related="order_id.pricelist_id", string="Pricelist")
+    # There is already an order_partner_id in the sale line class
+    # but we want to make the view as much compatible between child view
+    # wo want a native view do parent.partner_id we want to have the same behaviour
+    # with the child line (but in that case the parent is a sale order line
+    partner_id = fields.Many2one(related="order_id.partner_id", string="Customer")
+
     is_configurable = fields.Boolean(
         "Line is a configurable Product ?",
         compute="_compute_is_configurable",
@@ -64,14 +114,14 @@ class SaleOrderLine(models.Model):
     def _get_child_type_sort(self):
         return []
 
-    def _sort_children_line(self, count):
+    def _sort_children_line(self, done):
         types = self._get_child_type_sort()
         types.sort()
         for _position, child_type in types:
             for line in self.child_ids.sorted("sequence"):
                 if line.child_type == child_type:
-                    line.sequence = count
-                    count += 1
+                    line.sequence = len(done)
+                    done.append(line)
 
     @api.depends("product_id")
     def _compute_is_configurable(self):

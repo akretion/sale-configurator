@@ -19,14 +19,14 @@
                         <field name="display_type" invisible="1" />
                         <field name="order_id" invisible="1" />
                         <field name="sequence" invisible="1" />
-                        <field name="order_partner_id" invisible="1" />
+                        <field name="partner_id" invisible="1" />
                         <field name="pricelist_id" invisible="1" />
                         <field name="company_id" invisible="1" />
                         <group attrs="{'invisible': [('display_type', '!=', False)]}">
                             <field name="product_updatable" invisible="1" />
                             <field
                                 name="product_id"
-                                context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':pricelist_id, 'uom':product_uom, 'company_id': company_id}"
+                                context="{'partner_id':partner_id, 'quantity':product_uom_qty, 'pricelist':pricelist_id, 'uom':product_uom, 'company_id': company_id}"
                                 attrs="{
                                     'readonly': [('product_updatable', '=', False)],
                                     'required': [('display_type', '=', False)],
@@ -44,7 +44,7 @@
                             <label for="product_uom_qty" string="Ordered Quantity" />
                             <div>
                                 <field
-                                    context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':pricelist_id, 'uom':product_uom, 'uom_qty_change':True, 'company_id': company_id}"
+                                    context="{'partner_id':partner_id, 'quantity':product_uom_qty, 'pricelist':pricelist_id, 'uom':product_uom, 'uom_qty_change':True, 'company_id': company_id}"
                                     name="product_uom_qty"
                                     class="oe_inline"
                                 />
@@ -196,14 +196,28 @@
                 <field name="is_configurable" invisible="1" />
             </xpath>
             <xpath expr="//field[@name='order_line']//tree" position="attributes">
-                <attribute name="decoration-info">is_configurable</attribute>
+                <attribute name="decoration-it">parent_id</attribute>
+            </xpath>
+            <xpath
+                expr="//field[@name='order_line']//tree/field[@name='price_subtotal']"
+                position="attributes"
+            >
+                <attribute
+                    name="attrs"
+                >{'invisible': [('parent_id', '=', False)]}</attribute>
+                <attribute name="string">Opt Subtotal</attribute>
             </xpath>
             <xpath
                 expr="//field[@name='order_line']//tree/field[@name='price_subtotal']"
                 position="after"
             >
-                <field name="price_config_subtotal" invisible="0" />
+                <field
+                    name="price_config_subtotal"
+                    attrs="{'invisible': [('parent_id', '!=', False)]}"
+                    string="Subtotal"
+                />
                 <field name="is_configurable" invisible="1" />
+                <field name="parent_id" invisible="1" />
             </xpath>
             <xpath
                 expr="//field[@name='order_line']//tree/field[@name='sequence']"
