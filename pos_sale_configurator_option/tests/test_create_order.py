@@ -31,7 +31,7 @@ class TestCreateOrder(CommonCase):
                     "id": "1",
                     "product_id": self.opt_1.id,
                     "description": self.opt_1.name,
-                    "notes": "My note",
+                    "note": "My note",
                     "qty": 5,
                 },
                 {
@@ -39,7 +39,7 @@ class TestCreateOrder(CommonCase):
                     "id": "2",
                     "product_id": self.opt_2.id,
                     "description": self.opt_2.name,
-                    "notes": "",
+                    "note": "",
                     "qty": 3,
                 },
                 {
@@ -47,7 +47,7 @@ class TestCreateOrder(CommonCase):
                     "id": "3",
                     "product_id": self.opt_3.id,
                     "description": self.opt_3.name,
-                    "notes": "",
+                    "note": "",
                     "qty": 4,
                 },
             ]

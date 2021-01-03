@@ -9,16 +9,13 @@ class SaleOrder(models.Model):
     _inherit = "sale.order"
 
     def _prepare_pos_option(self, option):
-        description = option.get("description", "")
-        notes = option.get("notes", "")
-        if notes:
-            description = "\n".join([description, notes])
         return {
             "product_id": int(option["product_id"]),
             "option_unit_qty": int(option["qty"]),
             "option_qty_type": "proportional_qty",
             "product_option_id": int(option["id"]),
-            "name": description,
+            "name": option.get("description"),
+            "note": option.get("note"),
         }
 
     def _prepare_pos_line(self, line):
