@@ -34,11 +34,15 @@ class SaleOrderLine(models.Model):
             ("independent_qty", "Independent Qty"),
         ],
         string="Option qty Type",
+        compute="_compute_option_qty_type",
+        store=True,
+        readonly=False,
     )
     product_option_id = fields.Many2one(
         "product.configurator.option",
         "Product Option",
         ondelete="set null",
+        compute="_compute_product_option_id",
     )
     product_uom_qty = fields.Float(
         compute="_compute_product_uom_qty",
@@ -57,7 +61,12 @@ class SaleOrderLine(models.Model):
         else:
             return super()._is_line_configurable()
 
-    @api.depends("product_uom_qty", "option_unit_qty", "parent_id.product_uom_qty")
+    @api.depends(
+        "product_uom_qty",
+        "option_unit_qty",
+        "option_qty_type",
+        "parent_id.product_uom_qty",
+    )
     def _compute_product_uom_qty(self):
         for record in self:
             if record.parent_id:
@@ -68,57 +77,54 @@ class SaleOrderLine(models.Model):
                 elif record.option_qty_type == "independent_qty":
                     record.product_uom_qty = record.option_unit_qty
 
+    @api.onchange("product_uom_qty")
+    def onchange_qty_propagate_to_child(self):
+        # When adding a new configurable product the qty is not propagated
+        # correctly to child line with the onchange (it work when modifying)
+        # seem to have a bug in odoo ORM
+        for record in self:
+            record.option_ids._compute_product_uom_qty()
+
     @api.model_create_multi
     def create(self, vals_list):
-        # TODO CHECK
         lines = super().create(vals_list)
         # For weird reason it seem that the product_uom_qty have been not recomputed
         # correctly. Recompute is only triggered in the onchange
-        # and the onchange do not propagate the qty
+        # and the onchange do not propagate the qty see the following test:
+        # tests/test_sale_order.py::SaleOrderCase::test_create_sale_with_option_ids
         lines._compute_product_uom_qty()
         return lines
 
-    @api.onchange("product_option_id")
-    def product_option_id_change(self):
-        res = {}
-        self.product_id = self.product_option_id.product_id
-        return res
+    @api.depends("product_id")
+    def _compute_product_option_id(self):
+        for record in self:
+            record.product_option_id = (
+                record.parent_id.product_id.configurable_option_ids.filtered(
+                    lambda o: o.product_id == record.product_id
+                )
+            )
 
-    def _prepare_sale_line_option(self, opt):
-        if opt:
-            proportional_qty = 1.0
-            if opt.option_qty_type == "proportional_qty":
-                proportional_qty = 1.0 * self.product_uom_qty
-            return {
-                "order_id": self.order_id.id,
-                "product_id": opt.product_id.id,
-                "option_unit_qty": 1.0,
-                "product_uom_qty": proportional_qty,
-                "product_uom": opt.product_uom_id.id,
-                "option_qty_type": opt.option_qty_type,
-                "product_option_id": opt.id,
-            }
-        else:
-            return {
-                "order_id": self.order_id.id,
-            }
+    @api.depends("product_id")
+    def _compute_option_qty_type(self):
+        for record in self:
+            if record.product_option_id:
+                record.option_qty_type = record.product_option_id.option_qty_type
 
     @api.onchange("product_id")
     def product_id_change(self):
         res = super().product_id_change()
         self.option_ids = False
         if self.product_id.is_configurable_opt:
-            options = []
             for opt in self.product_id.configurable_option_ids:
                 if opt.is_default_option:
-                    options.append((0, 0, self._prepare_sale_line_option(opt)))
-            self.option_ids = options
-        if self.product_id.is_option and self.parent_id:
-            product_tmpl_id = self.parent_id.product_id.product_tmpl_id
-            option_ids = product_tmpl_id.configurable_option_ids.filtered(
-                lambda o: o.product_id == self.product_id
-            )
-            option_id = option_ids and option_ids[0] or False
-            self.product_option_id = option_id
-            self.update(self.parent_id._prepare_sale_line_option(option_id))
+                    option = self.new(
+                        {
+                            "product_id": opt.product_id.id,
+                            "parent_id": self.id,
+                            "child_type": "option",
+                            "order_id": self.order_id.id,
+                        }
+                    )
+                    option.product_id_change()
+                    self.option_ids |= option
         return res
