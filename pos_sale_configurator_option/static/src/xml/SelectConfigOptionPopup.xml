@@ -51,9 +51,9 @@
                                     </td>
 
                                 <td><textarea
-                                        class="notes"
+                                        class="note"
                                         onkeypress="event.stopPropagation()"
-                                        t-model="operation.notes"
+                                        t-model="operation.note"
                                     /></td>
                             </tr>
                         </t>

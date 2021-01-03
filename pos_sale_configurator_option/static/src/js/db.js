@@ -26,7 +26,6 @@ odoo.define("pos_sale_configurator_option.db_and_model", function (require) {
                 product_uom_id: config_option.product_uom_id,
                 sale_min_qty: config_option.sale_min_qty,
                 sale_max_qty: config_option.sale_max_qty,
-                sale_default_qty: 0,
             };
         },
     });
