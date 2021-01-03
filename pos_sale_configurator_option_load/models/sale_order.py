@@ -9,16 +9,16 @@ class SaleOrder(models.Model):
     _inherit = "sale.order"
 
     def _get_pos_line(self):
-        return self.order_line.filtered(lambda s: not s.parent_option_id)
+        return self.order_line.filtered(lambda s: not s.parent_id)
 
-    def _prepare_pos_json_line_option(self, option_sol):
+    def _prepare_pos_json_line_option(self, line):
         return {
-            "id": option_sol.product_option_id.id,
-            "product_id": option_sol.product_id.id,
-            "description": option_sol.name,
-            "quantity": option_sol.product_uom_qty,
-            "price": option_sol.price_unit,
-            "notes": "",  # note have been merged into description
+            "id": line.product_option_id.id,
+            "product_id": line.product_id.id,
+            "description": line.name,
+            "qty": line.option_unit_qty,
+            "price": line.price_unit,
+            "note": line.note,
         }
 
     def _prepare_pos_json_line(self, line):

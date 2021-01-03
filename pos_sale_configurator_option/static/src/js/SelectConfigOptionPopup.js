@@ -37,8 +37,8 @@ odoo.define("pos_sale_configurator_option.SelectConfigOptionPopup", function (re
                     price: this._get_product_price(product),
                     sale_min_qty: option.sale_min_qty,
                     sale_max_qty: option.sale_max_qty,
-                    qty: candidate.qty || option.sale_default_qty,
-                    notes: candidate.notes || "",
+                    qty: candidate.qty || 0,
+                    note: candidate.note || "",
                     description: option.product.display_name,
                 };
             });
@@ -66,7 +66,10 @@ odoo.define("pos_sale_configurator_option.SelectConfigOptionPopup", function (re
             return qty;
         }
         _limitQty(qty, min, max) {
-            return Math.max(min, Math.min(max, qty));
+            if (max > 0) {
+                qty = Math.min(max, qty);
+            }
+            return Math.max(min, qty);
         }
         getPayload() {
             var ret = this.state.config_options
@@ -84,7 +87,7 @@ odoo.define("pos_sale_configurator_option.SelectConfigOptionPopup", function (re
                         product: option.product,
                         description: option.description,
                         qty: option.qty,
-                        notes: option.notes,
+                        note: option.note,
                     };
                 });
             return ret;
