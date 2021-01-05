@@ -18,8 +18,8 @@ odoo.define("pos_sale_configurator_option.models", function (require) {
         compute_fixed_price: function (price) {
             // Compute fixed priced is call once
             // set_unit_price is call twice
-            price += this.get_options_price();
-            return _super_order.compute_fixed_price.apply(this, arguments);
+            var newPrice = price + this.get_options_price();
+            return _super_order.compute_fixed_price.apply(this, [newPrice]);
         },
         get_options_price: function () {
             // Sum the price of selected options
