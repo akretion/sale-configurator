@@ -5,7 +5,7 @@
 
 odoo.define("pos_sale_configurator_option.SelectConfigOptionPopup", function (require) {
     "use strict";
-
+    /* global owl */
     const AbstractAwaitablePopup = require("point_of_sale.AbstractAwaitablePopup");
     const Registries = require("point_of_sale.Registries");
     const {useState} = owl.hooks;
