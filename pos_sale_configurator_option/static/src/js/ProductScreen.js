@@ -19,8 +19,9 @@ odoo.define("pos_sale_configurator_option.ProductScreen", function (require) {
                     product: product,
                 });
                 if (ret.confirmed) {
-                    super._clickProduct(event);
-                    this._persistConfig(product, ret.payload);
+                    super._clickProduct(event).then(() => {
+                        this._persistConfig(product, ret.payload);
+                    });
                 }
             }
             _persistConfig(product, new_config) {
