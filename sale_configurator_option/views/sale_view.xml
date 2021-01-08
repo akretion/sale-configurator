@@ -62,6 +62,20 @@
                     name="domain"
                 >[('is_option', '=', True),('used_on_product_ids', '=', parent.product_id)]</attribute>
             </xpath>
+            <!-- In case that you have the configurator activated -->
+            <xpath
+                expr="//field[@name='option_ids']/tree/field[@name='product_template_id']"
+                position="attributes"
+            >
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath
+                expr="//field[@name='option_ids']/tree/field[@name='product_id']"
+                position="attributes"
+            >
+                <attribute name="optional" />
+                <attribute name="string">Product</attribute>
+            </xpath>
         </field>
     </record>
 

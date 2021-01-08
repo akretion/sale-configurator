@@ -105,6 +105,12 @@
             <xpath expr="//field[@name='order_line']" position="attributes">
                 <attribute name="bases">{'reload_on_button': true}</attribute>
             </xpath>
+            <xpath
+                expr="//field[@name='order_line']//tree/field[@name='product_template_id']"
+                position="attributes"
+            >
+                <attribute name="class">product</attribute>
+            </xpath>
         </field>
     </record>
 
