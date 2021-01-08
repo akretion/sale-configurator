@@ -21,6 +21,10 @@ class SaleOrder(models.Model):
     def _prepare_pos_line(self, line):
         vals = super()._prepare_pos_line(line)
         if line.get("config", {}).get("selected_options"):
+            # Note we only support simple case in POS where the product
+            # have a price unit of 0 and the price come from the option
+            # the price of the option are recomputed
+            vals["price_unit"] = 0
             vals["option_ids"] = []
             for option in line["config"]["selected_options"]:
                 vals["option_ids"].append([0, 0, self._prepare_pos_option(option)])
