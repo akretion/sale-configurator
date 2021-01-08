@@ -23,7 +23,7 @@
                 />
                 <field
                     name="option_ids"
-                    context="{'line_product_id': product_id}"
+                    context="{'line_product_id': product_id, 'default_order_id': order_id}"
                     attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
                 >
                     <tree editable="bottom">
