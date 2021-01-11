@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template
+        id="report_saleorder_document"
+        inherit_id="sale.report_saleorder_document"
+    >
+        <xpath
+            expr="//t[@t-if='not line.display_type']//td[@name='td_name']//span"
+            position="replace"
+        >
+            <t t-set="is_option_line" t-value="line.child_type == 'option'" />
+            <t t-if="is_option_line">
+                <span
+                    t-field="line.name"
+                    style="padding-left:50px;font-style:italic;"
+                />
+            </t>
+            <t t-if="not is_option_line">
+                <span t-field="line.name" />
+            </t>
+        </xpath>
+    </template>
+</odoo>
