@@ -5,18 +5,14 @@
             expr="//t[@name='account_invoice_line_accountable']//span[@t-field='line.name']"
             position="replace"
         >
-            <t
-                t-set="is_option_line"
-                t-value="any([child_type == 'option' for child_type in line.sale_line_ids.mapped('child_type')])"
-            />
-            <t t-if="is_option_line">
+            <t t-if="line.is_option">
                 <span
                     t-field="line.name"
                     t-options="{'widget': 'text'}"
                     style="padding-left:50px;font-style:italic;"
                 />
             </t>
-            <t t-if="not is_option_line">
+            <t t-if="not line.is_option">
                 <span t-field="line.name" t-options="{'widget': 'text'}" />
             </t>
         </xpath>
