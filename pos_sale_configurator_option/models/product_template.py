@@ -17,13 +17,25 @@ class ProductTemplate(models.Model):
         for record in self:
             record.sale_alone_forbidden = record.is_option
 
-    @api.constrains(
-        "available_in_pos",
-        "local_configurable_option_ids.available_in_pos",
-        "product_conf_tmpl_id.configurable_option_ids.available_in_pos",
-    )
+    @api.constrains("available_in_pos")
     def check_pos_availability(self):
-        for record in self:
+        configurable = self.env["product.template"].search(
+            [
+                "|",
+                (
+                    "local_configurable_option_ids.product_id.product_tmpl_id",
+                    "in",
+                    self.ids,
+                ),
+                (
+                    "product_conf_tmpl_id.configurable_option_ids"
+                    ".product_id.product_tmpl_id",
+                    "in",
+                    self.ids,
+                ),
+            ]
+        )
+        for record in self + configurable:
             for option in record.configurable_option_ids:
                 if record.available_in_pos and not option.product_id.available_in_pos:
                     raise ValidationError(
