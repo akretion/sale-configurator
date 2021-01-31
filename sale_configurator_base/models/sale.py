@@ -75,7 +75,7 @@ class SaleOrder(models.Model):
                     field.set("class", field.get("class", "") + " product")
                 if field.get("name") == "name":
                     field.set("class", field.get("class", "") + " description")
-            res["arch"] = etree.tostring(doc, pretty_print=True)
+            res["arch"] = etree.tostring(doc, pretty_print=True).decode("utf-8")
         return res
 
 
