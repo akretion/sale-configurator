@@ -38,6 +38,8 @@ class SaleOrderLine(models.Model):
     def _is_line_configurable(self):
         if self.parent_variant_id:
             return False
+        elif self.is_multi_variant_line:
+            return True
         else:
             return super()._is_line_configurable()
 
