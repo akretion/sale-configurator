@@ -20,7 +20,6 @@
                 />
             </xpath>
             <xpath expr="//field[@name='product_id']" position="attributes">
-                <field name="is_multi_variant_line" />
                 <attribute
                     name="attrs"
                 >{'readonly': [('product_updatable', '=', False)],
@@ -32,12 +31,12 @@
                 <field name="is_configurable_opt" invisible="1" />
                 <label
                     for="variant_ids"
-                    attrs="{'invisible': ['|', ('is_configurable_opt', '=', False), ('is_multi_variant_line', '=', False)]}"
+                    attrs="{'invisible': [('is_configurable_opt', '=', False), ('is_multi_variant_line', '=', False)]}"
                 />
                 <field
                     name="variant_ids"
                     context="{'line_product_id': product_id, 'order_id': order_id}"
-                    attrs="{'invisible': ['|', ('is_configurable_opt', '=', False), ('is_multi_variant_line', '=', False)]}"
+                    attrs="{'invisible': [('is_configurable_opt', '=', False), ('is_multi_variant_line', '=', False)]}"
                 >
                     <tree editable="bottom">
                         <field name="product_uom_category_id" invisible="1" />
@@ -53,7 +52,7 @@
                             options="{'no_create': True}"
                             domain="[('product_tmpl_id','=', parent.product_tmpl_id)]"
                             context="{
-                                'partner_id':parent.order_partner_id,
+                                'partner_id':parent.partner_id,
                                 'quantity':parent.product_uom_qty,
                                 'order_id': parent.order_id,
                                 'pricelist':parent.pricelist_id,
@@ -65,7 +64,7 @@
                         <field name="name" />
                         <field
                             name="product_uom_qty"
-                            context="{'partner_id':parent.order_partner_id,
+                            context="{'partner_id':parent.partner_id,
                             'quantity':parent.product_uom_qty,
                             'pricelist':parent.pricelist_id,
                             'uom':parent.product_uom,
