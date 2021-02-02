@@ -15,6 +15,7 @@
     "external_dependencies": {"python": [], "bin": []},
     "depends": ["sale_configurator_base"],
     "data": [
+        "views/account_move_view.xml",
         "views/sale_view.xml",
         "views/product_configurator_option_view.xml",
         "views/product_template_view.xml",

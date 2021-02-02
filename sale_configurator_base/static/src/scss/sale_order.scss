@@ -1,6 +1,9 @@
-tr.text-it > td > span.product {
-    margin-left: 30px;
+/* Different field types will use td or span */
+
+tr.text-it > td > span.configurator_option_padding {
+    padding-left: 30px;
 }
-tr.text-it > td > span.description {
-    margin-left: 30px;
+
+tr.text-it > td.configurator_option_padding {
+    padding-left: 30px;
 }

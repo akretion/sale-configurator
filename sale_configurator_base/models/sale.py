@@ -72,9 +72,15 @@ class SaleOrder(models.Model):
                         },
                     )
                 if field.get("name") == "product_id":
-                    field.set("class", field.get("class", "") + " product")
+                    field.set(
+                        "class", field.get("class", "") + " configurator_option_padding"
+                    )
                 if field.get("name") == "name":
-                    field.set("class", field.get("class", "") + " description")
+                    field.set(
+                        "class",
+                        field.get("class", "")
+                        + " description configurator_option_padding",
+                    )
             res["arch"] = etree.tostring(doc, pretty_print=True).decode("utf-8")
         return res
 
