@@ -19,6 +19,7 @@ class SaleOrderLine(models.Model):
         "Options",
         domain=[("child_type", "=", "option")],
         context={"default_child_type": "option"},
+        copy=False,
     )
     is_configurable_opt = fields.Boolean(
         "Is the product configurable Option ?", related="product_id.is_configurable_opt"
