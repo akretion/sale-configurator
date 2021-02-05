@@ -1,5 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_product_configurator_option_employee,product.configurator.option employee,model_product_configurator_option,base.group_user,1,0,0,0
-access_product_configurator_option_manager,product.configurator.option manager,model_product_configurator_option,base.group_system,1,1,1,1
+access_product_configurator_option_manager,product.configurator.option manager,model_product_configurator_option,sales_team.group_sale_manager,1,1,1,1
 access_product_configurator_template_employee,product.configurator.template employee,model_product_configurator_template,base.group_user,1,0,0,0
-access_product_configurator_template_manager,product.configurator.template manager,model_product_configurator_template,base.group_system,1,1,1,1
+access_product_configurator_template_manager,product.configurator.template manager,model_product_configurator_template,sales_team.group_sale_manager,1,1,1,1
