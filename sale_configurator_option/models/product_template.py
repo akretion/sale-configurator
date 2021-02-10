@@ -11,11 +11,11 @@ class ProductTemplate(models.Model):
 
     is_configurable_opt = fields.Boolean(
         "Is a Configurable Product ?",
-        help="Chek this, if the product is configurable with options",
+        help="Check this, if the product is configurable with options",
     )
     is_option = fields.Boolean(
         "Is an Option Product ?",
-        help="Chek this, if the product is an option used in configurable product",
+        help="Check this, if the product is an option used in configurable product",
     )
     product_conf_tmpl_id = fields.Many2one(
         "product.configurator.template",
