@@ -18,6 +18,8 @@
     "data": [
         "views/sale_view.xml",
         "views/assets.xml",
+        "templates/sale_report_templates.xml",
+        "templates/account_invoice_templates.xml",
     ],
     "demo": [],
     "qweb": [],

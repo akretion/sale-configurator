@@ -21,8 +21,6 @@
         "views/product_template_view.xml",
         "views/product_configurator_template_view.xml",
         "security/ir.model.access.csv",
-        "templates/sale_report_templates.xml",
-        "templates/account_invoice_templates.xml",
     ],
     "demo": [
         "demo/product_demo.xml",
