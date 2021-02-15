@@ -4,19 +4,65 @@
         id="report_saleorder_document"
         inherit_id="sale.report_saleorder_document"
     >
+        <!--Apply distinct style to children lines-->
         <xpath
             expr="//t[@t-if='not line.display_type']//td[@name='td_name']//span"
             position="replace"
         >
-            <t t-set="is_option_line" t-value="line.child_type == 'option'" />
-            <t t-if="is_option_line">
+            <t t-if="line.parent_id">
                 <span
                     t-field="line.name"
                     style="padding-left:50px;font-style:italic;"
                 />
             </t>
-            <t t-if="not is_option_line">
+            <t t-if="not line.parent_id">
                 <span t-field="line.name" />
+            </t>
+        </xpath>
+
+        <!--Add new column + cells for option subtotals-->
+        <xpath expr="//td[@name='th_subtotal']" position="after">
+            <th name="th_subtotal" class="text-right">
+                <span
+                    groups="account.group_show_line_subtotals_tax_excluded"
+                >Opt. Amount</span>
+                <span
+                    groups="account.group_show_line_subtotals_tax_included"
+                >Opt. Total Price</span>
+            </th>
+        </xpath>
+
+        <xpath expr="//td[@name='td_subtotal']" position="after">
+            <!--+ hide subtotal+tax when the product itself costs nothing-->
+            <td name="td_config_subtotal" class="text-right o_price_total">
+                <t t-if="not line.parent_id and not line.report_empty_parent">
+                    <span
+                        t-field="line.price_config_subtotal"
+                        groups="account.group_show_line_subtotals_tax_excluded"
+                    />
+                    <span
+                        t-field="line.price_config_total"
+                        groups="account.group_show_line_subtotals_tax_included"
+                    />
+                </t>
+            </td>
+        </xpath>
+
+        <xpath expr="//td[@name='td_taxes']" position="attributes">
+            <attribute name="t-if">not line.report_empty_parent</attribute>
+        </xpath>
+        <xpath expr="//td[@name='td_taxes']" position="after">
+            <t t-if="line.report_empty_parent">
+                <td />
+            </t>
+        </xpath>
+
+        <xpath expr="//td[@name='td_subtotal']" position="attributes">
+            <attribute name="t-if">line.parent_id</attribute>
+        </xpath>
+        <xpath expr="//td[@name='td_subtotal']" position="before">
+            <t t-if="not line.parent_id">
+                <td />
             </t>
         </xpath>
     </template>

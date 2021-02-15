@@ -8,6 +8,7 @@ from lxml import etree
 
 from odoo import _, api, fields, models
 from odoo.osv import expression
+from odoo.tools import float_compare
 
 
 # TODO put this in a box tool module
@@ -116,6 +117,12 @@ class SaleOrderLine(models.Model):
         "Line is a configurable Product ?",
         compute="_compute_is_configurable",
     )
+    report_empty_parent = fields.Boolean(
+        compute="_compute_report_empty_parent",
+        help="Technical field used in the report to hide subtotals"
+        " and taxes in case a parent line (with children lines) "
+        "has no price by itself",
+    )
 
     def _get_child_type_sort(self):
         return []
@@ -128,6 +135,16 @@ class SaleOrderLine(models.Model):
                 if line.child_type == child_type:
                     line.sequence = len(done)
                     done.append(line)
+
+    @api.depends("price_unit", "child_ids")
+    def _compute_report_empty_parent(self):
+        for rec in self:
+            rec.report_empty_parent = False
+            price_unit_like_zero = float_compare(
+                rec.price_unit, 0.00, precision_rounding=2
+            )
+            if rec.child_ids and price_unit_like_zero:
+                rec.report_empty_parent = True
 
     @api.depends("product_id")
     def _compute_is_configurable(self):
