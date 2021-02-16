@@ -17,7 +17,7 @@ class ProductTemplate(models.Model):
         for record in self:
             record.sale_alone_forbidden = record.is_option
 
-    @api.constrains("available_in_pos")
+    @api.constrains("available_in_pos", "active")
     def check_pos_availability(self):
         configurable = self.env["product.template"].search(
             [
@@ -37,11 +37,14 @@ class ProductTemplate(models.Model):
         )
         for record in self + configurable:
             for option in record.configurable_option_ids:
-                if record.available_in_pos and not option.product_id.available_in_pos:
+                if record.available_in_pos and (
+                    not option.product_id.available_in_pos
+                    or not option.product_id.active
+                ):
                     raise ValidationError(
                         _(
-                            "The product '%s' can not be activated on POS if the option"
-                            " '%s' is not activated in the pos"
+                            "The product '%s' can not be activated on POS if the "
+                            "option '%s' is not activated in the pos"
                         )
                         % (record.name, option.product_id.name)
                     )
