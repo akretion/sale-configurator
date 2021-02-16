@@ -140,8 +140,8 @@ class SaleOrderLine(models.Model):
     def _compute_report_empty_parent(self):
         for rec in self:
             rec.report_empty_parent = False
-            price_unit_like_zero = float_compare(
-                rec.price_unit, 0.00, precision_rounding=2
+            price_unit_like_zero = not float_compare(
+                rec.price_unit, 0.00, precision_digits=2
             )
             if rec.child_ids and price_unit_like_zero:
                 rec.report_empty_parent = True

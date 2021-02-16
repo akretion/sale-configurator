@@ -28,7 +28,7 @@ class AccountMoveLine(models.Model):
                 if field.get("name") != "sequence":
                     update_attrs(
                         field,
-                        {"readonly": [("is_option", "=", True)]},
+                        {"readonly": [("has_parent", "=", True)]},
                     )
                 if field.get("name") == "product_id":
                     field.set(
