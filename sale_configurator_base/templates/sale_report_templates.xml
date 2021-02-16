@@ -38,12 +38,7 @@
             </t>
             <t t-else="">
                 <th name="th_subtotal" class="text-right">
-                    <span
-                        groups="account.group_show_line_subtotals_tax_excluded"
-                    >Amount</span>
-                    <span
-                        groups="account.group_show_line_subtotals_tax_included"
-                    >Total Price</span>
+                    <span>Total</span>
                 </th>
             </t>
         </xpath>
@@ -81,7 +76,7 @@
         taxes, amount, total are useless and confusing to see
         alongside child lines, so we hide it-->
         <xpath expr="//td[@name='td_priceunit']" position="replace">
-            <t t-if="line.report_empty_parent">
+            <t t-if="line.report_line_is_empty_parent">
                 <td name="td_priceunit" />
             </t>
             <t t-else="">
@@ -91,7 +86,7 @@
             </t>
         </xpath>
         <xpath expr="//td[@name='td_taxes']" position="replace">
-            <t t-if="line.report_empty_parent">
+            <t t-if="line.report_line_is_empty_parent">
                 <td name="td_taxes" />
             </t>
             <t t-else="">
@@ -105,8 +100,18 @@
         <xpath expr="//td[@name='td_subtotal']" position="replace">
             <td name="td_subtotal" class="text-right o_price_total">
                 <t
-                    t-if="not line.child_ids and not line.report_empty_parent and line.parent_id"
-                >
+                    t-set="is_child"
+                    t-value="line.parent_id and (not line.child_ids) and (not line.report_line_is_empty_parent)"
+                />
+                <t
+                    t-set="is_parent_with_price"
+                    t-value="line.child_ids and (not line.report_line_is_empty_parent)"
+                />
+                <t
+                    t-set="fallback_default_odoo"
+                    t-value="not o.mapped('order_line').mapped('child_ids')"
+                />
+                <t t-if="is_child or is_parent_with_price or fallback_default_odoo">
                     <span
                         t-field="line.price_subtotal"
                         groups="account.group_show_line_subtotals_tax_excluded"

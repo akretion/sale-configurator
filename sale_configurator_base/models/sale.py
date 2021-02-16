@@ -117,8 +117,8 @@ class SaleOrderLine(models.Model):
         "Line is a configurable Product ?",
         compute="_compute_is_configurable",
     )
-    report_empty_parent = fields.Boolean(
-        compute="_compute_report_empty_parent",
+    report_line_is_empty_parent = fields.Boolean(
+        compute="_compute_report_line_is_empty_parent",
         help="Technical field used in the report to hide subtotals"
         " and taxes in case a parent line (with children lines) "
         "has no price by itself",
@@ -137,14 +137,14 @@ class SaleOrderLine(models.Model):
                     done.append(line)
 
     @api.depends("price_unit", "child_ids")
-    def _compute_report_empty_parent(self):
+    def _compute_report_line_is_empty_parent(self):
         for rec in self:
-            rec.report_empty_parent = False
-            price_unit_like_zero = not float_compare(
-                rec.price_unit, 0.00, precision_digits=2
+            rec.report_line_is_empty_parent = False
+            price_unit_like_zero = (
+                float_compare(rec.price_unit, 0.00, precision_digits=2) == 0
             )
             if rec.child_ids and price_unit_like_zero:
-                rec.report_empty_parent = True
+                rec.report_line_is_empty_parent = True
 
     @api.depends("product_id")
     def _compute_is_configurable(self):
