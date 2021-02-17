@@ -21,7 +21,7 @@
         </xpath>
 
         <!--
-        We need to distinguish configurable mode from "classic" Odoo invoice
+        We need to distinguish configurable mode from "classic" Odoo sale order
         Configurable mode will have the new "Total" (Total + child line totals)
         column, rename Odoo total to Sub-total
         Configurable mode == bool(doc.mapped('order_line').mapped('child_ids'))
