@@ -24,14 +24,14 @@
         We need to distinguish configurable mode from "classic" Odoo invoice
         Configurable mode will have the new "Total" (Total + child line totals)
         column, rename Odoo total to Sub-total
-        Configurable mode == bool(o.mapped('order_line').mapped('child_ids'))
+        Configurable mode == bool(doc.mapped('order_line').mapped('child_ids'))
         -->
 
         <!--Headers-->
 
         <xpath expr="//th[@name='th_subtotal']" position="replace">
             <!--In configurable mode, rename Amount/Total Price to Subtotal-->
-            <t t-if="o.mapped('order_line').mapped('child_ids')">
+            <t t-if="doc.mapped('order_line').mapped('child_ids')">
                 <th name="th_subtotal" class="text-right">
                     <span>Sub-total</span>
                 </th>
@@ -44,7 +44,7 @@
         </xpath>
 
         <xpath expr="//th[@name='th_subtotal']" position="after">
-            <t t-if="o.mapped('order_line').mapped('child_ids')">
+            <t t-if="doc.mapped('order_line').mapped('child_ids')">
                 <th name="th_configurable_total" class="text-right">
                     <span>Total</span>
                 </th>
@@ -56,7 +56,7 @@
         <xpath expr="//td[@name='td_subtotal']" position="after">
             <!--Add cell for "real" total (sum of configurable lines)
             only in configurable mode-->
-            <t t-if="o.mapped('order_line').mapped('child_ids')">
+            <t t-if="doc.mapped('order_line').mapped('child_ids')">
                 <td name="td_config_subtotal" class="text-right o_price_total">
                     <t t-if="not line.parent_id">
                         <span
@@ -109,7 +109,7 @@
                 />
                 <t
                     t-set="fallback_default_odoo"
-                    t-value="not o.mapped('order_line').mapped('child_ids')"
+                    t-value="not doc.mapped('order_line').mapped('child_ids')"
                 />
                 <t t-if="is_child or is_parent_with_price or fallback_default_odoo">
                     <span
