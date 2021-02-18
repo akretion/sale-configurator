@@ -68,6 +68,16 @@ class SaleOrder(models.Model):
             res["arch"] = etree.tostring(doc, pretty_print=True).decode("utf-8")
         return res
 
+    def _create_invoices(self, grouped=False, final=False, date=None):
+        """
+        _create_invoices doesn't have the right hooks for us
+        to directly build the parent/child relationships,
+        thus we rebuild them at the end
+        """
+        result = super()._create_invoices(grouped, final, date)
+        for invoice in result:
+            invoice._rebuild_parent_configuration_from_sale()
+
 
 class SaleOrderLine(models.Model):
     _name = "sale.order.line"

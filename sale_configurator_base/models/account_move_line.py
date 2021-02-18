@@ -16,6 +16,17 @@ class AccountMove(models.Model):
     def _onchange_children_sequence(self):
         super()._onchange_children_sequence()
 
+    def _rebuild_parent_configuration_from_sale(self):
+        for rec in self:
+            lines = rec.line_ids
+            mapping_sale_line_to_invoice_line = {
+                line.sale_line_ids.id: line.id for line in lines
+            }
+            for line in lines:
+                sale_line_parent = line.sale_line_ids.parent_id
+                if sale_line_parent:
+                    line.parent_id = mapping_sale_line_to_invoice_line[sale_line_parent.id]
+
 
 class AccountMoveLine(models.Model):
     _name = "account.move.line"
