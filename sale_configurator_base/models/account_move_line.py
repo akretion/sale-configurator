@@ -25,7 +25,9 @@ class AccountMove(models.Model):
             for line in lines:
                 sale_line_parent = line.sale_line_ids.parent_id
                 if sale_line_parent:
-                    line.parent_id = mapping_sale_line_to_invoice_line[sale_line_parent.id]
+                    line.parent_id = mapping_sale_line_to_invoice_line[
+                        sale_line_parent.id
+                    ]
 
 
 class AccountMoveLine(models.Model):
