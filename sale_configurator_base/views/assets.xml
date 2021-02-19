@@ -9,7 +9,7 @@
             <link
                 rel="stylesheet"
                 type="text/scss"
-                href="/sale_configurator_base/static/src/scss/sale_order.scss"
+                href="/sale_configurator_base/static/src/scss/child_line.scss"
             />
         </xpath>
     </template>

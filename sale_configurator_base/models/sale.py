@@ -57,13 +57,13 @@ class SaleOrder(models.Model):
                     )
                 if field.get("name") == "product_id":
                     field.set(
-                        "class", field.get("class", "") + " configurator_option_padding"
+                        "class", field.get("class", "") + " configurator_child_padding"
                     )
                 if field.get("name") == "name":
                     field.set(
                         "class",
                         field.get("class", "")
-                        + " description configurator_option_padding",
+                        + " description configurator_child_padding",
                     )
             res["arch"] = etree.tostring(doc, pretty_print=True).decode("utf-8")
         return res
@@ -77,6 +77,7 @@ class SaleOrder(models.Model):
         result = super()._create_invoices(grouped, final, date)
         for invoice in result:
             invoice._rebuild_parent_configuration_from_sale()
+        return result
 
 
 class SaleOrderLine(models.Model):
