@@ -6,7 +6,7 @@ from odoo import api, fields, models
 
 class AccountMove(models.Model):
     _name = "account.move"
-    _inherit = ["account.move", "configurable.mixin"]
+    _inherit = ["configurable.mixin", "account.move"]
 
     @property
     def _lines_name(self):

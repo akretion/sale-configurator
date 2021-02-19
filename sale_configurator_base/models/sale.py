@@ -20,7 +20,7 @@ def update_attrs(node, add_attrs):
 
 class SaleOrder(models.Model):
     _name = "sale.order"
-    _inherit = ["sale.order", "configurable.mixin"]
+    _inherit = ["configurable.mixin", "sale.order"]
 
     @property
     def _lines_name(self):
@@ -82,7 +82,7 @@ class SaleOrder(models.Model):
 
 class SaleOrderLine(models.Model):
     _name = "sale.order.line"
-    _inherit = ["sale.order.line", "configurable.line.mixin"]
+    _inherit = ["configurable.line.mixin", "sale.order.line"]
 
     parent_id = fields.Many2one(
         "sale.order.line", "Parent Line", ondelete="cascade", index=True
