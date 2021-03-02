@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+<record id="sale_order_line_config_option_view_form_base" model="ir.ui.view">
+    <field name="model">sale.order.line</field>
+    <field
+            name="inherit_id"
+            ref="sale_configurator_option.sale_order_line_config_option_view_form_base"
+        />
+    <field name="arch" type="xml">
+        <xpath expr="//field[@name='option_ids']/tree" position="attributes">
+            <attribute name="decoration-danger">qty_invalid</attribute>
+            <attribute
+                    name="decoration-warning"
+                >qty_warning_message and not qty_invalid</attribute>
+        </xpath>
+    </field>
+</record>
+
+</odoo>
