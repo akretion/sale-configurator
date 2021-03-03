@@ -5,3 +5,4 @@ from . import product_template
 from . import product_product
 from . import ir_ui_view
 from . import account_move
+from . import configurable_mixin

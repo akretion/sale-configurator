@@ -7,16 +7,130 @@
             expr="//t[@name='account_invoice_line_accountable']//span[@t-field='line.name']"
             position="replace"
         >
-            <t t-if="line.has_parent">
+            <t t-if="line.parent_id">
                 <span
                     t-field="line.name"
                     t-options="{'widget': 'text'}"
                     style="padding-left:50px;font-style:italic;"
                 />
             </t>
-            <t t-if="not line.has_parent">
+            <t t-if="not line.parent_id">
                 <span t-field="line.name" t-options="{'widget': 'text'}" />
             </t>
+        </xpath>
+
+        <!--
+        We need to distinguish configurable mode from "classic" Odoo invoice
+        Configurable mode will have the new "Total" (Total + child line totals)
+        column, rename Odoo total to Sub-total
+        Configurable mode == bool(o.mapped('line_ids').mapped('child_ids'))
+        -->
+
+        <!--Headers-->
+
+        <xpath expr="//th[@name='th_subtotal']" position="replace">
+            <!--In configurable mode, rename Amount/Total Price to Subtotal-->
+            <t t-if="o.mapped('line_ids').mapped('child_ids')">
+                <th name="th_subtotal" class="text-right">
+                    <span>Sub-total</span>
+                </th>
+            </t>
+            <t t-else="">
+                <th name="th_subtotal" class="text-right">
+                    <span>Total</span>
+                </th>
+            </t>
+        </xpath>
+
+        <xpath expr="//th[@name='th_subtotal']" position="after">
+            <t t-if="o.mapped('line_ids').mapped('child_ids')">
+                <th name="th_configurable_total" class="text-right">
+                    <span>Total</span>
+                </th>
+            </t>
+        </xpath>
+
+        <!--Cells-->
+
+        <xpath
+            expr="//t[@name='account_invoice_line_accountable']//td[hasclass('o_price_total')]"
+            position="after"
+        >
+            <!--Add cell for "real" total (sum of configurable lines)
+            only in configurable mode-->
+            <t t-if="o.mapped('line_ids').mapped('child_ids')">
+                <td name="td_config_subtotal" class="text-right o_price_total">
+                    <t t-if="not line.parent_id">
+                        <span
+                            t-field="line.price_config_subtotal"
+                            groups="account.group_show_line_subtotals_tax_excluded"
+                        />
+                        <span
+                            t-field="line.price_config_total"
+                            groups="account.group_show_line_subtotals_tax_included"
+                        />
+                    </t>
+                </td>
+            </t>
+        </xpath>
+
+        <!--In case parent line is empty (price equals 0), then
+        taxes, amount, total are useless and confusing to see
+        alongside child lines, so we hide it-->
+<!--        <xpath expr="//td[@name='td_priceunit']" position="replace">-->
+        <xpath
+            expr="//t[@name='account_invoice_line_accountable']//td[3]"
+            position="replace"
+        >
+            <t t-if="line.report_line_is_empty_parent">
+                <td name="td_priceunit" />
+            </t>
+            <t t-else="">
+                <td name="td_priceunit" class="text-right">
+                    <span t-field="line.price_unit" />
+                </td>
+            </t>
+        </xpath>
+        <xpath
+            expr="//t[@name='account_invoice_line_accountable']//td[5]"
+            position="replace"
+        >
+            <t t-if="line.report_line_is_empty_parent">
+                <td name="td_taxes" />
+            </t>
+            <t t-else="">
+                <td name="td_taxes" class="text-right">
+                    <span
+                        t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_ids))"
+                    />
+                </td>
+            </t>
+        </xpath>
+        <xpath
+            expr="//t[@name='account_invoice_line_accountable']//td[hasclass('o_price_total')]"
+            position="replace"
+        >
+            <td name="td_subtotal" class="text-right o_price_total">
+                <t t-set="is_child" t-value="line.parent_id" />
+                <t
+                    t-set="is_parent_with_price"
+                    t-value="line.child_ids and (not line.report_line_is_empty_parent)"
+                />
+                <t
+                    t-set="fallback_default_odoo"
+                    t-value="not o.mapped('line_ids').mapped('child_ids')"
+                />
+                <t t-if="is_child or is_parent_with_price or fallback_default_odoo">
+                    <span
+                        t-field="line.price_subtotal"
+                        groups="account.group_show_line_subtotals_tax_excluded"
+                    />
+                    <span
+                        t-field="line.price_total"
+                        groups="account.group_show_line_subtotals_tax_included"
+                    />
+                </t>
+            </td>
         </xpath>
 
     </template>
