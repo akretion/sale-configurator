@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="report_invoice_document" inherit_id="account.report_invoice_document">
+
+        <!--Apply distinct style to children lines-->
+        <xpath
+            expr="//t[@name='account_invoice_line_accountable']//span[@t-field='line.name']"
+            position="replace"
+        >
+            <t t-if="line.has_parent">
+                <span
+                    t-field="line.name"
+                    t-options="{'widget': 'text'}"
+                    style="padding-left:50px;font-style:italic;"
+                />
+            </t>
+            <t t-if="not line.has_parent">
+                <span t-field="line.name" t-options="{'widget': 'text'}" />
+            </t>
+        </xpath>
+
+    </template>
+</odoo>
