@@ -28,15 +28,14 @@
             </xpath>
 
             <xpath expr="//field[@name='name']" position="after">
-                <field name="is_configurable_opt" invisible="1" />
                 <label
                     for="variant_ids"
-                    attrs="{'invisible': [('is_configurable_opt', '=', False), ('is_multi_variant_line', '=', False)]}"
+                    attrs="{'invisible': [('is_multi_variant_line', '=', False)]}"
                 />
                 <field
                     name="variant_ids"
                     context="{'line_product_id': product_id, 'order_id': order_id}"
-                    attrs="{'invisible': [('is_configurable_opt', '=', False), ('is_multi_variant_line', '=', False)]}"
+                    attrs="{'invisible': [('is_multi_variant_line', '=', False)]}"
                 >
                     <tree editable="bottom">
                         <field name="product_uom_category_id" invisible="1" />
