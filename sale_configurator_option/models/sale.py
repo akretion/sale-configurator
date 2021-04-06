@@ -96,14 +96,16 @@ class SaleOrderLine(models.Model):
         lines._compute_product_uom_qty()
         return lines
 
+    def _get_product_option(self):
+        self.ensure_one()
+        return self.parent_id.product_id.configurable_option_ids.filtered(
+            lambda o: o.product_id == self.product_id
+        )
+
     @api.depends("product_id")
     def _compute_product_option_id(self):
         for record in self:
-            record.product_option_id = (
-                record.parent_id.product_id.configurable_option_ids.filtered(
-                    lambda o: o.product_id == record.product_id
-                )
-            )
+            record.product_option_id = record._get_product_option()
 
     @api.depends("product_id")
     def _compute_option_qty_type(self):
