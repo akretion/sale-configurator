@@ -45,11 +45,6 @@ class SaleOrderLine(models.Model):
         ondelete="set null",
         compute="_compute_product_option_id",
     )
-    product_uom_qty = fields.Float(
-        compute="_compute_product_uom_qty",
-        readonly=False,
-        store=True,
-    )
 
     def _get_child_type_sort(self):
         res = super()._get_child_type_sort()
@@ -69,8 +64,9 @@ class SaleOrderLine(models.Model):
         "parent_id.product_uom_qty",
     )
     def _compute_product_uom_qty(self):
+        super()._compute_product_uom_qty()
         for record in self:
-            if record.parent_id:
+            if record.parent_id and record.child_type == "option":
                 if record.option_qty_type == "proportional_qty":
                     record.product_uom_qty = (
                         record.option_unit_qty * record.parent_id.product_uom_qty

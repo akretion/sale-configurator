@@ -50,8 +50,9 @@ class SaleOrderCase(SavepointCase):
                 "product_id": prod.id,
                 "product_uom": prod.uom_id.id,
                 "product_uom_qty": 1,
-                "parent_variant_id": sale_line.id,
+                "parent_id": sale_line.id,
                 "price_unit": prod.list_price,
+                "child_type": "variant",
             }
             new_vrt = sale_line.create(vrt_vals)
             new_vrt.product_id_change()
@@ -63,8 +64,6 @@ class SaleOrderCase(SavepointCase):
                 "name": product_tmpl.name,
                 "product_tmpl_id": product_tmpl.id,
                 "product_id": product_tmpl.product_variant_id.id,
-                "product_tmpl_uom_qty": 1,
-                "product_tmpl_uom": product_tmpl.uom_id.id,
                 "price_unit": product_tmpl.list_price,
                 "order_id": self.sale.id,
             }
@@ -122,5 +121,4 @@ class SaleOrderCase(SavepointCase):
             lambda l: l.product_id == self.product_variant_2
         )
         line_product_variant_2.product_uom_qty = 6
-        new_line.variant_id_change()
         self.assertEqual(line_product_variant_1.price_unit, 600)

@@ -34,7 +34,7 @@
                 />
                 <field
                     name="variant_ids"
-                    context="{'line_product_id': product_id, 'order_id': order_id}"
+                    context="{'default_order_id': order_id}"
                     attrs="{'invisible': [('is_multi_variant_line', '=', False)]}"
                 >
                     <tree editable="bottom">
@@ -72,15 +72,10 @@
                             force_save="1"
                         />
                         <field name="price_unit" />
-                        <field name="is_variant_qty_need_recompute" />
                         <field name="order_id" invisible="1" />
                         <field name="qty_invoiced" invisible="1" />
                         <field name="qty_to_invoice" invisible="1" />
-                        <field
-                            name="parent_variant_qty"
-                            string="Parent Qty"
-                            invisible="0"
-                        />
+                        <field name="parent_qty" string="Parent Qty" invisible="0" />
                         <field
                             name="product_uom"
                             force_save="1"

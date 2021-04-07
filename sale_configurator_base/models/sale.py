@@ -123,6 +123,15 @@ class SaleOrderLine(models.Model):
         " and taxes in case a parent line (with children lines) "
         "has no price by itself",
     )
+    product_uom_qty = fields.Float(
+        compute="_compute_product_uom_qty",
+        readonly=False,
+        store=True,
+    )
+
+    def _compute_product_uom_qty(self):
+        # inherit me to add specific behaviours
+        pass
 
     def _get_child_type_sort(self):
         return []
