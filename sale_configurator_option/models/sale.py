@@ -140,3 +140,14 @@ class SaleOrderLine(models.Model):
             return vals.get("parent_option_id")
         else:
             return super()._get_parent_id_from_vals(vals)
+
+    @api.depends("option_ids")
+    def _compute_report_line_is_empty_parent(self):
+        super()._compute_report_line_is_empty_parent()
+
+    @api.depends("option_ids.price_subtotal", "option_ids.price_total")
+    def _compute_config_amount(self):
+        super()._compute_config_amount()
+
+    def get_children(self):
+        return super().get_children() + self.option_ids

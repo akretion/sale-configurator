@@ -106,7 +106,18 @@ class SaleOrderLine(models.Model):
         return res
 
     def _get_parent_id_from_vals(self, vals):
-        if "parent_option_id" in vals:
-            return vals.get("parent_option_id")
+        if "parent_variant_id" in vals:
+            return vals.get("parent_variant_id")
         else:
             return super()._get_parent_id_from_vals(vals)
+
+    @api.depends("variant_ids")
+    def _compute_report_line_is_empty_parent(self):
+        super()._compute_report_line_is_empty_parent()
+
+    @api.depends("variant_ids.price_subtotal", "variant_ids.price_total")
+    def _compute_config_amount(self):
+        super()._compute_config_amount()
+
+    def get_children(self):
+        return super().get_children() + self.variant_ids

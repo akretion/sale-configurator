@@ -98,6 +98,10 @@ class SaleOrderLine(models.Model):
         store=True,
     )
     parent_qty = fields.Float(related="parent_id.product_uom_qty")
+    # Becarefull never use child_ids in computed field because odoo is going
+    # to do crazy thing, indead inside you will have duplicated data
+    # (with real id and with Newid) so please instead use get_children method
+    # child_ids is used for reporting
     child_ids = fields.One2many("sale.order.line", "parent_id", "Children Lines")
     child_type = fields.Selection([], compute="_compute_parent", store=True)
     price_config_subtotal = fields.Monetary(
@@ -147,23 +151,26 @@ class SaleOrderLine(models.Model):
     def _get_child_type_sort(self):
         return []
 
+    def get_children(self):
+        return self.browse(False)
+
     def _sort_children_line(self, done):
         types = self._get_child_type_sort()
         types.sort()
         for _position, child_type in types:
-            for line in self.child_ids.sorted("sequence"):
+            for line in self.get_children().sorted("sequence"):
                 if line.child_type == child_type:
                     line.sequence = len(done)
                     done.append(line)
 
-    @api.depends("price_unit", "child_ids")
+    @api.depends("price_unit")
     def _compute_report_line_is_empty_parent(self):
         for rec in self:
             rec.report_line_is_empty_parent = False
             price_unit_like_zero = (
                 float_compare(rec.price_unit, 0.00, precision_digits=2) == 0
             )
-            if rec.child_ids and price_unit_like_zero:
+            if rec.get_children() and price_unit_like_zero:
                 rec.report_line_is_empty_parent = True
 
     @api.depends("product_id")
@@ -199,8 +206,6 @@ class SaleOrderLine(models.Model):
     @api.depends(
         "price_subtotal",
         "price_total",
-        "child_ids.price_subtotal",
-        "child_ids.price_total",
         "parent_id",
     )
     def _compute_config_amount(self):
@@ -220,9 +225,9 @@ class SaleOrderLine(models.Model):
         else:
             return {
                 "price_config_subtotal": self.price_subtotal
-                + sum(self.child_ids.mapped("price_subtotal")),
+                + sum(self.get_children().mapped("price_subtotal")),
                 "price_config_total": self.price_total
-                + sum(self.child_ids.mapped("price_total")),
+                + sum(self.get_children().mapped("price_total")),
             }
 
     def _get_parent_id_from_vals(self, vals):
