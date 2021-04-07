@@ -15,22 +15,19 @@
     </record>
     <record id="sale_order_line_variant_1" model="sale.order.line">
         <field name="order_id" ref="sale_order_1" />
-        <field name="parent_id" ref="sale_order_line_1" />
-        <field name="child_type">variant</field>
+        <field name="parent_variant_id" ref="sale_order_line_1" />
         <field name="product_id" ref="product.product_product_4" />
         <field name="product_uom_qty" eval="4" />
     </record>
     <record id="sale_order_line_variant_2" model="sale.order.line">
         <field name="order_id" ref="sale_order_1" />
-        <field name="parent_id" ref="sale_order_line_1" />
-        <field name="child_type">variant</field>
+        <field name="parent_variant_id" ref="sale_order_line_1" />
         <field name="product_id" ref="product.product_product_4b" />
         <field name="product_uom_qty" eval="3" />
     </record>
     <record id="sale_order_line_variant_3" model="sale.order.line">
         <field name="order_id" ref="sale_order_1" />
-        <field name="parent_id" ref="sale_order_line_1" />
-        <field name="child_type">variant</field>
+        <field name="parent_variant_id" ref="sale_order_line_1" />
         <field name="product_id" ref="product.product_product_4c" />
         <field name="product_uom_qty" eval="2" />
     </record>

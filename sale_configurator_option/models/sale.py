@@ -9,16 +9,15 @@ from odoo import api, fields, models
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
+    parent_option_id = fields.Many2one("sale.order.line", string="Parent Option")
     child_type = fields.Selection(
         selection_add=[("option", "Option")],
         ondelete={"option": "set null"},
     )
     option_ids = fields.One2many(
         "sale.order.line",
-        "parent_id",
+        "parent_option_id",
         "Options",
-        domain=[("child_type", "=", "option")],
-        context={"default_child_type": "option"},
         copy=False,
     )
     is_configurable_opt = fields.Boolean(
@@ -46,6 +45,15 @@ class SaleOrderLine(models.Model):
         compute="_compute_product_option_id",
     )
 
+    @api.depends("parent_option_id")
+    def _compute_parent(self):
+        for record in self:
+            if record.parent_option_id:
+                record.parent_id = record.parent_option_id
+                record.child_type = "option"
+            else:
+                super(SaleOrderLine, record)._compute_parent()
+
     def _get_child_type_sort(self):
         res = super()._get_child_type_sort()
         res.append((20, "option"))
@@ -61,15 +69,15 @@ class SaleOrderLine(models.Model):
         "product_uom_qty",
         "option_unit_qty",
         "option_qty_type",
-        "parent_id.product_uom_qty",
+        "parent_option_id.product_uom_qty",
     )
     def _compute_product_uom_qty(self):
         super()._compute_product_uom_qty()
         for record in self:
-            if record.parent_id and record.child_type == "option":
+            if record.parent_option_id:
                 if record.option_qty_type == "proportional_qty":
                     record.product_uom_qty = (
-                        record.option_unit_qty * record.parent_id.product_uom_qty
+                        record.option_unit_qty * record.parent_option_id.product_uom_qty
                     )
                 elif record.option_qty_type == "independent_qty":
                     record.product_uom_qty = record.option_unit_qty
@@ -94,7 +102,7 @@ class SaleOrderLine(models.Model):
 
     def _get_product_option(self):
         self.ensure_one()
-        return self.parent_id.product_id.configurable_option_ids.filtered(
+        return self.parent_option_id.product_id.configurable_option_ids.filtered(
             lambda o: o.product_id == self.product_id
         )
 
@@ -119,11 +127,16 @@ class SaleOrderLine(models.Model):
                     option = self.new(
                         {
                             "product_id": opt.product_id.id,
-                            "parent_id": self.id,
-                            "child_type": "option",
+                            "parent_option_id": self.id,
                             "order_id": self.order_id.id,
                         }
                     )
                     option.product_id_change()
                     self.option_ids |= option
         return res
+
+    def _get_parent_id_from_vals(self, vals):
+        if "parent_option_id" in vals:
+            return vals.get("parent_option_id")
+        else:
+            return super()._get_parent_id_from_vals(vals)

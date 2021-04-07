@@ -50,9 +50,8 @@ class SaleOrderCase(SavepointCase):
                 "product_id": prod.id,
                 "product_uom": prod.uom_id.id,
                 "product_uom_qty": 1,
-                "parent_id": sale_line.id,
+                "parent_variant_id": sale_line.id,
                 "price_unit": prod.list_price,
-                "child_type": "variant",
             }
             new_vrt = sale_line.create(vrt_vals)
             new_vrt.product_id_change()

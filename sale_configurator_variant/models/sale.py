@@ -9,15 +9,15 @@ from odoo import api, fields, models
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
+    parent_variant_id = fields.Many2one("sale.order.line", string="Parent Variant")
     child_type = fields.Selection(
         selection_add=[("variant", "Variant")],
         ondelete={"variant": "set null"},
     )
     variant_ids = fields.One2many(
         "sale.order.line",
-        "parent_id",
+        "parent_variant_id",
         "Variants",
-        domain=[("child_type", "=", "variant")],
         context={"default_child_type": "variant"},
     )
     product_tmpl_id = fields.Many2one(
@@ -27,7 +27,6 @@ class SaleOrderLine(models.Model):
         change_default=True,
         ondelete="restrict",
     )
-    parent_qty = fields.Float(related="parent_id.product_uom_qty", readonly=False)
     is_multi_variant_line = fields.Boolean(
         "Multi variant",
     )
@@ -37,13 +36,22 @@ class SaleOrderLine(models.Model):
         store=True,
     )
 
+    @api.depends("parent_variant_id")
+    def _compute_parent(self):
+        for record in self:
+            if record.parent_variant_id:
+                record.parent_id = record.parent_variant_id
+                record.child_type = "variant"
+            else:
+                super(SaleOrderLine, record)._compute_parent()
+
     def _get_sale_line_price_variant(self):
         product = self.product_id.with_context(
             partner=self.order_id.partner_id,
-            quantity=self.parent_id.product_uom_qty,
+            quantity=self.parent_qty,
             date=self.order_id.date_order,
             pricelist=self.order_id.pricelist_id.id,
-            uom=self.parent_id.product_uom.id,
+            uom=self.parent_variant_id.product_uom.id,
         )
         return self.env["account.tax"]._fix_tax_included_price_company(
             self._get_display_price(product),
@@ -52,10 +60,10 @@ class SaleOrderLine(models.Model):
             self.company_id,
         )
 
-    @api.depends("parent_id.product_uom_qty", "product_id")
+    @api.depends("parent_variant_id.product_uom_qty", "product_id")
     def _compute_price_unit(self):
         for record in self:
-            if record.child_type == "variant":
+            if record.parent_variant_id:
                 record.price_unit = record._get_sale_line_price_variant()
 
     @api.depends("variant_ids.product_uom_qty")
@@ -71,7 +79,7 @@ class SaleOrderLine(models.Model):
         return res
 
     def _is_line_configurable(self):
-        if self.parent_id:
+        if self.parent_variant_id:
             return False
         elif self.is_multi_variant_line:
             return True
@@ -96,3 +104,9 @@ class SaleOrderLine(models.Model):
         if self.product_tmpl_id:
             self.name = self.product_tmpl_id.name
         return res
+
+    def _get_parent_id_from_vals(self, vals):
+        if "parent_option_id" in vals:
+            return vals.get("parent_option_id")
+        else:
+            return super()._get_parent_id_from_vals(vals)

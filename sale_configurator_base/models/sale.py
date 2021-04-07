@@ -90,10 +90,16 @@ class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     parent_id = fields.Many2one(
-        "sale.order.line", "Parent Line", ondelete="cascade", index=True
+        "sale.order.line",
+        "Parent Line",
+        ondelete="cascade",
+        index=True,
+        compute="_compute_parent",
+        store=True,
     )
+    parent_qty = fields.Float(related="parent_id.product_uom_qty")
     child_ids = fields.One2many("sale.order.line", "parent_id", "Children Lines")
-    child_type = fields.Selection([])
+    child_type = fields.Selection([], compute="_compute_parent", store=True)
     price_config_subtotal = fields.Monetary(
         compute="_compute_config_amount",
         string="Config Subtotal",
@@ -128,6 +134,11 @@ class SaleOrderLine(models.Model):
         readonly=False,
         store=True,
     )
+
+    def _compute_parent(self):
+        for record in self:
+            record.parent_id = None
+            record.child_type = None
 
     def _compute_product_uom_qty(self):
         # inherit me to add specific behaviours
@@ -214,9 +225,13 @@ class SaleOrderLine(models.Model):
                 + sum(self.child_ids.mapped("price_total")),
             }
 
+    def _get_parent_id_from_vals(self, vals):
+        return False
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            if vals.get("parent_id") and "order_id" not in vals:
-                vals["order_id"] = self.browse(vals["parent_id"]).order_id.id
+            parent_id = self._get_parent_id_from_vals(vals)
+            if parent_id and "order_id" not in vals:
+                vals["order_id"] = self.browse(parent_id).order_id.id
         return super().create(vals_list)
