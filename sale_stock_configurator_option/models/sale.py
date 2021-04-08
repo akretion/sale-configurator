@@ -25,14 +25,10 @@ class SaleOrderLine(models.Model):
     )
 
     def _action_launch_stock_rule(self, previous_product_uom_qty=False):
-        for line in self:
-            if line.child_type == "option":
-                continue
-            else:
-                super(SaleOrderLine, line)._action_launch_stock_rule(
-                    previous_product_uom_qty=previous_product_uom_qty
-                )
-        return True
+        lines = self.filtered(lambda l: l.child_type != "option")
+        return super(SaleOrderLine, lines)._action_launch_stock_rule(
+            previous_product_uom_qty=previous_product_uom_qty
+        )
 
     @api.depends("parent_id.qty_delivered")
     def _compute_qty_delivered(self):
