@@ -97,6 +97,7 @@ class SaleOrderLine(models.Model):
             # ToFIX set product_id to False raise error on[
             #  _sql_constraints = accountable_required_fields
             self.product_id = self.product_tmpl_id.product_variant_id
+            self.product_uom = self.product_tmpl_id.uom_id
 
     @api.onchange("product_id")
     def product_id_change(self):
