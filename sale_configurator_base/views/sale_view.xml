@@ -54,13 +54,14 @@
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='order_line']" position="before">
+                <field name="id" invisible="1"/>
                 <button
                     name="%(action_sale_line_config_base)d"
                     type="action"
                     string="Add Configurable Product"
                     class="btn-primary oe_edit_only oe_left"
                     states="draft,sent"
-                    context="{'default_order_id': active_id,
+                    context="{'default_order_id': id,
                       'default_name': '/', }"
                 />
             </xpath>
