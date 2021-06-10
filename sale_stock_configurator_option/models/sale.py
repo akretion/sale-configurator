@@ -30,7 +30,7 @@ class SaleOrderLine(models.Model):
             previous_product_uom_qty=previous_product_uom_qty
         )
 
-    @api.depends("parent_id.qty_delivered")
+    @api.depends("parent_id.qty_delivered", "qty_delivered_method", "product_uom_qty")
     def _compute_qty_delivered(self):
         for line in self:
             if line.qty_delivered_method == "option_proportional":

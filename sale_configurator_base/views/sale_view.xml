@@ -54,7 +54,7 @@
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='order_line']" position="before">
-                <field name="id" invisible="1"/>
+                <field name="id" invisible="1" />
                 <button
                     name="%(action_sale_line_config_base)d"
                     type="action"
