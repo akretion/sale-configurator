@@ -17,6 +17,22 @@
         <field name="export_id" ref="shopinvader.ir_exp_shopinvader_variant" />
     </record>
 
+    <record id="ir_exp_shopinvader_option_product_categ_name" model="ir.exports.line">
+        <field name="name">configurable_option_ids/product_id/categ_id/name</field>
+        <field
+            name="target"
+        >configurable_option_ids:options/product_id:product/categ_id:categ/name</field>
+        <field name="export_id" ref="shopinvader.ir_exp_shopinvader_variant" />
+    </record>
+
+    <record id="ir_exp_shopinvader_option_product_categ_id" model="ir.exports.line">
+        <field name="name">configurable_option_ids/product_id/categ_id/id</field>
+        <field
+            name="target"
+        >configurable_option_ids:options/product_id:product/categ_id:categ/id</field>
+        <field name="export_id" ref="shopinvader.ir_exp_shopinvader_variant" />
+    </record>
+
     <record id="ir_exp_shopinvader_option_product_price" model="ir.exports.line">
         <field name="name">configurable_option_ids/product_id/shopinvader_price</field>
         <field
