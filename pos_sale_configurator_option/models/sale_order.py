@@ -29,3 +29,6 @@ class SaleOrder(models.Model):
             for option in line["config"]["selected_options"]:
                 vals["option_ids"].append([0, 0, self._prepare_pos_option(option)])
         return vals
+
+    def _get_lines_to_deliver(self):
+        return super()._get_lines_to_deliver().filtered(lambda s: not s.parent_id)
