@@ -240,3 +240,9 @@ class SaleOrderLine(models.Model):
             if parent_id and "order_id" not in vals:
                 vals["order_id"] = self.browse(parent_id).order_id.id
         return super().create(vals_list)
+
+    def write(self, vals):
+        super().write(vals)
+        if "option_ids" in vals:
+            self.order_id.sync_sequence()
+        return True
