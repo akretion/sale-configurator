@@ -3,7 +3,7 @@
 # @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 
 
 class ProductTemplate(models.Model):
@@ -45,3 +45,16 @@ class ProductTemplate(models.Model):
                 template.configurable_option_ids = (
                     template.local_configurable_option_ids
                 )
+
+    def action_archive(self):
+        for record in self:
+            options = record.product_variant_ids.used_on_option_ids
+            if options:
+                self.message_post(
+                    body=_(
+                        "The product have been archived, {} related options have"
+                        " been deleted"
+                    ).format(len(options))
+                )
+                options.unlink()
+        return super().action_archive()
