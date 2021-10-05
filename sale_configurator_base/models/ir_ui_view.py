@@ -22,6 +22,7 @@ class IrUiView(models.Model):
         )
         doc = etree.XML(res["arch"])
         fields = doc.xpath("//field[@name='order_line']/tree/field")
+        controls = doc.xpath("//field[@name='order_line']/tree/control")
         items = []
         for field in fields:
             # We remove attrs on price_subtotal as they depend on field parent_id
@@ -30,6 +31,8 @@ class IrUiView(models.Model):
             # We remove this field that do not make sense on child view
             if field.get("name") != "price_config_subtotal":
                 items.append(field)
+        for clt in controls:
+            items.append(clt)
         return items
 
     def _get_sale_line_form_item(self):
