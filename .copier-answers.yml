@@ -1,10 +1,13 @@
 # Do NOT update manually; changes here will be overwritten by Copier
 _commit: v1.1.1
-_src_path: https://github.com/OCA/oca-addons-repo-template.git
+_src_path: https://github.com/akretion/akretion-addons-repo-template.git
+black_version: 20.8b1
 dependency_installation_mode: PIP
 generate_requirements_txt: true
 include_wkhtmltopdf: false
-odoo_version: 14.0
+odoo_version: '14.0'
+prettify_xml: true
+python_line_length: 88
 rebel_module_groups: []
 repo_description: Sale configurator
 repo_name: Sale Configurator
