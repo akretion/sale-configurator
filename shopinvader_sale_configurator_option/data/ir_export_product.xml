@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+    <record id="ir_exp_shopinvader_option_id" model="ir.exports.line">
+        <field name="name">configurable_option_ids/id</field>
+        <field name="target">configurable_option_ids:options/id</field>
+        <field name="export_id" ref="shopinvader.ir_exp_shopinvader_variant" />
+    </record>
 
     <record id="ir_exp_shopinvader_option_product_name" model="ir.exports.line">
         <field name="name">configurable_option_ids/product_id/name</field>
