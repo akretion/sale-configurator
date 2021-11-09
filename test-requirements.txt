@@ -1,9 +1,2 @@
 odoo14-addon-sale_restricted_qty @ git+https://github.com/OCA/sale-workflow@refs/pull/1370/head#subdirectory=setup/sale_restricted_qty
-#odoo14-addon-pim @ git+https://github.com/shopinvader/odoo-pim@12.0#subdirectory=setup/pim
-#odoo14-addon-attribute_set @ git+https://github.com/shopinvader/odoo-pim@12.0#subdirectory=setup/attribute_set
-#odoo14-addon-product_attribute_set @ git+https://github.com/shopinvader/odoo-pim@12.0#subdirectory=setup/product_attribute_set
-#odoo14-addon-attribute_set_completeness @ git+https://github.com/shopinvader/odoo-pim@12.0#subdirectory=setup/attribute_set_completeness
-#odoo14-addon-product_attribute_set_completeness @ git+https://github.com/shopinvader/odoo-pim@12.0#subdirectory=setup/product_attribute_set_completeness
-#odoo14-addon-attribute_set_mass_edit @ git+https://github.com/shopinvader/odoo-pim@12.0#subdirectory=setup/attribute_set_mass_edit
-#odoo14-addon-attribute_set_searchable @ git+https://github.com/shopinvader/odoo-pim@12.0#subdirectory=setup/attribute_set_searchable
-#openupgradelib @ git+https://github.com/OCA/openupgradelib.git@master
+odoo14-addon-onchange-helper @ git+https://github.com/oca/server-tools@refs/pull/2002/head#subdirectory=setup/onchange_helper
