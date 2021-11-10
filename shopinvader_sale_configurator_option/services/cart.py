@@ -10,7 +10,7 @@ from odoo.addons.component.core import Component
 
 
 class CartService(Component):
-    _inherit = ("shopinvader.cart.service",)
+    _inherit = "shopinvader.cart.service"
 
     def _get_vals_for_product_option(self, product_option):
         return {"product_id": product_option.product_id.id}
@@ -22,7 +22,7 @@ class CartService(Component):
         return res
 
     def _prepare_cart_item(self, params, cart):
-        res = super(CartService, self)._prepare_cart_item(params, cart)
+        res = super()._prepare_cart_item(params, cart)
         res["option_ids"] = []
         for op in params.get("options", []):
             res["option_ids"].append((0, 0, self._prepare_cart_option(op)))
@@ -53,33 +53,24 @@ class CartService(Component):
         return res
 
     def _check_existing_cart_item(self, cart, params):
-        # never merge product with options
-        # TODO only apply in case of product with options
-        return False
-
-    def _play_cart_item_onchanges(self, cart, vals, existing_item=None):
-        new_vals = super()._play_cart_item_onchanges(
-            cart, vals, existing_item=existing_item
-        )
-        new_vals.pop("option_ids")
-        if "option_ids" in vals:
-            new_vals["option_ids"] = vals["option_ids"]
-        return new_vals
+        if "options" in params:
+            return False
+        else:
+            lines = super()._check_existing_cart_item(cart, params)
+            if lines:
+                return lines.filtered(lambda l: not l.is_configurable_opt)
+            else:
+                return lines
 
     def _upgrade_cart_item_quantity_vals(self, item, params, action="replace"):
         vals = super()._upgrade_cart_item_quantity_vals(item, params, action=action)
         assert action in ("sum", "replace")
         if "options" in params:
             if action == "replace":
-                vals["option_ids"] = [(5, 0, 0)]
+                item.option_ids.unlink()
+                vals["option_ids"] = [
+                    (0, 0, self._prepare_cart_option(op)) for op in params["options"]
+                ]
             else:
                 raise UserError(_("sum action Not supported with options"))
-            for op in params.get("options", []):
-                vals["option_ids"].append((0, 0, self._prepare_cart_option(op)))
         return vals
-
-    # TODO FIXME incorrect inherit
-    def _upgrade_cart_item_quantity(self, cart, item, params, action="replace"):
-        vals = self._upgrade_cart_item_quantity_vals(item, params, action=action)
-        item.update(vals)
-        item.product_uom_change()
