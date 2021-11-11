@@ -92,7 +92,7 @@ class CartService(Component):
             super()._check_allowed_product(cart, params)
 
     def _get_sale_order_line_name(self, vals):
-        if "is_multi_variant_line" in vals:
+        if vals.get("is_multi_variant_line"):
             return self.env["product.template"].browse(vals["product_tmpl_id"]).name
         else:
             return super()._get_sale_order_line_name(vals)
