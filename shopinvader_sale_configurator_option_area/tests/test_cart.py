@@ -16,5 +16,5 @@ class ConfiguratorCartCase(ConfiguratorCartCommonCase):
         self.assertEqual(len(options), 2)
         area_1 = self.env.ref("sale_configurator_option_area.product_option_area_1")
         area_2 = self.env.ref("sale_configurator_option_area.product_option_area_2")
-        self.assertEqual(options[0]["area"]["id"], area_1.id)
-        self.assertEqual(options[1]["area"]["id"], area_2.id)
+        self.assertEqual(options[0]["option"]["area"]["name"], area_1.name)
+        self.assertEqual(options[1]["option"]["area"]["name"], area_2.name)

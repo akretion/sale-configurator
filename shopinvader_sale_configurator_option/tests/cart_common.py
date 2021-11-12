@@ -10,6 +10,9 @@ class ConfiguratorCartCommonCase(CartCase):
     def setUpClass(cls):
         super().setUpClass()
         product = cls.env.ref("sale_configurator_option.product_with_option")
+        # test compatibility with search engine
+        if hasattr(product.shopinvader_bind_ids, "recompute_json"):
+            product.shopinvader_bind_ids.recompute_json()
         opt1 = cls.env.ref("sale_configurator_option.product_configurator_option_1")
         opt2 = cls.env.ref("sale_configurator_option.product_configurator_option_2")
         cls.item_params = {
