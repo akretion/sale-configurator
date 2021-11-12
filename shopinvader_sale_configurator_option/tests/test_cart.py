@@ -12,6 +12,8 @@ class ConfiguratorCartCase(ConfiguratorCartCommonCase):
         self.assertEqual(len(res["data"]["lines"]["items"]), 1)
         options = res["data"]["lines"]["items"][0]["options"]
         self.assertEqual(len(options), 2)
+        self.assertEqual(options[0]["option"]["product"]["name"], "Option 1")
+        self.assertEqual(options[1]["option"]["product"]["name"], "Option 2")
 
     def test_add_two_item_with_option(self):
         res = self.service.dispatch("add_item", params=self.item_params)

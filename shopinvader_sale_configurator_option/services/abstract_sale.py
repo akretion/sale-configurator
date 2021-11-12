@@ -15,14 +15,33 @@ class AbstractSaleService(AbstractComponent):
         else:
             return super()._is_item(line)
 
-    def _prepare_option(self, option):
-        return {
-            "id": option.product_option_id.id,
-            "product": {"id": option.product_id.id, "name": option.product_id.name},
+    def _prepare_option(self, data, option):
+        res = {
+            "name": option.name,
             "qty": option.option_unit_qty,
+            "amount": {
+                "price": option.price_unit,
+                "untaxed": option.price_subtotal,
+                "tax": option.price_tax,
+                "total": option.price_total,
+                "total_without_discount": option.price_total_no_discount,
+            },
+            "discount": {"rate": option.discount, "value": option.discount_total},
         }
+        for product_option in data["product"]["options"]:
+            if product_option["id"] == option.product_option_id.id:
+                res["option"] = product_option
+        return res
 
     def _convert_one_line(self, line):
         res = super()._convert_one_line(line)
-        res["options"] = [self._prepare_option(option) for option in line.option_ids]
+        res["options"] = [
+            self._prepare_option(res, option) for option in line.option_ids
+        ]
+        res["amount"].update(
+            {
+                "price_config_total": line.price_config_total,
+                "price_config_untaxed": line.price_config_subtotal,
+            }
+        )
         return res
