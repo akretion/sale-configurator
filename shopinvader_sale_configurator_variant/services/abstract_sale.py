@@ -17,15 +17,9 @@ class AbstractSaleService(AbstractComponent):
         else:
             return super()._is_item(line)
 
-    def _prepare_variant(self, variant):
-        return {
-            "product": {"id": variant.product_id.id, "name": variant.product_id.name},
-            "qty": variant.product_uom_qty,
-        }
-
     def _convert_one_line(self, line):
         res = super()._convert_one_line(line)
-        res["variants"] = [
-            self._prepare_variant(variant) for variant in line.variant_ids
-        ]
+        res["variants"] = []
+        for vline in line.variant_ids:
+            res["variants"].append(super()._convert_one_line(vline))
         return res

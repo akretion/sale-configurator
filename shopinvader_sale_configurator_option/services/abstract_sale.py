@@ -35,13 +35,16 @@ class AbstractSaleService(AbstractComponent):
 
     def _convert_one_line(self, line):
         res = super()._convert_one_line(line)
-        res["options"] = [
-            self._prepare_option(res, option) for option in line.option_ids
-        ]
-        res["amount"].update(
-            {
-                "price_config_total": line.price_config_total,
-                "price_config_untaxed": line.price_config_subtotal,
-            }
-        )
+        if not line.parent_id:
+            # avoid adding this field when _convert_one_line is call on children line
+            # like in shopinvader_sale_configurable_variant
+            res["options"] = [
+                self._prepare_option(res, option) for option in line.option_ids
+            ]
+            res["amount"].update(
+                {
+                    "price_config_total": line.price_config_total,
+                    "price_config_untaxed": line.price_config_subtotal,
+                }
+            )
         return res

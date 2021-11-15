@@ -39,6 +39,7 @@ class ConfiguratorCartCase(ConfiguratorCartCommonCase):
         items = res["data"]["lines"]["items"]
         self.assertEqual(len(items), 1)
         self.assertEqual(items[0]["qty"], 45)
+        self.assertEqual(items[0]["amount"]["price"], 0)
         variants = items[0]["variants"]
         self.assertEqual(len(variants), 3)
 
