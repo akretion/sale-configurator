@@ -60,6 +60,12 @@ class SaleOrderLine(models.Model):
             self.company_id,
         )
 
+    def _get_display_price(self, product):
+        if self.variant_ids:
+            return 0
+        else:
+            return super()._get_display_price(product)
+
     @api.depends("parent_variant_id.product_uom_qty", "product_id")
     def _compute_price_unit(self):
         for record in self:

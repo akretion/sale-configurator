@@ -121,3 +121,9 @@ class SaleOrderCase(SavepointCase):
         )
         line_product_variant_2.product_uom_qty = 6
         self.assertEqual(line_product_variant_1.price_unit, 600)
+
+    def test_update_price(self):
+        self.sale.update_prices()
+        self.assertEqual(self.sale.amount_total, 6850.80)
+        self.assertEqual(self.sale.amount_untaxed, 6850.80)
+        self.assertEqual(self.sale.amount_tax, 0)
