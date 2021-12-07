@@ -6,7 +6,6 @@
 from odoo import api, fields, models
 
 
-
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
@@ -16,17 +15,20 @@ class SaleOrder(models.Model):
         for line in copied_order.order_line:
             if line.parent_option_id:
                 new_parent_id = copied_order.with_context(
-                    opt=line.parent_option_id).order_line.filtered(
-                    lambda l: l.origin_copy_id ==  l.env.context["opt"])
+                    opt=line.parent_option_id
+                ).order_line.filtered(
+                    lambda l: l.origin_copy_id == l.env.context["opt"]
+                )
                 if new_parent_id:
                     line.parent_option_id = new_parent_id
                 else:
                     line.parent_option_id = False
-            #set sequence to reorder line correctely
+            # set sequence to reorder line correctely
             line.sequence = sequence
             sequence += 1
 
         return copied_order
+
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -66,9 +68,12 @@ class SaleOrderLine(models.Model):
         ondelete="set null",
         compute="_compute_product_option_id",
     )
-    origin_copy_id = fields.Many2one("sale.order.line", string="Copied from",
-                                     help="Technical field used to reorder relation"
-                                     " parent and childs of copied lines")
+    origin_copy_id = fields.Many2one(
+        "sale.order.line",
+        string="Copied from",
+        help="Technical field used to reorder relation"
+        " parent and childs of copied lines",
+    )
 
     def copy(self, default=None):
         copied_line = super(SaleOrderLine, self).copy(default=default)
@@ -78,9 +83,8 @@ class SaleOrderLine(models.Model):
     def copy_data(self, default=None):
         res = super(SaleOrderLine, self).copy_data(default=default)
         for line, values in zip(self, res):
-            values['origin_copy_id'] = line.id
+            values["origin_copy_id"] = line.id
         return res
-
 
     @api.depends("parent_option_id")
     def _compute_parent(self):
