@@ -50,7 +50,7 @@ class ProductTemplate(models.Model):
         for record in self:
             options = record.product_variant_ids.used_on_option_ids
             if options:
-                self.message_post(
+                record.message_post(
                     body=_(
                         "The product have been archived, {} related options have"
                         " been deleted"
