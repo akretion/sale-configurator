@@ -13,11 +13,13 @@ class ProductProduct(models.Model):
     )
 
     def _compute_product_price(self):
-        for record in self:
-            if isinstance(record.id, models.NewId):
-                record.price = record._origin.price
-            else:
-                super()._compute_product_price()
+        tmp_records = self.filtered(lambda s: isinstance(s.id, models.NewId))
+        real_records = self - tmp_records
+        if real_records:
+            super(ProductProduct, real_records)._compute_product_price()
+        if tmp_records:
+            for tmp_record in tmp_records:
+                tmp_record.price = tmp_record._origin.price
 
     def _compute_shopinvader_price(self):
         for record in self:
