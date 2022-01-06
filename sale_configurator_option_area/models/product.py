@@ -51,6 +51,7 @@ class ProductConfiguratorOptionArea(models.Model):
         compute="_compute_product_ids",
         search="_search_product_ids",
     )
+    active = fields.Boolean(default=True)
 
     def _compute_product_ids(self):
         for record in self:
