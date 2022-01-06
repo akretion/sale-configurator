@@ -22,26 +22,30 @@ odoo.define("pos_sale_configurator_option.SelectConfigOptionPopup", function (re
             selected_options.forEach((option) => {
                 selectedLookup[option.id] = option;
             });
-            return this.env.pos.db.get_options(product.id).map((option) => {
+            return this.env.pos.db.get_options(product.id).reduce((result, option) => {
                 var candidate = selectedLookup[option.id] || {};
                 var product = this.env.pos.db.get_product_by_id(option.product_id);
                 if (!product) {
-                    throw new Error(
-                        `Config Product ${option.product_id} not available in pos.`
+                    // In case that the product is not in the POS we skip it and log it for easier debug
+                    // but sometime this can be a wanted feature (we only have a subset of option in the POS)
+                    console.log(
+                        `The Product ${option.product_id} ilinked to the {props.product} is not available in pos.`
                     );
+                } else {
+                    result.push({
+                        // Copy what we want to edit in the view
+                        id: option.id,
+                        product: product,
+                        price: this._get_product_price(product),
+                        sale_min_qty: option.sale_min_qty,
+                        sale_max_qty: option.sale_max_qty,
+                        qty: candidate.qty || 0,
+                        note: candidate.note || "",
+                        description: option.product.display_name,
+                    });
                 }
-                return {
-                    // Copy what we want to edit in the view
-                    id: option.id,
-                    product: product,
-                    price: this._get_product_price(product),
-                    sale_min_qty: option.sale_min_qty,
-                    sale_max_qty: option.sale_max_qty,
-                    qty: candidate.qty || 0,
-                    note: candidate.note || "",
-                    description: option.product.display_name,
-                };
-            });
+                return result;
+            }, []);
         }
         _get_pricelist() {
             const current_order = this.env.pos.get_order();
