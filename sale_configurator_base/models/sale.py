@@ -139,6 +139,17 @@ class SaleOrderLine(models.Model):
         store=True,
     )
 
+    # In different implementation the price unit can depend on other lines
+    # So in the base module we add an empty generic implementation
+    price_unit = fields.Float(
+        compute="_compute_price_unit",
+        readonly=False,
+        store=True,
+    )
+
+    def _compute_price_unit(self):
+        pass
+
     def _compute_parent(self):
         for record in self:
             record.parent_id = None

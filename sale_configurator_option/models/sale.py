@@ -45,6 +45,22 @@ class SaleOrderLine(models.Model):
         compute="_compute_product_option_id",
     )
 
+    # TODO in V16 the price_unit is a computed field \o/
+    # so we should be able to drop this
+    @api.depends("product_uom_qty")
+    def _compute_price_unit(self):
+        super()._compute_price_unit()
+        for record in self:
+            if record.child_type == "option":
+                product = record.product_id.with_context(
+                    partner=record.order_id.partner_id,
+                    quantity=record.product_uom_qty,
+                    date=record.order_id.date_order,
+                    pricelist=record.order_id.pricelist_id.id,
+                    uom=record.product_uom.id,
+                )
+                record.price_unit = record._get_display_price(product)
+
     @api.depends("parent_option_id")
     def _compute_parent(self):
         for record in self:
@@ -103,6 +119,7 @@ class SaleOrderLine(models.Model):
         # is note done
         lines._compute_product_uom_qty()
 
+        # We ensure to write the option after all field on the main line a recomputed
         if any(options_list):
             for line, vals in zip(lines, options_list):
                 if vals:
