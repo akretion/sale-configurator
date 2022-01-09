@@ -30,11 +30,6 @@ class SaleOrderLine(models.Model):
     is_multi_variant_line = fields.Boolean(
         "Multi variant",
     )
-    price_unit = fields.Float(
-        compute="_compute_price_unit",
-        readonly=False,
-        store=True,
-    )
 
     @api.depends("parent_variant_id")
     def _compute_parent(self):
@@ -68,6 +63,7 @@ class SaleOrderLine(models.Model):
 
     @api.depends("parent_variant_id.product_uom_qty", "product_id")
     def _compute_price_unit(self):
+        super()._compute_price_unit()
         for record in self:
             if record.parent_variant_id:
                 record.price_unit = record._get_sale_line_price_variant()

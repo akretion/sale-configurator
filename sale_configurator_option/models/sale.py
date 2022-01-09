@@ -45,6 +45,22 @@ class SaleOrderLine(models.Model):
         compute="_compute_product_option_id",
     )
 
+    # TODO in V16 the price_unit is a computed field \o/
+    # so we should be able to drop this
+    @api.depends("product_uom_qty")
+    def _compute_price_unit(self):
+        super()._compute_price_unit()
+        for record in self:
+            if record.child_type == "option":
+                product = record.product_id.with_context(
+                    partner=record.order_id.partner_id,
+                    quantity=record.product_uom_qty,
+                    date=record.order_id.date_order,
+                    pricelist=record.order_id.pricelist_id.id,
+                    uom=record.product_uom.id,
+                )
+                record.price_unit = record._get_display_price(product)
+
     @api.depends("parent_option_id")
     def _compute_parent(self):
         for record in self:
@@ -92,12 +108,23 @@ class SaleOrderLine(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        options_list = [vals.pop("option_ids", None) for vals in vals_list]
         lines = super().create(vals_list)
         # For weird reason it seem that the product_uom_qty have been not recomputed
         # correctly. Recompute is only triggered in the onchange
         # and the onchange do not propagate the qty see the following test:
         # tests/test_sale_order.py::SaleOrderCase::test_create_sale_with_option_ids
+        # Note maybe it's because the product_uom_qty have a default value
+        # and so the create will add it, end then if we have a value the recompute
+        # is note done
         lines._compute_product_uom_qty()
+
+        # We ensure to write the option after all field on the main line a recomputed
+        if any(options_list):
+            for line, vals in zip(lines, options_list):
+                if vals:
+                    line.write({"option_ids": vals})
+
         return lines
 
     def _get_product_option(self):
