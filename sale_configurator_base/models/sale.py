@@ -97,7 +97,9 @@ class SaleOrderLine(models.Model):
         compute="_compute_parent",
         store=True,
     )
-    parent_qty = fields.Float(related="parent_id.product_uom_qty")
+    parent_qty = fields.Float(
+        related="parent_id.product_uom_qty", string="Parent Quantity"
+    )
     # Becarefull never use child_ids in computed field because odoo is going
     # to do crazy thing, indead inside you will have duplicated data
     # (with real id and with Newid) so please instead use get_children method
