@@ -61,22 +61,24 @@ class SaleOrder(models.Model):
         if view_type == "form" and not self._context.get("force_original_sale_form"):
             doc = etree.XML(res["arch"])
             for field in doc.xpath("//field[@name='order_line']/tree/field"):
-                if field.get("name") != "sequence":
-                    update_attrs(
-                        field,
-                        {
-                            "readonly": [
-                                "|",
-                                ("parent_id", "!=", False),
-                                ("is_configurable", "=", True),
-                            ]
-                        },
-                    )
-                if field.get("name") == "product_id":
+                fname = field.get("name")
+                if fname != "sequence":
+                    if not self.env["sale.order.line"]._fields[fname].readonly:
+                        update_attrs(
+                            field,
+                            {
+                                "readonly": [
+                                    "|",
+                                    ("parent_id", "!=", False),
+                                    ("is_configurable", "=", True),
+                                ]
+                            },
+                        )
+                if fname == "product_id":
                     field.set(
                         "class", field.get("class", "") + " configurator_option_padding"
                     )
-                if field.get("name") == "name":
+                if fname == "name":
                     field.set(
                         "class",
                         field.get("class", "")
