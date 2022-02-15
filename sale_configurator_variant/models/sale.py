@@ -43,7 +43,7 @@ class SaleOrderLine(models.Model):
     def _get_sale_line_price_variant(self):
         product = self.product_id.with_context(
             partner=self.order_id.partner_id,
-            quantity=self.parent_qty,
+            quantity=self.parent_id.product_uom_qty,
             date=self.order_id.date_order,
             pricelist=self.order_id.pricelist_id.id,
             uom=self.parent_variant_id.product_uom.id,
