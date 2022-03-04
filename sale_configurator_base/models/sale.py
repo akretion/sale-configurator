@@ -147,6 +147,16 @@ class SaleOrderLine(models.Model):
         readonly=False,
         store=True,
     )
+    hide_subtotal = fields.Boolean(compute="_compute_hide_subtotal")
+
+    def _compute_hide_subtotal(self):
+        for record in self:
+            record.hide_subtotal = (
+                record.child_ids
+                and not record.price_unit
+                or not record.parent_id
+                and not record.child_ids
+            )
 
     def _compute_price_unit(self):
         pass
