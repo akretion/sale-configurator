@@ -77,13 +77,14 @@
             >
                 <attribute
                     name="attrs"
-                >{'invisible': [('parent_id', '=', False)]}</attribute>
+                >{'invisible': [('hide_subtotal', '=', True)]}</attribute>
                 <attribute name="string">Opt Subtotal</attribute>
             </xpath>
             <xpath
                 expr="//field[@name='order_line']//tree/field[@name='price_subtotal']"
                 position="after"
             >
+                <field name="hide_subtotal" invisible="1" />
                 <field
                     name="price_config_subtotal"
                     attrs="{'invisible': [('parent_id', '!=', False)]}"
