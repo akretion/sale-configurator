@@ -43,7 +43,7 @@ class SaleOrderLine(models.Model):
     def _get_sale_line_price_variant(self):
         product = self.product_id.with_context(
             partner=self.order_id.partner_id,
-            quantity=self.parent_qty,
+            quantity=self.parent_id.product_uom_qty,
             date=self.order_id.date_order,
             pricelist=self.order_id.pricelist_id.id,
             uom=self.parent_variant_id.product_uom.id,
@@ -101,12 +101,19 @@ class SaleOrderLine(models.Model):
             self.product_id = self.product_tmpl_id.product_variant_id
             self.product_uom = self.product_tmpl_id.uom_id
 
-    @api.onchange("product_id")
-    def product_id_change(self):
-        res = super().product_id_change()
+    def get_sale_order_line_multiline_description_sale(self, product):
         if self.product_tmpl_id:
-            self.name = self.product_tmpl_id.name
-        return res
+            return self._get_product_template_description_sale()
+        elif self.child_type == "variant":
+            return self._get_product_variant_description_sale()
+        else:
+            return super().get_sale_order_line_multiline_description_sale(product)
+
+    def _get_product_template_description_sale(self):
+        return f"{self.product_tmpl_id.name}\n{self.product_tmpl_id.description_sale}"
+
+    def _get_product_variant_description_sale(self):
+        return self.product_id.display_name
 
     def _get_parent_id_from_vals(self, vals):
         if "parent_variant_id" in vals:
