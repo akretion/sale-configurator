@@ -2,10 +2,29 @@
 <odoo>
 
     <record model="ir.ui.view" id="product_template_form_view">
-        <field name="name">product.template.option.form</field>
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_form_view" />
         <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button
+                    name="%(product_configurator_option_action)d"
+                    type="action"
+                    context="{'search_default_option_product_tmpl_id': context.get('active_id')}"
+                    class="oe_stat_button"
+                    icon="fa-level-up"
+                >
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field
+                                name="count_used_on_option_line"
+                                widget="statinfo"
+                                nolabel="1"
+                            />
+                        </span>
+                        <span class="o_stat_text">Used In Configurable</span>
+                    </div>
+                </button>
+            </div>
             <xpath expr="//page[@name='sales']" position="after">
                 <page name="config_options" string="Configurator Options">
                     <group name="options">

@@ -4,6 +4,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 
 class ProductConfiguratorOption(models.Model):
@@ -22,6 +23,7 @@ class ProductConfiguratorOption(models.Model):
         index=True,
         ondelete="cascade",
     )
+    # TODO we should add a prefix => configurable_product_tmpl_id
     product_tmpl_id = fields.Many2one(
         "product.template",
         "Parent Product Template",
@@ -29,8 +31,17 @@ class ProductConfiguratorOption(models.Model):
         index=True,
         ondelete="cascade",
     )
+    # TODO we should add a prefix => option_product_id
     product_id = fields.Many2one(
-        "product.product", "Option", required=True, domain=[("is_option", "=", True)]
+        "product.product",
+        "Option Product Variant",
+        required=True,
+        domain=[("is_option", "=", True)],
+    )
+    option_product_tmpl_id = fields.Many2one(
+        related="product_id.product_tmpl_id",
+        string="Option Product Template",
+        store=True,
     )
     product_uom_id = fields.Many2one(
         "uom.uom",
@@ -58,6 +69,16 @@ class ProductConfiguratorOption(models.Model):
         string="Used on product template",
         compute="_compute_used_on_product_template",
     )
+    active = fields.Boolean(compute="_compute_active", store=True)
+
+    @api.depends(
+        "product_id.active", "product_tmpl_id.active", "product_conf_tmpl_id.active"
+    )
+    def _compute_active(self):
+        for record in self:
+            record.active = record.product_id.active and (
+                record.product_tmpl_id.active or record.product_conf_tmpl_id.active
+            )
 
     def _compute_used_on_product_template(self):
         for record in self:
@@ -93,3 +114,11 @@ class ProductConfiguratorOption(models.Model):
             "Option must be unique by configurable product",
         )
     }
+
+    def toggle_active(self):
+        raise UserError(
+            _(
+                "You can not active/inactive option manually,"
+                "instead active/inactive related product"
+            )
+        )

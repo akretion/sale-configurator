@@ -4,14 +4,78 @@
     <record id="product_configurator_option_view_tree" model="ir.ui.view">
         <field name="model">product.configurator.option</field>
         <field name="arch" type="xml">
-            <tree string="Option" editable="bottom">
-                <field name="sequence" widget="handle" />
+            <tree string="Option" editable="bottom" decoration-muted="not active">
+                <field
+                    name="sequence"
+                    widget="handle"
+                    invisible="not context.get('base_model_name')"
+                />
+                <field
+                    name="product_conf_tmpl_id"
+                    invisible="context.get('base_model_name')"
+                />
+                <field
+                    name="product_tmpl_id"
+                    invisible="context.get('base_model_name')"
+                />
                 <field name="product_id" />
                 <field name="product_uom_id" />
                 <field name="option_qty_type" />
                 <field name="is_default_option" />
+                <field name="active" invisible="1" />
             </tree>
         </field>
+    </record>
+
+    <record id="product_configurator_option_view_form" model="ir.ui.view">
+        <field name="model">product.configurator.option</field>
+        <field name="arch" type="xml">
+            <form string="Option">
+                <group>
+                    <field name="sequence" widget="handle" />
+                    <field
+                        name="product_conf_tmpl_id"
+                        invisible="context.get('hjhjh')"
+                    />
+                    <field name="product_tmpl_id" invisible="context.get('hjhjh')" />
+                    <field name="product_id" />
+                    <field name="product_uom_id" />
+                    <field name="option_qty_type" />
+                    <field name="is_default_option" />
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="product_configurator_option_view_search" model="ir.ui.view">
+        <field name="model">product.configurator.option</field>
+        <field name="arch" type="xml">
+            <search string="Option">
+                <field name="product_conf_tmpl_id" />
+                <field
+                    name="product_tmpl_id"
+                    domain="[('is_configurable_opt', '=', True)]"
+                />
+                <field
+                    name="option_product_tmpl_id"
+                    domain="[('is_option', '=', True)]"
+                />
+                <field name="product_id" domain="[('is_option', '=', True)]" />
+                <filter
+                    string="Archived"
+                    name="inactive"
+                    domain="[('active','=',False)]"
+                />
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="product_configurator_option_action">
+        <field name="name">Option</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.configurator.option</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="product_configurator_option_view_search" />
     </record>
 
 </odoo>
