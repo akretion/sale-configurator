@@ -13,7 +13,10 @@
     "license": "AGPL-3",
     "installable": True,
     "external_dependencies": {"python": [], "bin": []},
-    "depends": ["sale_configurator_base"],
+    "depends": [
+        "base_view_inheritance_extension",
+        "sale_configurator_base",
+    ],
     "data": [
         "views/account_move_view.xml",
         "views/sale_view.xml",
