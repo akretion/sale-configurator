@@ -47,3 +47,18 @@ class ConfiguratorCartCase(ConfiguratorCartCommonCase):
         options = res["data"]["lines"]["items"][0]["options"]
         self.assertEqual(len(options), 1)
         self.assertEqual(options[0]["qty"], 3)
+
+    def test_anonymous_cart_then_sign(self):
+        res = self.service.dispatch("add_item", params=self.item_params)
+        self.assertEqual(len(res["data"]["lines"]["items"]), 1)
+        options = res["data"]["lines"]["items"][0]["options"]
+        self.assertEqual(len(options), 2)
+        self.assertEqual(options[0]["option"]["product"]["name"], "Option 1")
+        self.assertEqual(options[1]["option"]["product"]["name"], "Option 2")
+        invader_partner = self.env.ref("shopinvader.shopinvader_partner_1")
+        cart = self.env["sale.order"].browse(res["data"]["id"])
+        self.shopinvader_session["cart_id"] = cart.id
+        self.service._load_partner_work_context(invader_partner, force=True)
+        service_sign = self.service.component("customer")
+        res = service_sign.sign_in()
+        self.assertEqual(len(cart.main_line_ids), 1)
