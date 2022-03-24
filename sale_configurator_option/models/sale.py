@@ -147,8 +147,14 @@ class SaleOrderLine(models.Model):
     @api.onchange("product_id")
     def product_id_change(self):
         res = super().product_id_change()
-        self.option_ids = False
-        if self.product_id.is_configurable_opt:
+        # Note we use here the context because we only want to add the default option
+        # in odoo backend when editing a SO
+        # Other module can call the method product_id_change and we do not want
+        # to have weird side effect
+        if self.product_id.is_configurable_opt and self._context.get(
+            "add_default_option"
+        ):
+            self.option_ids = False
             for opt in self.product_id.configurable_option_ids:
                 if opt.is_default_option:
                     option = self.new(

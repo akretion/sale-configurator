@@ -22,6 +22,10 @@ def update_attrs(node, add_attrs):
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
+    main_line_ids = fields.One2many(
+        "sale.order.line", "order_id", domain=[("parent_id", "=", False)]
+    )
+
     def sync_sequence(self):
         for record in self:
             done = []
