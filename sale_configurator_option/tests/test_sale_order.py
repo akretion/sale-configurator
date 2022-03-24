@@ -133,6 +133,7 @@ class SaleOrderCase(SavepointCase):
         self.assertEqual(self.line_opt_1.price_unit, 5)
 
     def test_conf_product_change_option(self):
+        self.env = self.env(context={"add_default_option": True})
         new_line = self.create_sale_line(self.product_with_option)
         new_line.product_id_change()
         product_ids = set(new_line.option_ids.mapped("product_id.id"))
