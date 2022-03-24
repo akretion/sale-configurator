@@ -9,7 +9,12 @@ class ProductProduct(models.Model):
     _inherit = "product.product"
 
     shopinvader_price = fields.Serialized(
-        compute="_compute_shopinvader_price", string="Shopinvader Price"
+        compute="_compute_shopinvader_price",
+        string="Computed Price for Shopinvader",
+        help=(
+            "Option are not bind on shopinvader, but this field allow to get "
+            "the price in the shopinvader context"
+        ),
     )
 
     def _compute_product_price(self):
