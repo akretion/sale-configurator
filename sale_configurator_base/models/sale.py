@@ -74,7 +74,9 @@ class SaleOrder(models.Model):
                                 "readonly": [
                                     "|",
                                     ("parent_id", "!=", False),
+                                    "&",
                                     ("is_configurable", "=", True),
+                                    ("is_configured", "=", True),
                                 ]
                             },
                         )
@@ -131,6 +133,11 @@ class SaleOrderLine(models.Model):
     is_configurable = fields.Boolean(
         "Line is a configurable Product ?",
         compute="_compute_is_configurable",
+    )
+    # Technical field to know if the line was created from the
+    # Add Configurable Product interface
+    is_configured = fields.Boolean(
+        "Line is a configured Product ?",
     )
     report_line_is_empty_parent = fields.Boolean(
         compute="_compute_report_line_is_empty_parent",
