@@ -43,7 +43,7 @@ class SaleOrderLine(models.Model):
     def _get_sale_line_price_variant(self):
         product = self.product_id.with_context(
             partner=self.order_id.partner_id,
-            quantity=self.parent_id.product_uom_qty,
+            quantity=self.parent_variant_id.product_uom_qty,
             date=self.order_id.date_order,
             pricelist=self.order_id.pricelist_id.id,
             uom=self.parent_variant_id.product_uom.id,
@@ -65,7 +65,7 @@ class SaleOrderLine(models.Model):
     def _compute_price_unit(self):
         super()._compute_price_unit()
         for record in self:
-            if record.parent_variant_id:
+            if record.parent_variant_id and record.product_id:
                 record.price_unit = record._get_sale_line_price_variant()
 
     @api.depends("variant_ids.product_uom_qty")
