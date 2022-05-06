@@ -1,7 +1,7 @@
 # Do NOT update manually; changes here will be overwritten by Copier
-_commit: v1.1.1
+_commit: v1.1.2
 _src_path: https://github.com/akretion/akretion-addons-repo-template.git
-black_version: 20.8b1
+black_version: 22.3.0
 dependency_installation_mode: PIP
 generate_requirements_txt: true
 include_wkhtmltopdf: false
@@ -14,3 +14,4 @@ repo_name: Sale Configurator
 repo_slug: sale-configurator
 travis_apt_packages: []
 travis_apt_sources: []
+
