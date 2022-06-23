@@ -30,6 +30,7 @@ class SaleOrderLine(models.Model):
     is_multi_variant_line = fields.Boolean(
         "Multi variant",
     )
+    discount = fields.Float(compute="_compute_discount", readonly=False)
 
     @api.depends("parent_variant_id")
     def _compute_parent(self):
@@ -59,6 +60,10 @@ class SaleOrderLine(models.Model):
         if self.variant_ids:
             return 0
         else:
+            if self.parent_variant_id:
+                self = self.with_context(
+                    parent_variant_qty=self.parent_variant_id.product_uom_qty
+                )
             return super()._get_display_price(product)
 
     @api.depends("parent_variant_id.product_uom_qty", "product_id")
@@ -67,6 +72,12 @@ class SaleOrderLine(models.Model):
         for record in self:
             if record.parent_variant_id and record.product_id:
                 record.price_unit = record._get_sale_line_price_variant()
+
+    @api.depends("parent_variant_id.product_uom_qty")
+    def _compute_discount(self):
+        for record in self:
+            if record.parent_variant_id and record.product_id:
+                record._onchange_discount()
 
     @api.depends("variant_ids.product_uom_qty")
     def _compute_product_uom_qty(self):
@@ -90,7 +101,12 @@ class SaleOrderLine(models.Model):
 
     def _get_child_qty(self):
         self.ensure_one()
-        return sum(self.variant_ids.mapped("product_uom_qty"))
+        # TODO clean on V16
+        # hack to solve onchange issue
+        variants = self.variant_ids.filtered(
+            lambda s: not isinstance(s.id, models.NewId) or hasattr(s.id, "ref")
+        )
+        return sum(variants.mapped("product_uom_qty"))
 
     @api.onchange("product_tmpl_id")
     def product_tmpl_id_change(self):
@@ -131,3 +147,21 @@ class SaleOrderLine(models.Model):
 
     def get_children(self):
         return super().get_children() + self.variant_ids
+
+    @api.onchange(
+        "product_id", "price_unit", "product_uom", "product_uom_qty", "tax_id"
+    )
+    def _onchange_discount(self):
+        if self.parent_variant_id:
+            self = self.with_context(
+                parent_variant_qty=self.parent_variant_id.product_uom_qty
+            )
+        return super()._onchange_discount()
+
+    def _get_real_price_currency(self, product, rule_id, qty, uom, pricelist_id):
+        if self._context.get("parent_variant_qty"):
+            qty = self._context.get("parent_variant_qty")
+            product = product.with_context(quantity=qty)
+        return super()._get_real_price_currency(
+            product, rule_id, qty, uom, pricelist_id
+        )
