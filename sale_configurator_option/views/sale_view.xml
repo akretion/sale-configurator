@@ -53,7 +53,7 @@
                 position="before"
             >
                 <field name="option_unit_qty" string="Qty" />
-                <field name="option_qty_type" string="Qty type" invisible="0" />
+                <field name="option_qty_type" string="Qty type" optional="hide" />
             </xpath>
             <xpath
                 expr="//field[@name='option_ids']/tree/field[@name='product_uom_qty']"
