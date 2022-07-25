@@ -30,7 +30,7 @@ class SaleOrderLine(models.Model):
     is_multi_variant_line = fields.Boolean(
         "Multi variant",
     )
-    discount = fields.Float(compute="_compute_discount", readonly=False)
+    discount = fields.Float(compute="_compute_discount", readonly=False, store=True)
 
     @api.depends("parent_variant_id")
     def _compute_parent(self):
