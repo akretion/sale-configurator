@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <template
+        id="assets_pos"
+        name="pos_sale_configurator_option_assets"
+        inherit_id="point_of_sale.assets"
+    >
+        <xpath expr="." position="inside">
+            <script
+                type="text/javascript"
+                src="/pos_sale_configurator_option/static/src/js/models.js"
+            />
+            <script
+                type="text/javascript"
+                src="/pos_sale_configurator_option/static/src/js/db.js"
+            />
+            <script
+                type="text/javascript"
+                src="/pos_sale_configurator_option/static/src/js/ProductWidget.js"
+            />
+            <script
+                type="text/javascript"
+                src="/pos_sale_configurator_option/static/src/js/SelectConfigOptionPopup.js"
+            />
+            <script
+                type="text/javascript"
+                src="/pos_sale_configurator_option/static/src/js/ProductScreen.js"
+            />
+            <script
+                type="text/javascript"
+                src="/pos_sale_configurator_option/static/src/js/Orderline.js"
+            />
+        </xpath>
+    </template>
+    <template
+        id="pos_sale_configurator_option_style"
+        name="pos_sale_configurator_option_css"
+        inherit_id="point_of_sale.index"
+    >
+        <xpath expr="//head" position="inside">
+            <link
+                rel="stylesheet"
+                href="/pos_sale_configurator_option/static/src/css/pos_sale_configurator_option.css"
+            />
+        </xpath>
+    </template>
+</odoo>

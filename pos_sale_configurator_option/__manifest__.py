@@ -1,0 +1,30 @@
+# Copyright 2020 Akretion (https://www.akretion.com).
+# @author Raphaël Reverdy <raphael.reverdy@akretion.com>
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
+
+{
+    "name": "POS Sale Configurator Option",
+    "summary": "Sell configuration from the Point Of Sale",
+    "version": "14.0.1.0.0",
+    "category": "Uncategorized",
+    "website": "https://github.com/akretion/sale-configurator",
+    "author": " Akretion",
+    "license": "AGPL-3",
+    "application": False,
+    "installable": True,
+    "auto_install": True,
+    "external_dependencies": {"python": [], "bin": []},
+    "depends": [
+        "sale_stock_configurator_option",
+        "pos_sale_order",
+        "sale_configurator_option_restricted_qty",
+        "sale_order_line_note",
+    ],
+    "data": ["views/pos_sale_configurator_option.xml"],
+    "demo": [],
+    "qweb": [
+        "static/src/xml/SelectConfigOptionPopup.xml",
+        "static/src/xml/Orderline.xml",
+    ],
+}

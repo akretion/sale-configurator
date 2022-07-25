@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright (C) 2020 Akretion (https://www.akretion.com)
+     @author Raphaël Reverdy (https://akretion.com)
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<template>
+    <t t-name="SelectConfigOptionPopup" owl="1">
+        <div role="dialog" class="modal-dialog">
+            <div class="popup popup-text popup-lg popup-select-option">
+                <header class="title">
+                    <t t-esc="state.product.display_name" />
+                </header>
+
+                <main class="body select-option col-lg-4 col-md-6 col-sm-12">
+                    <table>
+                        <tr>
+                            <th colspan="3">Quantity</th>
+                            <th>Name</th>
+                            <th>Unit Price</th>
+                            <th>Notes</th>
+                        </tr>
+                        <t
+                            t-foreach="state.config_options"
+                            t-as="operation"
+                            t-key="operation.id"
+                        >
+                            <tr>
+                                <td><button
+                                        class="down"
+                                        t-on-click="decreaseQty(operation)"
+                                    >
+                                        <i class="fa fa-minus" />
+                                    </button></td>
+                                <td><input
+                                        type="text"
+                                        class="quantity"
+                                        t-model.number="operation.qty"
+                                    /></td>
+                                <td><button
+                                        class="up"
+                                        t-on-click="increaseQty(operation)"
+                                    >
+                                    <i class="fa fa-plus" /></button>
+                                </td>
+                                <td class="description"><t
+                                        t-esc="operation.product.display_name"
+                                    /></td>
+                                <td class="price">
+                                    <t
+                                        t-esc="env.pos.format_currency(operation.price,'Product Price')"
+                                    />
+                                    </td>
+
+                                <td><textarea
+                                        class="note"
+                                        onkeypress="event.stopPropagation()"
+                                        t-model="operation.note"
+                                    /></td>
+                            </tr>
+                        </t>
+                    </table>
+                </main>
+
+                <footer class="footer">
+                    <div class="button confirm highlight" t-on-click="confirm">
+                        Ok
+                    </div>
+                    <div class="button cancel" t-on-click="cancel">
+                        Cancel
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </t>
+
+</template>
