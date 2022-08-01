@@ -42,6 +42,7 @@ class CartService(Component):
                         for variant in params.get("variants", [])
                     ],
                     "product_tmpl_id": product.product_tmpl_id.id,
+                    "price_unit": 0,
                 }
             )
         return res
