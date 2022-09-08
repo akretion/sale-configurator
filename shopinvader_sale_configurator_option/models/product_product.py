@@ -38,4 +38,5 @@ class ProductProduct(models.Model):
                     "record_id": record.id,
                 }
             )
+            shopinvader_variant.record_id = record
             record.shopinvader_price = shopinvader_variant.price
