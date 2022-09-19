@@ -35,8 +35,21 @@ class ProductProduct(models.Model):
                 {
                     "backend_id": backend.id,
                     "lang_id": backend.lang_ids[0].id,
-                    "record_id": record.id,
                 }
             )
+
+            # Since shopinvader.variant.record_id is a Many2one inherited from
+            # product.product, its field is marked as delegate.
+            # As delegate fields get a NewId when the record is created
+            # (https://github.com/odoo/odoo/blob/15.0/odoo/fields.py#L2783-L2785)
+            # we need to disable the delegation otherwise the price computation
+            # will fail in case of pricelist because it considers the record.id
+            # to be an int:
+            # https://github.com/odoo/odoo/blob/15.0/addons/product/models/product_pricelist.py#L94 # noqa
+
+            old_delegate = shopinvader_variant._fields["record_id"].delegate
+            shopinvader_variant._fields["record_id"].delegate = False
             shopinvader_variant.record_id = record
+            shopinvader_variant._fields["record_id"].delegate = old_delegate
+
             record.shopinvader_price = shopinvader_variant.price
