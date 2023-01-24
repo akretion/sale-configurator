@@ -9,7 +9,9 @@ from odoo import api, fields, models
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    parent_option_id = fields.Many2one("sale.order.line", string="Parent Option")
+    parent_option_id = fields.Many2one(
+        "sale.order.line", string="Parent Option", index=True
+    )
     child_type = fields.Selection(
         selection_add=[("option", "Option")],
         ondelete={"option": "set null"},
