@@ -33,6 +33,15 @@ class ProductTemplate(models.Model):
         compute="_compute_configurable_option_ids",
         copy=True,
     )
+    count_used_on_option_line = fields.Integer(
+        "Count Use On Option Line", compute="_compute_count_used_on_option_line"
+    )
+
+    def _compute_count_used_on_option_line(self):
+        for record in self:
+            record.count_used_on_option_line = len(
+                record.product_variant_ids.used_on_option_line_ids
+            )
 
     @api.depends("product_conf_tmpl_id")
     def _compute_configurable_option_ids(self):
