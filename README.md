@@ -1,7 +1,9 @@
-[![Runbot Status](https://runbot.odoo-community.org/runbot/badge/flat//14.0.svg)](https://runbot.odoo-community.org/runbot/repo/github-com-oca-sale-configurator-)
-[![Build Status](https://travis-ci.com/OCA/sale-configurator.svg?branch=14.0)](https://travis-ci.com/OCA/sale-configurator)
-[![codecov](https://codecov.io/gh/OCA/sale-configurator/branch/14.0/graph/badge.svg)](https://codecov.io/gh/OCA/sale-configurator)
-[![Translation Status](https://translation.odoo-community.org/widgets/sale-configurator-14-0/-/svg-badge.svg)](https://translation.odoo-community.org/engage/sale-configurator-14-0/?utm_source=widget)
+
+<!-- /!\ Non OCA Context : Set here the badge of your runbot / runboat instance. -->
+[![Pre-commit Status](https://github.com/akretion/sale-configurator/actions/workflows/pre-commit.yml/badge.svg?branch=14)](https://github.com/akretion/sale-configurator/actions/workflows/pre-commit.yml?query=branch%3A14)
+[![Build Status](https://github.com/akretion/sale-configurator/actions/workflows/test.yml/badge.svg?branch=14)](https://github.com/akretion/sale-configurator/actions/workflows/test.yml?query=branch%3A14)
+[![codecov](https://codecov.io/gh/akretion/sale-configurator/branch/14/graph/badge.svg)](https://codecov.io/gh/akretion/sale-configurator)
+<!-- /!\ Non OCA Context : Set here the badge of your translation instance. -->
 
 <!-- /!\ do not modify above this line -->
 
@@ -45,12 +47,9 @@ addon | version | maintainers | summary
 
 This repository is licensed under [AGPL-3.0](LICENSE).
 
-However, each module can have a totally different license, as long as they adhere to OCA
+However, each module can have a totally different license, as long as they adhere to Akretion
 policy. Consult each module's `__manifest__.py` file, which contains a `license` key
 that explains its license.
 
 ----
-
-OCA, or the [Odoo Community Association](http://odoo-community.org/), is a nonprofit
-organization whose mission is to support the collaborative development of Odoo features
-and promote its widespread use.
+<!-- /!\ Non OCA Context : Set here the full description of your organization. -->

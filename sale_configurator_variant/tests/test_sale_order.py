@@ -30,9 +30,8 @@ class SaleOrderCase(SavepointCase):
         cls.product_variant_1 = cls.env.ref("product.product_product_4")
         cls.product_variant_2 = cls.env.ref("product.product_product_4b")
         cls.product_variant_3 = cls.env.ref("product.product_product_4c")
-        cls.product_variant_4 = cls.env.ref("product.product_product_4d")
-        cls.product_variant_5 = cls.env.ref("sale.product_product_4e")
-        cls.product_variant_6 = cls.env.ref("sale.product_product_4f")
+        cls.product_variant_4 = cls.env.ref("sale.product_product_4e")
+        cls.product_variant_5 = cls.env.ref("sale.product_product_4f")
         cls.pricelist = cls.env.ref("product.list0")
 
     def _conf_product_add_variants(self, sale_line):
@@ -42,7 +41,6 @@ class SaleOrderCase(SavepointCase):
             self.product_variant_3,
             self.product_variant_4,
             self.product_variant_5,
-            self.product_variant_6,
         ]
         for prod in default_variants:
             vrt_vals = {
@@ -93,9 +91,9 @@ class SaleOrderCase(SavepointCase):
         new_line = self.create_sale_line_parent(self.product_with_variant)
         new_line.product_tmpl_id_change()
         self._conf_product_add_variants(new_line)
-        self.assertEqual(new_line.product_uom_qty, 6)
+        self.assertEqual(new_line.product_uom_qty, 5)
         new_line.variant_ids[0].product_uom_qty = 3
-        self.assertEqual(new_line.product_uom_qty, 8)
+        self.assertEqual(new_line.product_uom_qty, 7)
 
     def test_conf_product_variant_price_global_qty(self):
         # Check if qty of one variant change price of other variant change
