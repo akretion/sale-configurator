@@ -14,6 +14,9 @@ class IrUiView(models.Model):
     def _get_sale_line_item(self, mode):
         return getattr(self, f"_get_sale_line_{mode}_item")()
 
+    def add_field_in_tree(self, field):
+        return field.get("name") != "price_config_subtotal"
+
     def _get_sale_line_tree_item(self):
         res = (
             self.env["sale.order"]
@@ -27,8 +30,8 @@ class IrUiView(models.Model):
             # We remove attrs on price_subtotal as they depend on field parent_id
             if field.get("name") in ["price_subtotal"]:
                 field.set("attrs", "{}")
-            # We remove this field that do not make sense on child view
-            if field.get("name") != "price_config_subtotal":
+            # We remove fields that do not make sense on child view
+            if self.add_field_in_tree(field):
                 items.append(field)
         return items
 
