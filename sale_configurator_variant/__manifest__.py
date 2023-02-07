@@ -6,7 +6,7 @@
 {
     "name": "Sale Configurator Variant",
     "summary": "Extend sale configurator to manage product variant",
-    "version": "14.0.1.1.0",
+    "version": "14.0.1.1.1",
     "category": "Sale",
     "website": "https://github.com/akretion/sale-configurator",
     "author": " Akretion",
