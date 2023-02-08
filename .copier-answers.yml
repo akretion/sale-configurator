@@ -14,7 +14,8 @@ include_wkhtmltopdf: false
 odoo_version: 14
 org_name: Akretion
 org_slug: akretion
-rebel_module_groups: []
+rebel_module_groups:
+- sale_configurator_pricelist_tax
 repo_description: Sale configurator
 repo_name: Sale Configurator
 repo_slug: sale-configurator

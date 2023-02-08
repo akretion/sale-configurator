@@ -3,9 +3,14 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 
+import logging
+from ast import literal_eval
+
 from lxml import etree
 
 from odoo import models
+
+_logger = logging.getLogger(__name__)
 
 
 class IrUiView(models.Model):
@@ -16,6 +21,24 @@ class IrUiView(models.Model):
 
     def add_field_in_tree(self, field):
         return field.get("name") != "price_config_subtotal"
+
+    def _sl_field_have_invalid_attrs_parent_field(self, field):
+        # If we have some attrs with that depend of parent field
+        # we check if that field exist on sale order line
+        # it's not perfect as the field can exist in the model
+        # but not in the view. But checking the view is super complex
+        # so checking the model should solve most of incompatibility case
+        for _key, domain in literal_eval(field.get("attrs", "{}")).items():
+            for item in domain:
+                if len(item) == 3 and "parent" in item[0]:
+                    field_name = item[0].replace("parent.", "")
+                    if field_name not in self.env["sale.order.line"]._fields:
+                        _logger.info(
+                            f"Field {field.get('name')} depend on parent {field_name}"
+                            "the field do not exist so we skip it"
+                        )
+                        return True
+        return False
 
     def _get_sale_line_tree_item(self):
         res = (
@@ -30,7 +53,10 @@ class IrUiView(models.Model):
             # We remove attrs on price_subtotal as they depend on field parent_id
             if field.get("name") in ["price_subtotal"]:
                 field.set("attrs", "{}")
-            # We remove fields that do not make sense on child view
+            # We skip fields with invalid attrs parent
+            if self._sl_field_have_invalid_attrs_parent_field(field):
+                continue
+            # We remove this field that do not make sense on child view
             if self.add_field_in_tree(field):
                 items.append(field)
         return items
