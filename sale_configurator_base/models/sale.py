@@ -126,7 +126,7 @@ class SaleOrderLine(models.Model):
     # but we want to make the view as much compatible between child view
     # wo want a native view do parent.partner_id we want to have the same behaviour
     # with the child line (but in that case the parent is a sale order line
-    partner_id = fields.Many2one(related="order_id.partner_id", string="Customer")
+    partner_id = fields.Many2one(related="order_id.partner_id", string="Order Customer")
 
     is_configurable = fields.Boolean(
         "Line is a configurable Product ?",
