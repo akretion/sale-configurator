@@ -29,15 +29,21 @@ class IrUiView(models.Model):
         # but not in the view. But checking the view is super complex
         # so checking the model should solve most of incompatibility case
         for _key, domain in literal_eval(field.get("attrs", "{}")).items():
-            for item in domain:
-                if len(item) == 3 and "parent" in item[0]:
-                    field_name = item[0].replace("parent.", "")
-                    if field_name not in self.env["sale.order.line"]._fields:
-                        _logger.info(
-                            f"Field {field.get('name')} depend on parent {field_name}"
-                            "the field do not exist so we skip it"
-                        )
-                        return True
+            try:
+                for item in domain:
+                    if len(item) == 3 and "parent" in item[0]:
+                        field_name = item[0].replace("parent.", "")
+                        if field_name not in self.env["sale.order.line"]._fields:
+                            _logger.info(
+                                f"Field {field.get('name')} depend on parent {field_name}"
+                                "the field do not exist so we skip it"
+                            )
+                            return True
+            except Exception as e:
+                _logger.error(
+                    f"Field {field.get('name')} has a bad domain in attrs vals {field.attrib} (domain must be a list): \nERROR: {e}"
+                )
+
         return False
 
     def _get_sale_line_tree_item(self):
