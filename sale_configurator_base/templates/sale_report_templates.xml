@@ -20,10 +20,7 @@
             </t>
         </xpath>
         <!-- change the way section and notes are displayed in children lines -->
-        <xpath
-            expr="//td[@name='td_note_line']/span"
-            position="replace"
-        >
+        <xpath expr="//td[@name='td_note_line']/span" position="replace">
             <t t-if="line.parent_id">
                 <span
                     t-field="line.name"
@@ -34,10 +31,7 @@
                 <span t-field="line.name" />
             </t>
         </xpath>
-        <xpath
-            expr="//td[@name='td_section_line']/span"
-            position="replace"
-        >
+        <xpath expr="//td[@name='td_section_line']/span" position="replace">
             <t t-if="line.parent_id">
                 <span
                     t-field="line.name"
