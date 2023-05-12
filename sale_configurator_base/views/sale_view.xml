@@ -14,6 +14,7 @@
                     <field name="pricelist_id" invisible="1" />
                     <field name="company_id" invisible="1" />
                     <field name="state" invisible="1" />
+                    <field name="is_configured" invisible="1" />
                     <!-- There is some magic here, please look at models/ir_ui_view.py
                         We dynamically retrieve all field from the sale order form
                     -->
@@ -62,11 +63,12 @@
                     class="btn-primary oe_edit_only oe_left"
                     states="draft,sent"
                     context="{'default_order_id': id,
-                      'default_name': '/', }"
+                      'default_name': '/', 'default_is_configured': True}"
                 />
             </xpath>
             <xpath expr="//form/field[@name='display_type']" position="before">
                 <field name="is_configurable" invisible="1" />
+                <field name="is_configured" invisible="1" />
             </xpath>
             <xpath expr="//field[@name='order_line']//tree" position="attributes">
                 <attribute name="decoration-it">parent_id</attribute>
@@ -90,6 +92,7 @@
                     attrs="{'invisible': [('parent_id', '!=', False)]}"
                     string="Subtotal"
                 />
+                <field name="is_configured" invisible="1" />
                 <field name="is_configurable" invisible="1" />
                 <field name="parent_id" invisible="1" />
             </xpath>
@@ -101,7 +104,12 @@
                     name="open_sale_line_config_base"
                     type="object"
                     icon="fa-th"
-                    attrs="{'invisible': ['|', ('state', 'not in', ('draft', 'sent')), ('is_configurable', '=', False)]}"
+                    attrs="{'invisible': ['|', ('state', 'not in', ('draft', 'sent')), '|', ('is_configurable', '=', False), ('is_configured', '=', False)]}"
+                />
+                <button
+                    title="This product was not added as configurable"
+                    icon="fa-ban"
+                    attrs="{'invisible': ['|', ('state', 'not in', ('draft', 'sent')), '|', ('is_configurable', '=', False), ('is_configured', '=', True)]}"
                 />
             </xpath>
             <xpath expr="//field[@name='order_line']" position="attributes">
