@@ -14,7 +14,7 @@ from odoo.addons.sale_configurator_option.tests.common import SaleOrderCommon
 # if not you will have inconsistency order in EUR with pricelist in dollars
 
 
-@tagged("post_install/sale", "-at_install")
+@tagged("post_install", "-at_install")
 class SaleOrderCase(SaleOrderCommon):
     def test_total_amount(self):
         self.assertEqual(self.sale.amount_total, 126.50)
