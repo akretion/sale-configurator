@@ -64,9 +64,11 @@ class SaleOrder(models.Model):
         )
         if view_type == "form" and not self._context.get("force_original_sale_form"):
             doc = etree.XML(res["arch"])
+            tree = doc.xpath("//field[@name='order_line']/tree")
+            editable = tree and tree[0].get("editable")
             for field in doc.xpath("//field[@name='order_line']/tree/field"):
                 fname = field.get("name")
-                if fname != "sequence":
+                if fname != "sequence" and editable:
                     if not self.env["sale.order.line"]._fields[fname].readonly:
                         update_attrs(
                             field,
