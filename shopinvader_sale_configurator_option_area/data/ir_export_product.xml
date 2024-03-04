@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="ir_exp_shopinvader_option_area_name" model="ir.exports.line">
+        <field name="name">configurable_option_ids/area_id/name</field>
+        <field name="target">configurable_option_ids:options/area_id:area/name</field>
+        <field name="export_id" ref="shopinvader.ir_exp_shopinvader_variant" />
+    </record>
+
+    <record id="ir_exp_shopinvader_option_area_code" model="ir.exports.line">
+        <field name="name">configurable_option_ids/area_id/code</field>
+        <field name="target">configurable_option_ids:options/area_id:area/code</field>
+        <field name="export_id" ref="shopinvader.ir_exp_shopinvader_variant" />
+    </record>
+
+</odoo>
