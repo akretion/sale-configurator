@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="product_with_option_message" model="product.product">
+        <field name="name">Product With Option Message</field>
+        <field name="code">PWOM</field>
+        <field name="is_configurable_opt">True</field>
+        <field name="lst_price">10</field>
+    </record>
+    <record id="product_option_message" model="product.product">
+        <field name="name">Option with message</field>
+        <field name="code">OPTM</field>
+        <field name="lst_price">5</field>
+        <field name="is_option">True</field>
+    </record>
+    <record
+        id="product_configurator_option_with_message"
+        model="product.configurator.option"
+    >
+        <field
+            name="product_tmpl_id"
+            ref="product_with_option_message_product_template"
+        />
+        <field name="product_id" ref="product_option_message" />
+        <field name="option_qty_type">proportional_qty</field>
+        <field name="sequence">4</field>
+        <field name="has_message">True</field>
+    </record>
+</odoo>
