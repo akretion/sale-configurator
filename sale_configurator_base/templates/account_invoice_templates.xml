@@ -3,7 +3,7 @@
     <template
         id="report_invoice_document"
         inherit_id="account.report_invoice_document"
-        priority="1000"
+        priority="200"
     >
 
         <!--Apply distinct style to children lines-->
