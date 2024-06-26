@@ -5,7 +5,7 @@
 {
     "name": "Sale Configurator Option No Orphan",
     "summary": "Remove ability to add options as standard sale order lines",
-    "version": "14.0.1.0.0",
+    "version": "14.0.1.0.1",
     "category": "Uncategorized",
     "website": "https://github.com/akretion/sale-configurator",
     "author": " Akretion",

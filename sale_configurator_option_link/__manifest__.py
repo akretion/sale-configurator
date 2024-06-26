@@ -9,7 +9,7 @@
         "Module to manage Link betwen Options"
         " (the choise off one option add anthor option)"
     ),
-    "version": "14.0.1.0.0",
+    "version": "14.0.1.0.1",
     "category": "Uncategorized",
     "website": "https://github.com/akretion/sale-configurator",
     "author": " Akretion",
