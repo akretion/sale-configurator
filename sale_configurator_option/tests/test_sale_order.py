@@ -213,3 +213,32 @@ class SaleOrderCase(SavepointCase):
         self.assertEqual(lines[2].sequence, 2)
         self.assertTrue(lines[1].parent_id)
         self.assertEqual(lines[2].product_id, self.product_option_1)
+
+    def test_copy_sale(self):
+        sale = self._create_sale_order()
+        self.assertEqual(len(sale.order_line), 3)
+        self.assertEqual(len(sale.main_line_ids), 1)
+        main_line = sale.main_line_ids
+        options = sale.order_line - main_line
+        self.assertEqual(len(options), 2)
+        self.assertEqual(options[0].parent_id, main_line)
+        self.assertEqual(options[1].parent_id, main_line)
+        self.assertEqual(options[0].parent_option_id, main_line)
+        self.assertEqual(options[1].parent_option_id, main_line)
+        self.assertEqual(options, main_line.option_ids)
+
+        sale_copy = sale.copy()
+        self.assertEqual(len(sale_copy.order_line), 3)
+        self.assertEqual(len(sale_copy.main_line_ids), 1)
+        main_line_copy = sale_copy.main_line_ids
+        options_copy = sale_copy.order_line - main_line_copy
+        self.assertEqual(len(options_copy), 2)
+        self.assertEqual(options_copy[0].parent_id, main_line_copy)
+        self.assertEqual(options_copy[1].parent_id, main_line_copy)
+        self.assertEqual(options_copy[0].parent_option_id, main_line_copy)
+        self.assertEqual(options_copy[1].parent_option_id, main_line_copy)
+        self.assertEqual(options_copy, main_line_copy.option_ids)
+
+        self.assertNotEqual(main_line, main_line_copy)
+        self.assertNotEqual(options[0], options_copy[0])
+        self.assertNotEqual(options[1], options_copy[1])
