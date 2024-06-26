@@ -6,6 +6,23 @@
 from odoo import api, fields, models
 
 
+class SaleOrder(models.Model):
+    _inherit = "sale.order"
+
+    def copy_data(self, default=None):
+        # Option lines should not be copied directly but from parent line option_ids
+        if default is None:
+            default = {}
+        if "order_line" not in default:
+            default["order_line"] = [
+                (0, 0, line.copy_data()[0])
+                for line in self.order_line.filtered(
+                    lambda l: not l.is_downpayment and not l.parent_id
+                )
+            ]
+        return super().copy_data(default)
+
+
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
@@ -20,7 +37,7 @@ class SaleOrderLine(models.Model):
         "sale.order.line",
         "parent_option_id",
         "Options",
-        copy=False,
+        copy=True,
     )
     is_configurable_opt = fields.Boolean(
         "Is the product configurable Option ?", related="product_id.is_configurable_opt"
