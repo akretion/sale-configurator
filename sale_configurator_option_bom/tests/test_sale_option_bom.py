@@ -176,23 +176,23 @@ class TestProcess(CommonCase, MindefSaleCase):
         )
 
     def test_basic_process(self):
-        List_Manuf_order_1 = self.env["mrp.production"].search([])
-        indice_start = len(List_Manuf_order_1)
+        list_manuf_order_1 = self.env["mrp.production"].search([])
+        indice_start = len(list_manuf_order_1)
         self.assertEqual(indice_start, 4)
         self.assertTrue(self.sale_order.action_confirm())
-        List_Manuf_order = self.env["mrp.production"].search([])
+        list_manuf_order = self.env["mrp.production"].search([])
         product_ok = False
         indice = 0
-        for Manuf_order in List_Manuf_order:
+        for manuf_order in list_manuf_order:
             indice = indice + 1
-            if Manuf_order.product_id.id == self.product_with_option.id:
+            if manuf_order.product_id.id == self.product_with_option.id:
                 product_ok = True
-                Manuf_order_trouver = Manuf_order
+                manuf_order_trouver = manuf_order
         self.assertEqual(indice, 5)
         self.assertTrue(product_ok)
         line_option_1 = False
         line_product_2 = False
-        for line in Manuf_order_trouver.move_raw_ids:
+        for line in manuf_order_trouver.move_raw_ids:
             if line.product_id.id == self.option_1.id:
                 line_option_1 = True
                 self.assertEqual(line.product_uom_qty, 2)
@@ -204,16 +204,16 @@ class TestProcess(CommonCase, MindefSaleCase):
 
     def test_basic_process_2(self):
         self.assertTrue(self.sale_order_2.action_confirm())
-        List_Manuf_order = self.env["mrp.production"].search([])
+        list_manuf_order = self.env["mrp.production"].search([])
         product_ok = False
-        for Manuf_order in List_Manuf_order:
-            if Manuf_order.product_id.id == self.product_with_option.id:
+        for manuf_order in list_manuf_order:
+            if manuf_order.product_id.id == self.product_with_option.id:
                 product_ok = True
-                Manuf_order_trouver = Manuf_order
+                manuf_order_trouver = manuf_order
         self.assertTrue(product_ok)
         line_option_1 = False
         line_product_2 = False
-        for line in Manuf_order_trouver.move_raw_ids:
+        for line in manuf_order_trouver.move_raw_ids:
             if line.product_id.id == self.option_1.id:
                 line_option_1 = True
             if line.product_id.id == self.product_option.id:
@@ -225,23 +225,23 @@ class TestProcess(CommonCase, MindefSaleCase):
         indic_list_of = self.env["mrp.production"].search([])
         self.assertEqual(len(indic_list_of), 4)
         self.assertTrue(self.sale_order_3.action_confirm())
-        List_Manuf_order = self.env["mrp.production"].search([])
-        self.assertEqual(len(List_Manuf_order), 6)
+        list_manuf_order = self.env["mrp.production"].search([])
+        self.assertEqual(len(list_manuf_order), 6)
         product_ok = False
         product_ok2 = False
-        for Manuf_order in List_Manuf_order:
-            if Manuf_order.product_id.id == self.product_with_option.id:
+        for manuf_order in list_manuf_order:
+            if manuf_order.product_id.id == self.product_with_option.id:
                 product_ok = True
-                Manuf_order_trouver = Manuf_order
-            if Manuf_order.product_id.id == self.product_with_option_2.id:
+                manuf_order_trouver = manuf_order
+            if manuf_order.product_id.id == self.product_with_option_2.id:
                 product_ok2 = True
-                Manuf_order_trouver2 = Manuf_order
+                manuf_order_trouver2 = manuf_order
         self.assertTrue(product_ok)
         self.assertTrue(product_ok2)
         line_option_1 = False
         line_product_2 = False
         line_option_3 = False
-        for line in Manuf_order_trouver.move_raw_ids:
+        for line in manuf_order_trouver.move_raw_ids:
             if line.product_id.id == self.option_1.id:
                 line_option_1 = True
                 self.assertEqual(line.product_uom_qty, 2)
@@ -257,7 +257,7 @@ class TestProcess(CommonCase, MindefSaleCase):
         line_option_1 = False
         line_product_2 = False
         line_option_3 = False
-        for line in Manuf_order_trouver2.move_raw_ids:
+        for line in manuf_order_trouver2.move_raw_ids:
             if line.product_id.id == self.option_1.id:
                 line_option_1 = True
             if line.product_id.id == self.product_option.id:

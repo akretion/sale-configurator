@@ -50,7 +50,7 @@ class MrpProduction(models.Model):
                 lazy=False,
             )
             if lines:
-                List_lines = []
+                list_lines = []
                 list_product_id = []
                 for line in lines:
                     for option in options:
@@ -58,37 +58,37 @@ class MrpProduction(models.Model):
                             total_qty_line = (
                                 line["product_qty"] * option["product_uom_qty"]
                             )
-                    if List_lines:
+                    if list_lines:
                         if line["product_id"][0] in list_product_id:
                             index_list_prod = list_product_id.index(
                                 line["product_id"][0]
                             )
                             if (
-                                List_lines[index_list_prod]["product_id"][0]
+                                list_lines[index_list_prod]["product_id"][0]
                                 == line["product_id"][0]
-                                and List_lines[index_list_prod]["product_uom_id"][0]
+                                and list_lines[index_list_prod]["product_uom_id"][0]
                                 == line["product_uom_id"][0]
                             ):
-                                List_lines[index_list_prod]["product_qty"] = (
-                                    List_lines[index_list_prod]["product_qty"]
+                                list_lines[index_list_prod]["product_qty"] = (
+                                    list_lines[index_list_prod]["product_qty"]
                                     + total_qty_line
                                 )
                             else:
-                                List_lines.append(line)
-                                List_lines[-1]["product_qty"] = total_qty_line
+                                list_lines.append(line)
+                                list_lines[-1]["product_qty"] = total_qty_line
                                 list_product_id.append(line["product_id"][0])
                     else:
-                        List_lines.append(line)
+                        list_lines.append(line)
                         list_product_id.append(line["product_id"][0])
-                        List_lines[-1]["product_qty"] = total_qty_line
-                for List_prod in List_lines:
+                        list_lines[-1]["product_qty"] = total_qty_line
+                for list_prod in list_lines:
                     moves.append(
                         prod._get_move_raw_values(
                             self.env["product.product"].browse(
-                                List_prod["product_id"][0]
+                                list_prod["product_id"][0]
                             ),
-                            List_prod["product_qty"],
-                            self.env["uom.uom"].browse(List_prod["product_uom_id"][0]),
+                            list_prod["product_qty"],
+                            self.env["uom.uom"].browse(list_prod["product_uom_id"][0]),
                         )
                     )
         return moves
