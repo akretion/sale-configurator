@@ -17,8 +17,11 @@
     "depends": [
         "mrp",
         "sale_configurator_option",
+        "mrp_sale_info",
     ],
-    "data": [],
+    "data": [
+        "views/mrp_bom_view.xml",
+    ],
     "demo": [],
     "qweb": [],
 }

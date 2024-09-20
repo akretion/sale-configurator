@@ -1,14 +1,11 @@
 # Copyright 2024 Akretion (http://www.akretion.com).
-# @author Thomas BONNERUE <thomas.bonnerue@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import SUPERUSER_ID
-
-from odoo.addons.mindef_sale.tests.common import MindefSaleCase
-from odoo.addons.shopfloor.tests.common import CommonCase
+from odoo.tests.common import SavepointCase
 
 
-class TestProcess(CommonCase, MindefSaleCase):
+class TestProcess(SavepointCase):
     @classmethod
     def setUpClassUsers(cls):
         super().setUpClassUsers()
@@ -18,7 +15,7 @@ class TestProcess(CommonCase, MindefSaleCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.env = cls.env(user=SUPERUSER_ID)  # CommonCase gives us a new user
-        cls.env["exception.rule"].search([]).write({"active": False})
+        cls.partner = cls.env.ref("base.res_partner_1")
         cls.env.ref("stock.route_warehouse0_mto").active = True
         cls.option_1 = cls.env.ref("sale_configurator_option.product_option_1")
         cls.option_2 = cls.env.ref("sale_configurator_option.product_option_2")
@@ -26,14 +23,12 @@ class TestProcess(CommonCase, MindefSaleCase):
         (cls.option_1 + cls.option_2 + cls.option_3).write(
             {
                 "type": "service",
-                "available_in_pos": True,
             }
         )
         cls.product_with_option = cls.env["product.product"].create(
             {
                 "name": "Optional product",
                 "type": "product",
-                "is_repaired": False,
                 "route_ids": [
                     (
                         6,
@@ -44,8 +39,6 @@ class TestProcess(CommonCase, MindefSaleCase):
                         ],
                     )
                 ],
-                # "tracking": "lot",
-                "auto_generate_prodlot": True,
                 "is_configurable_opt": True,
                 "local_configurable_option_ids": [
                     (0, 0, {"product_id": cls.option_1.id}),
@@ -58,7 +51,6 @@ class TestProcess(CommonCase, MindefSaleCase):
             {
                 "name": "Optional product deux",
                 "type": "product",
-                "is_repaired": False,
                 "route_ids": [
                     (
                         6,
@@ -69,8 +61,6 @@ class TestProcess(CommonCase, MindefSaleCase):
                         ],
                     )
                 ],
-                # "tracking": "lot",
-                "auto_generate_prodlot": True,
                 "is_configurable_opt": True,
                 "local_configurable_option_ids": [
                     (0, 0, {"product_id": cls.option_1.id}),
@@ -79,6 +69,9 @@ class TestProcess(CommonCase, MindefSaleCase):
                 ],
             }
         )
+        cls.related_1 = cls.product_with_option.local_configurable_option_ids
+        cls.related_2 = cls.product_with_option_2.local_configurable_option_ids
+
         cls.product_option = cls.env["product.product"].create(
             {
                 "name": "product option consu",
@@ -96,7 +89,7 @@ class TestProcess(CommonCase, MindefSaleCase):
                         {
                             "product_id": cls.product_option.id,
                             "product_qty": 2,
-                            "related_option": cls.option_2.id,
+                            "related_option": cls.related_1[1].id,
                         },
                     ),
                 ],
@@ -113,7 +106,7 @@ class TestProcess(CommonCase, MindefSaleCase):
                         {
                             "product_id": cls.product_option.id,
                             "product_qty": 2,
-                            "related_option": cls.option_3.id,
+                            "related_option": cls.related_2[2].id,
                         },
                     ),
                     (
@@ -122,77 +115,172 @@ class TestProcess(CommonCase, MindefSaleCase):
                         {
                             "product_id": cls.product_option.id,
                             "product_qty": 4,
-                            "related_option": cls.option_2.id,
+                            "related_option": cls.related_2[1].id,
                         },
                     ),
                 ],
             }
         )
-        cls.sale_order = cls._create_mindef_so(
-            [
+        vals = {
+            "partner_id": cls.partner.id,
+            "order_line": [
                 (
-                    cls.product_with_option.id,
-                    2,
-                    [
-                        (cls.option_1.id, 1),
-                        (cls.option_2.id, 2),
-                        (cls.option_3.id, 2),
-                    ],
-                ),
-            ]
-        )
-        cls.sale_order_2 = cls._create_mindef_so(
-            [
+                    0,
+                    0,
+                    {
+                        "product_id": cls.product_with_option.id,
+                        "product_uom_qty": 2,
+                        "option_ids": [
+                            (
+                                0,
+                                0,
+                                {
+                                    "product_id": cls.option_1.id,
+                                    "option_unit_qty": 1,
+                                    "option_qty_type": "proportional_qty",
+                                },
+                            ),
+                            (
+                                0,
+                                0,
+                                {
+                                    "product_id": cls.option_2.id,
+                                    "option_unit_qty": 2,
+                                    "option_qty_type": "proportional_qty",
+                                },
+                            ),
+                            (
+                                0,
+                                0,
+                                {
+                                    "product_id": cls.option_3.id,
+                                    "option_unit_qty": 2,
+                                    "option_qty_type": "proportional_qty",
+                                },
+                            ),
+                        ],
+                    },
+                )
+            ],
+        }
+        cls.sale_order = cls.env["sale.order"].create(vals)
+
+        vals = {
+            "partner_id": cls.partner.id,
+            "order_line": [
                 (
-                    cls.product_with_option.id,
-                    1,
-                    [
-                        (cls.option_1.id, 1),
-                    ],
+                    0,
+                    0,
+                    {
+                        "product_id": cls.product_with_option.id,
+                        "product_uom_qty": 2,
+                        "option_ids": [
+                            (
+                                0,
+                                0,
+                                {
+                                    "product_id": cls.option_1.id,
+                                    "option_unit_qty": 1,
+                                    "option_qty_type": "proportional_qty",
+                                },
+                            ),
+                        ],
+                    },
                 ),
-            ]
-        )
-        cls.sale_order_3 = cls._create_mindef_so(
-            [
+            ],
+        }
+        cls.sale_order_2 = cls.env["sale.order"].create(vals)
+
+        vals = {
+            "partner_id": cls.partner.id,
+            "order_line": [
                 (
-                    cls.product_with_option.id,
-                    1,
-                    [
-                        (cls.option_1.id, 2),
-                        (cls.option_2.id, 1),
-                        (cls.option_3.id, 2),
-                    ],
+                    0,
+                    0,
+                    {
+                        "product_id": cls.product_with_option.id,
+                        "product_uom_qty": 1,
+                        "option_ids": [
+                            (
+                                0,
+                                0,
+                                {
+                                    "product_id": cls.option_1.id,
+                                    "option_unit_qty": 2,
+                                    "option_qty_type": "proportional_qty",
+                                },
+                            ),
+                            (
+                                0,
+                                0,
+                                {
+                                    "product_id": cls.option_2.id,
+                                    "option_unit_qty": 1,
+                                    "option_qty_type": "proportional_qty",
+                                },
+                            ),
+                            (
+                                0,
+                                0,
+                                {
+                                    "product_id": cls.option_3.id,
+                                    "option_unit_qty": 2,
+                                    "option_qty_type": "proportional_qty",
+                                },
+                            ),
+                        ],
+                    },
                 ),
                 (
-                    cls.product_with_option_2.id,
-                    2,
-                    [
-                        (cls.option_1.id, 2),
-                        (cls.option_2.id, 3),
-                        (cls.option_3.id, 1),
-                    ],
+                    0,
+                    0,
+                    {
+                        "product_id": cls.product_with_option_2.id,
+                        "product_uom_qty": 2,
+                        "option_ids": [
+                            (
+                                0,
+                                0,
+                                {
+                                    "product_id": cls.option_1.id,
+                                    "option_unit_qty": 2,
+                                    "option_qty_type": "proportional_qty",
+                                },
+                            ),
+                            (
+                                0,
+                                0,
+                                {
+                                    "product_id": cls.option_2.id,
+                                    "option_unit_qty": 3,
+                                    "option_qty_type": "proportional_qty",
+                                },
+                            ),
+                            (
+                                0,
+                                0,
+                                {
+                                    "product_id": cls.option_3.id,
+                                    "option_unit_qty": 1,
+                                    "option_qty_type": "proportional_qty",
+                                },
+                            ),
+                        ],
+                    },
                 ),
-            ]
-        )
+            ],
+        }
+        cls.sale_order_3 = cls.env["sale.order"].create(vals)
 
     def test_basic_process(self):
-        list_manuf_order_1 = self.env["mrp.production"].search([])
-        indice_start = len(list_manuf_order_1)
-        self.assertEqual(indice_start, 4)
-        self.assertTrue(self.sale_order.action_confirm())
-        list_manuf_order = self.env["mrp.production"].search([])
-        product_ok = False
-        indice = 0
-        for manuf_order in list_manuf_order:
-            indice = indice + 1
-            if manuf_order.product_id.id == self.product_with_option.id:
-                product_ok = True
-                manuf_order_trouver = manuf_order
-        self.assertEqual(indice, 5)
-        self.assertTrue(product_ok)
+        self.sale_order.action_confirm()
+        production = self.sale_order.production_ids.filtered(
+            lambda m: m.product_id == self.product_with_option
+        )
+        self.assertTrue(production)
         line_option_1 = False
         line_product_2 = False
-        for line in manuf_order_trouver.move_raw_ids:
+        for line in production.move_raw_ids:
             if line.product_id.id == self.option_1.id:
                 line_option_1 = True
                 self.assertEqual(line.product_uom_qty, 2)
@@ -203,17 +291,14 @@ class TestProcess(CommonCase, MindefSaleCase):
         self.assertTrue(line_product_2)
 
     def test_basic_process_2(self):
-        self.assertTrue(self.sale_order_2.action_confirm())
-        list_manuf_order = self.env["mrp.production"].search([])
-        product_ok = False
-        for manuf_order in list_manuf_order:
-            if manuf_order.product_id.id == self.product_with_option.id:
-                product_ok = True
-                manuf_order_trouver = manuf_order
-        self.assertTrue(product_ok)
+        self.sale_order_2.action_confirm()
+        production = self.sale_order_2.production_ids.filtered(
+            lambda m: m.product_id == self.product_with_option
+        )
+        self.assertTrue(production)
         line_option_1 = False
         line_product_2 = False
-        for line in manuf_order_trouver.move_raw_ids:
+        for line in production.move_raw_ids:
             if line.product_id.id == self.option_1.id:
                 line_option_1 = True
             if line.product_id.id == self.product_option.id:
@@ -222,26 +307,19 @@ class TestProcess(CommonCase, MindefSaleCase):
         self.assertFalse(line_product_2)
 
     def test_basic_process_3(self):
-        indic_list_of = self.env["mrp.production"].search([])
-        self.assertEqual(len(indic_list_of), 4)
-        self.assertTrue(self.sale_order_3.action_confirm())
-        list_manuf_order = self.env["mrp.production"].search([])
-        self.assertEqual(len(list_manuf_order), 6)
-        product_ok = False
-        product_ok2 = False
-        for manuf_order in list_manuf_order:
-            if manuf_order.product_id.id == self.product_with_option.id:
-                product_ok = True
-                manuf_order_trouver = manuf_order
-            if manuf_order.product_id.id == self.product_with_option_2.id:
-                product_ok2 = True
-                manuf_order_trouver2 = manuf_order
-        self.assertTrue(product_ok)
-        self.assertTrue(product_ok2)
+        self.sale_order_3.action_confirm()
+        production = self.sale_order_3.production_ids.filtered(
+            lambda m: m.product_id == self.product_with_option
+        )
+        production2 = self.sale_order_3.production_ids.filtered(
+            lambda m: m.product_id == self.product_with_option_2
+        )
+        self.assertTrue(production)
+        self.assertTrue(production2)
         line_option_1 = False
         line_product_2 = False
         line_option_3 = False
-        for line in manuf_order_trouver.move_raw_ids:
+        for line in production.move_raw_ids:
             if line.product_id.id == self.option_1.id:
                 line_option_1 = True
                 self.assertEqual(line.product_uom_qty, 2)
@@ -257,7 +335,7 @@ class TestProcess(CommonCase, MindefSaleCase):
         line_option_1 = False
         line_product_2 = False
         line_option_3 = False
-        for line in manuf_order_trouver2.move_raw_ids:
+        for line in production2.move_raw_ids:
             if line.product_id.id == self.option_1.id:
                 line_option_1 = True
             if line.product_id.id == self.product_option.id:

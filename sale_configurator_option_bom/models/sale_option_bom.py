@@ -1,5 +1,4 @@
 # Copyright 2024 Akretion (http://www.akretion.com).
-# @author Thomas BONNERUE <thomas.bonnerue@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import fields, models
@@ -8,15 +7,18 @@ from odoo import fields, models
 class MrpBomLine(models.Model):
     _inherit = "mrp.bom.line"
 
-    related_option = fields.Many2one("product.product", "Option ref")
+    related_option = fields.Many2one(
+        "product.configurator.option",
+        "Option ref",
+        domain="[('product_tmpl_id', '=', parent_product_tmpl_id)]",
+    )
 
     def _skip_bom_line(self, product):
-        res = super()._skip_bom_line(product)
 
         if self.related_option:
             return True
         else:
-            return res
+            return super()._skip_bom_line(product)
 
 
 class MrpProduction(models.Model):
@@ -25,16 +27,15 @@ class MrpProduction(models.Model):
     def _get_moves_raw_values(self):
         moves = super()._get_moves_raw_values()
         options = []
-
         for prod in self:
             lines = self.env["mrp.bom.line"].read_group(
                 [
                     (
                         "related_option.id",
                         "in",
-                        prod.sale_line_ids.option_ids.product_id.ids,
+                        prod.sale_line_ids.option_ids.product_option_id.ids,
                     ),
-                    ("parent_product_tmpl_id.id", "=", prod.product_tmpl_id.id),
+                    ("bom_id", "=", prod.bom_id.id),
                 ],
                 fields=["product_qty:sum"],
                 groupby=["product_id", "product_uom_id", "related_option"],
@@ -54,7 +55,12 @@ class MrpProduction(models.Model):
                 list_product_id = []
                 for line in lines:
                     for option in options:
-                        if line["related_option"][0] == option["product_id"][0]:
+                        if (
+                            self.env["product.configurator.option"]
+                            .browse(line["related_option"][0])
+                            .product_id.id
+                            == option["product_id"][0]
+                        ):
                             total_qty_line = (
                                 line["product_qty"] * option["product_uom_qty"]
                             )
