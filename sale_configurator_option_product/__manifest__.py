@@ -16,6 +16,7 @@
     "depends": [
         "mrp",
         "sale_configurator_option",
+        "mrp_sale_info",
     ],
     "data": [],
     "demo": [],
