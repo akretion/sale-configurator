@@ -3,22 +3,15 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import SUPERUSER_ID
-
-from odoo.addons.mindef_sale.tests.common import MindefSaleCase
-from odoo.addons.shopfloor.tests.common import CommonCase
+from odoo.tests.common import SavepointCase
 
 
-class TestProcess(CommonCase, MindefSaleCase):
-    @classmethod
-    def setUpClassUsers(cls):
-        super().setUpClassUsers()
-        cls.shopfloor_user.groups_id += cls.env.ref("stock.group_stock_manager")
-
+class TestProcess(SavepointCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         cls.env = cls.env(user=SUPERUSER_ID)  # CommonCase gives us a new user
-        cls.env["exception.rule"].search([]).write({"active": False})
+        cls.partner = cls.env.ref("base.res_partner_1")
         cls.env.ref("stock.route_warehouse0_mto").active = True
         cls.option_1 = cls.env.ref("sale_configurator_option.product_option_1")
         cls.option_2 = cls.env.ref("sale_configurator_option.product_option_2")
@@ -26,7 +19,6 @@ class TestProcess(CommonCase, MindefSaleCase):
         (cls.option_1 + cls.option_2 + cls.option_3).write(
             {
                 "type": "product",
-                "available_in_pos": True,
             }
         )
         cls.option_1.write({"type": "service"})
@@ -34,7 +26,6 @@ class TestProcess(CommonCase, MindefSaleCase):
             {
                 "name": "Optional product",
                 "type": "product",
-                "is_repaired": False,
                 "route_ids": [
                     (
                         6,
@@ -45,9 +36,6 @@ class TestProcess(CommonCase, MindefSaleCase):
                         ],
                     )
                 ],
-                # "tracking": "lot",
-                "auto_generate_prodlot": True,
-                "is_configurable_opt": True,
                 "local_configurable_option_ids": [
                     (0, 0, {"product_id": cls.option_1.id}),
                     (0, 0, {"product_id": cls.option_2.id}),
@@ -72,45 +60,57 @@ class TestProcess(CommonCase, MindefSaleCase):
                         {
                             "product_id": cls.product_option.id,
                             "product_qty": 1,
-                            "related_option": cls.option_2.id,
                         },
                     )
                 ],
             }
         )
-        cls.sale_order = cls._create_mindef_so(
-            [
+
+        vals = {
+            "partner_id": cls.partner.id,
+            "order_line": [
                 (
-                    cls.product_with_option.id,
-                    2,
-                    [
-                        (cls.option_1.id, 1),
-                        (cls.option_2.id, 1),
-                    ],
-                ),
-            ]
-        )
-        cls.sale_order.picking_policy = "one"
+                    0,
+                    0,
+                    {
+                        "product_id": cls.product_with_option.id,
+                        "product_uom_qty": 2,
+                        "option_ids": [
+                            (
+                                0,
+                                0,
+                                {
+                                    "product_id": cls.option_1.id,
+                                    "option_unit_qty": 1,
+                                    "option_qty_type": "proportional_qty",
+                                },
+                            ),
+                            (
+                                0,
+                                0,
+                                {
+                                    "product_id": cls.option_2.id,
+                                    "option_unit_qty": 1,
+                                    "option_qty_type": "proportional_qty",
+                                },
+                            ),
+                        ],
+                    },
+                )
+            ],
+        }
+        cls.sale_order = cls.env["sale.order"].create(vals)
 
     def test_basic_process(self):
-        list_manuf_order_1 = self.env["mrp.production"].search([])
-        indice_start = len(list_manuf_order_1)
-        self.assertEqual(indice_start, 4)
-        self.assertTrue(self.sale_order.action_confirm())
-        list_manuf_order = self.env["mrp.production"].search([])
-        product_ok = False
-        indice = 0
-        for manuf_order in list_manuf_order:
-            indice = indice + 1
-            if manuf_order.product_id.id == self.product_with_option.id:
-                product_ok = True
-                manuf_order_trouver = manuf_order
-        self.assertEqual(indice, 5)
-        self.assertTrue(product_ok)
+        self.sale_order.action_confirm()
+        production = self.sale_order.production_ids.filtered(
+            lambda m: m.product_id == self.product_with_option
+        )
+        self.assertTrue(production)
         line_option_1 = False
         line_product_2 = False
         line_product_3 = False
-        for line in manuf_order_trouver.move_raw_ids:
+        for line in production.move_raw_ids:
             if line.product_id.id == self.option_1.id:
                 line_option_1 = True
             if line.product_id.id == self.option_2.id:
