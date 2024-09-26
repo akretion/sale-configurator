@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="ir_exp_shopinvader_min_qty" model="ir.exports.line">
+        <field name="name">sale_min_qty</field>
+        <field name="target">sale_min_qty:min_qty</field>
+        <field name="export_id" ref="shopinvader.ir_exp_shopinvader_variant" />
+    </record>
+
+    <record id="ir_exp_shopinvader_max_qty" model="ir.exports.line">
+        <field name="name">sale_max_qty</field>
+        <field name="target">sale_max_qty:max_qty</field>
+        <field name="export_id" ref="shopinvader.ir_exp_shopinvader_variant" />
+    </record>
+
+    <record id="ir_exp_shopinvader_option_min_qty" model="ir.exports.line">
+        <field name="name">configurable_option_ids/sale_min_qty</field>
+        <field
+            name="target"
+        >configurable_option_ids:options/sale_min_qty:min_qty</field>
+        <field name="export_id" ref="shopinvader.ir_exp_shopinvader_variant" />
+    </record>
+
+    <record id="ir_exp_shopinvader_option_max_qty" model="ir.exports.line">
+        <field name="name">configurable_option_ids/sale_max_qty</field>
+        <field
+            name="target"
+        >configurable_option_ids:options/sale_max_qty:max_qty</field>
+        <field name="export_id" ref="shopinvader.ir_exp_shopinvader_variant" />
+    </record>
+
+</odoo>
