@@ -89,7 +89,7 @@ class TestProcess(SavepointCase):
                         {
                             "product_id": cls.product_option.id,
                             "product_qty": 2,
-                            "related_option": cls.related_1[1].id,
+                            "related_option_id": cls.related_1[1].id,
                         },
                     ),
                 ],
@@ -106,7 +106,7 @@ class TestProcess(SavepointCase):
                         {
                             "product_id": cls.product_option.id,
                             "product_qty": 2,
-                            "related_option": cls.related_2[2].id,
+                            "related_option_id": cls.related_2[2].id,
                         },
                     ),
                     (
@@ -115,7 +115,7 @@ class TestProcess(SavepointCase):
                         {
                             "product_id": cls.product_option.id,
                             "product_qty": 4,
-                            "related_option": cls.related_2[1].id,
+                            "related_option_id": cls.related_2[1].id,
                         },
                     ),
                 ],

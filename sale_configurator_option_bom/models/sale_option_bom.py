@@ -7,7 +7,7 @@ from odoo import fields, models
 class MrpBomLine(models.Model):
     _inherit = "mrp.bom.line"
 
-    related_option = fields.Many2one(
+    related_option_id = fields.Many2one(
         "product.configurator.option",
         "Option ref",
         domain="[('product_tmpl_id', '=', parent_product_tmpl_id)]",
@@ -15,7 +15,7 @@ class MrpBomLine(models.Model):
 
     def _skip_bom_line(self, product):
 
-        if self.related_option:
+        if self.related_option_id:
             return True
         else:
             return super()._skip_bom_line(product)
@@ -31,14 +31,14 @@ class MrpProduction(models.Model):
             lines = self.env["mrp.bom.line"].read_group(
                 [
                     (
-                        "related_option.id",
+                        "related_option_id.id",
                         "in",
                         prod.sale_line_ids.option_ids.product_option_id.ids,
                     ),
                     ("bom_id", "=", prod.bom_id.id),
                 ],
                 fields=["product_qty:sum"],
-                groupby=["product_id", "product_uom_id", "related_option"],
+                groupby=["product_id", "product_uom_id", "related_option_id"],
                 lazy=False,
             )
             options = self.env["sale.order.line"].read_group(
@@ -57,7 +57,7 @@ class MrpProduction(models.Model):
                     for option in options:
                         if (
                             self.env["product.configurator.option"]
-                            .browse(line["related_option"][0])
+                            .browse(line["related_option_id"][0])
                             .product_id.id
                             == option["product_id"][0]
                         ):
