@@ -37,7 +37,7 @@ class ProductTemplate(models.Model):
         )
         for record in self + configurable:
             for option in record.configurable_option_ids:
-                if record.available_in_pos and (
+                if record.available_in_pos and option.active and (
                     not option.product_id.available_in_pos
                     or not option.product_id.active
                 ):
