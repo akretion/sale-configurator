@@ -21,6 +21,7 @@ class SaleOrderLine(models.Model):
         "parent_variant_id",
         "Variants",
         context={"default_child_type": "variant"},
+        copy=True,
     )
     product_tmpl_id = fields.Many2one(
         "product.template",
@@ -134,8 +135,8 @@ class SaleOrderLine(models.Model):
         return self.product_id.display_name
 
     def _get_parent_id_from_vals(self, vals):
-        if "parent_variant_id" in vals:
-            return vals.get("parent_variant_id")
+        if vals.get("parent_variant_id"):
+            return vals["parent_variant_id"]
         else:
             return super()._get_parent_id_from_vals(vals)
 
