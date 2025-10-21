@@ -18,7 +18,7 @@ class SaleOrderLine(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         self = self.with_context(skip_constraint_sale_restrict_qty=True)
-        records = super(SaleOrderLine, self).create(vals_list)
+        records = super().create(vals_list)
         # Check the constraint after computing all fields
         self.check_constraint_restricted_qty()
         return records
