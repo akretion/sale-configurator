@@ -11,6 +11,7 @@ setuptools.setup(
         'odoo14-addon-sale_configurator_base',
         'odoo14-addon-sale_configurator_option',
         'odoo14-addon-sale_configurator_option_area',
+        'odoo14-addon-sale_configurator_option_bom',
         'odoo14-addon-sale_configurator_option_link',
         'odoo14-addon-sale_configurator_option_no_orphan',
         'odoo14-addon-sale_configurator_option_restricted_qty',
