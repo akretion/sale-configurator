@@ -2,9 +2,12 @@
 # @author Sébastien BEAU <sebastien.beau@akretion.com>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+from odoo.tests import tagged
+
 from .common import CommonOptionCase
 
 
+@tagged("post_install", "-at_install")
 class TestCreateOrder(CommonOptionCase):
     def test_create_sale(self):
         data = self._get_pos_data()
