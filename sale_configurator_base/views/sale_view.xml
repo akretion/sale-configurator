@@ -101,7 +101,7 @@
                     name="open_sale_line_config_base"
                     type="object"
                     icon="fa-th"
-                    attrs="{'invisible': ['|', ('state', 'not in', ('draft', 'sent')), ('is_configurable', '=', False)]}"
+                    attrs="{'invisible': [('is_configurable', '=', False)]}"
                 />
             </xpath>
             <xpath expr="//field[@name='order_line']" position="attributes">
