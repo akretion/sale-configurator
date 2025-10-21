@@ -6,7 +6,7 @@
 {
     "name": "Sale Configurator Base",
     "summary": "Base module for sale configurator",
-    "version": "14.0.1.0.5",
+    "version": "14.0.1.0.6",
     "category": "Uncategorized",
     "website": "https://github.com/akretion/sale-configurator",
     "author": " Akretion",
