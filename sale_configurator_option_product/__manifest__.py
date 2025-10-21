@@ -10,7 +10,7 @@
     "category": "Uncategorized",
     "author": "Akretion,Odoo Community Association (OCA)",
     "website": "https://github.com/akretion/sale-configurator",
-    "version": "14.0.1.0.0",
+    "version": "14.0.1.0.1",
     "application": False,
     "installable": True,
     "depends": [

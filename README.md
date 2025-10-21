@@ -27,7 +27,8 @@ addon | version | maintainers | summary
 [sale_configurator_option_bom](sale_configurator_option_bom/) | 14.0.1.0.0 |  | add modification on sale product to have relation beetwin option and bom
 [sale_configurator_option_link](sale_configurator_option_link/) | 14.0.1.0.1 |  | Module to manage Link betwen Options (the choise off one option add anthor option)
 [sale_configurator_option_no_orphan](sale_configurator_option_no_orphan/) | 14.0.1.0.1 |  | Remove ability to add options as standard sale order lines
-[sale_configurator_option_restricted_qty](sale_configurator_option_restricted_qty/) | 14.0.1.0.1 |  | Manage Restricted Qty on Sale configurator
+[sale_configurator_option_product](sale_configurator_option_product/) | 14.0.1.0.1 |  | add modification for adding option product in the Manufactur order
+[sale_configurator_option_restricted_qty](sale_configurator_option_restricted_qty/) | 14.0.1.0.2 |  | Manage Restricted Qty on Sale configurator
 [sale_configurator_pricelist_tax](sale_configurator_pricelist_tax/) | 14.0.1.0.1 |  | Glue module between sale_configurator_base and sale_order_pricelist_tax
 [sale_configurator_variant](sale_configurator_variant/) | 14.0.1.1.2 |  | Extend sale configurator to manage product variant
 [sale_configurator_variant_restricted_qty](sale_configurator_variant_restricted_qty/) | 14.0.1.0.0 |  | Glue module for compatibility
