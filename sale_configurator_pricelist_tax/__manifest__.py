@@ -24,4 +24,5 @@
     "demo": [],
     "auto_install": True,
     "sequence": 10,
+    "installable": False,
 }

@@ -12,7 +12,7 @@
     "author": " Akretion",
     "license": "AGPL-3",
     "application": False,
-    "installable": True,
+    "installable": False,
     "external_dependencies": {"python": [], "bin": []},
     "depends": ["pos_sale_configurator_option", "pos_sale_order_load"],
     "data": [],

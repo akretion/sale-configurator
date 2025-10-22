@@ -13,7 +13,7 @@
     "author": "Akretion, Odoo Community Association (OCA)",
     "version": "14.0.1.0.0",
     "application": False,
-    "installable": True,
+    "installable": False,
     "depends": [
         "mrp",
         "sale_configurator_option",
