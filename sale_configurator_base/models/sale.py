@@ -267,6 +267,14 @@ class SaleOrderLine(models.Model):
             parent_id = self._get_parent_id_from_vals(vals)
             if parent_id and "order_id" not in vals:
                 vals["order_id"] = self.browse(parent_id).order_id.id
+            # TODO remove on next version
+            # On V14 the company_id is empty (as it's a related)
+            # and it will be computed after the create and this raise an security
+            # issue as the ir.rule will check the company_id
+            if "order_id" in vals and "company_id" not in vals:
+                vals["company_id"] = (
+                    self.env["sale.order"].browse(vals["order_id"]).company_id.id
+                )
         return super().create(vals_list)
 
     def write(self, vals):

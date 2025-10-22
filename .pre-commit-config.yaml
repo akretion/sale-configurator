@@ -19,6 +19,8 @@ exclude: |
   /build/|/dist/|
   # Ignore test files in addons
   /tests/samples/.*|
+  # ignore lint of (fix in next version) pos_sale_configurator_option/static
+  ^pos_sale_configurator_option/static/|
   # You don't usually want a bot to modify your legal texts
   (LICENSE.*|COPYING.*)
 default_language_version:
