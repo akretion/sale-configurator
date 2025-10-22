@@ -31,6 +31,7 @@
                 />
                 <field
                     name="option_ids"
+                    widget="section_and_note_one2many"
                     context="{'default_order_id': order_id}"
                     attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
                 >
