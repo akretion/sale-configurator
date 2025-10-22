@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="product_configurator_option_view_tree" model="ir.ui.view">
+        <field name="model">product.configurator.option</field>
+        <field
+            name="inherit_id"
+            ref="sale_configurator_option.product_configurator_option_view_tree"
+        />
+        <field name="arch" type="xml">
+            <field name="option_qty_type" position="after">
+                <field name="has_message" />
+            </field>
+        </field>
+    </record>
+</odoo>

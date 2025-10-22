@@ -61,6 +61,7 @@ jobs:
     env:
       INCLUDE: "${{ matrix.include }}"
       EXCLUDE: "${{ matrix.exclude }}"
+      PIP_EXTRA_INDEX_URL: "https://wheelhouse.shopinvader.com/simple/"
     steps:
       - uses: actions/checkout@v4
         with:
