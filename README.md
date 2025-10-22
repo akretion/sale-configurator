@@ -23,8 +23,8 @@ addon | version | maintainers | summary
 --- | --- | --- | ---
 [pos_sale_configurator_option](pos_sale_configurator_option/) | 14.0.1.0.0 |  | Sell configuration from the Point Of Sale
 [pos_sale_configurator_option_load](pos_sale_configurator_option_load/) | 14.0.1.0.0 |  | Allow to load sale order with option into the POS
-[sale_configurator_base](sale_configurator_base/) | 14.0.1.0.6 |  | Base module for sale configurator
-[sale_configurator_option](sale_configurator_option/) | 14.0.1.0.1 |  | Base module for sale configurator
+[sale_configurator_base](sale_configurator_base/) | 14.0.1.0.7 |  | Base module for sale configurator
+[sale_configurator_option](sale_configurator_option/) | 14.0.1.0.2 |  | Base module for sale configurator
 [sale_configurator_option_area](sale_configurator_option_area/) | 14.0.1.0.1 |  | Module to manage Option Typologies
 [sale_configurator_option_bom](sale_configurator_option_bom/) | 14.0.1.0.0 |  | add modification on sale product to have relation beetwin option and bom
 [sale_configurator_option_link](sale_configurator_option_link/) | 14.0.1.0.1 |  | Module to manage Link betwen Options (the choise off one option add anthor option)
@@ -32,10 +32,10 @@ addon | version | maintainers | summary
 [sale_configurator_option_product](sale_configurator_option_product/) | 14.0.1.0.1 |  | add modification for adding option product in the Manufactur order
 [sale_configurator_option_restricted_qty](sale_configurator_option_restricted_qty/) | 14.0.1.0.2 |  | Manage Restricted Qty on Sale configurator
 [sale_configurator_pricelist_tax](sale_configurator_pricelist_tax/) | 14.0.1.0.1 |  | Glue module between sale_configurator_base and sale_order_pricelist_tax
-[sale_configurator_variant](sale_configurator_variant/) | 14.0.1.1.2 |  | Extend sale configurator to manage product variant
+[sale_configurator_variant](sale_configurator_variant/) | 14.0.1.1.3 |  | Extend sale configurator to manage product variant
 [sale_configurator_variant_restricted_qty](sale_configurator_variant_restricted_qty/) | 14.0.1.0.0 |  | Glue module for compatibility
 [sale_stock_configurator_option](sale_stock_configurator_option/) | 14.0.1.0.1 |  | Sale Stock glue module for sale configurator
-[test_sale_configurator_option_variant](test_sale_configurator_option_variant/) | 14.0.1.0.0 |  | Module for testing compatibility
+[test_sale_configurator_option_variant](test_sale_configurator_option_variant/) | 14.0.1.0.1 |  | Module for testing compatibility
 
 
 Unported addons
