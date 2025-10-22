@@ -70,8 +70,8 @@ class SaleOrderCase(SavepointCase):
         cls.product_option_2.list_price = 250
         cls._add_pricelist_item(cls.product_option_2, 230)
 
-    def test_create_sale_with_option_and_variant(self):
-        sale = self.env["sale.order"].create(
+    def _create_sale_with_option_and_variant(self):
+        return self.env["sale.order"].create(
             {
                 "partner_id": self.env.ref("base.res_partner_1").id,
                 "pricelist_id": self.pricelist.id,
@@ -126,6 +126,32 @@ class SaleOrderCase(SavepointCase):
                 ],
             }
         )
+
+    def test_create_sale_with_option_and_variant(self):
+        sale = self._create_sale_with_option_and_variant()
+        lines = sale.order_line
+        self.assertEqual(len(lines), 5)
+        self.assertEqual(lines[0].product_uom_qty, 50)
+        self.assertTrue(lines[0].is_configurable)
+        self.assertEqual(lines[0].price_unit, 0)
+
+        self.assertEqual(lines[1].product_uom_qty, 30)
+        self.assertEqual(lines[1].price_unit, 30)
+
+        self.assertEqual(lines[2].product_uom_qty, 20)
+        self.assertEqual(lines[2].price_unit, 30)
+
+        self.assertEqual(lines[3].product_uom_qty, 50)
+        self.assertEqual(lines[3].price_unit, 130)
+
+        self.assertEqual(lines[4].product_uom_qty, 100)
+        self.assertEqual(lines[4].price_unit, 230)
+
+        self.assertEqual(lines[0].price_config_subtotal, 31000)
+
+    def test_duplicate_sale(self):
+        ori_sale = self._create_sale_with_option_and_variant()
+        sale = ori_sale.copy()
         lines = sale.order_line
         self.assertEqual(len(lines), 5)
         self.assertEqual(lines[0].product_uom_qty, 50)

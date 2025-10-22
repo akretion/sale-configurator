@@ -26,6 +26,19 @@ class SaleOrder(models.Model):
         "sale.order.line", "order_id", domain=[("parent_id", "=", False)]
     )
 
+    def copy_data(self, default=None):
+        # Option lines should not be copied directly but from parent line option_ids
+        if default is None:
+            default = {}
+        if "order_line" not in default:
+            default["order_line"] = [
+                (0, 0, line.copy_data()[0])
+                for line in self.order_line.filtered(
+                    lambda l: not l.is_downpayment and not l.parent_id
+                )
+            ]
+        return super().copy_data(default)
+
     def sync_sequence(self):
         for record in self:
             done = []

@@ -6,23 +6,6 @@
 from odoo import api, fields, models
 
 
-class SaleOrder(models.Model):
-    _inherit = "sale.order"
-
-    def copy_data(self, default=None):
-        # Option lines should not be copied directly but from parent line option_ids
-        if default is None:
-            default = {}
-        if "order_line" not in default:
-            default["order_line"] = [
-                (0, 0, line.copy_data()[0])
-                for line in self.order_line.filtered(
-                    lambda l: not l.is_downpayment and not l.parent_id
-                )
-            ]
-        return super().copy_data(default)
-
-
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
@@ -188,8 +171,8 @@ class SaleOrderLine(models.Model):
         return res
 
     def _get_parent_id_from_vals(self, vals):
-        if "parent_option_id" in vals:
-            return vals.get("parent_option_id")
+        if vals.get("parent_option_id"):
+            return vals["parent_option_id"]
         else:
             return super()._get_parent_id_from_vals(vals)
 
