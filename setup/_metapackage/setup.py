@@ -8,6 +8,8 @@ setuptools.setup(
     description="Meta package for akretion-sale-configurator Odoo addons",
     version=version,
     install_requires=[
+        'odoo14-addon-pos_sale_configurator_option',
+        'odoo14-addon-pos_sale_configurator_option_load',
         'odoo14-addon-sale_configurator_base',
         'odoo14-addon-sale_configurator_option',
         'odoo14-addon-sale_configurator_option_area',

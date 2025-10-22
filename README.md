@@ -21,6 +21,8 @@ Available addons
 ----------------
 addon | version | maintainers | summary
 --- | --- | --- | ---
+[pos_sale_configurator_option](pos_sale_configurator_option/) | 14.0.1.0.0 |  | Sell configuration from the Point Of Sale
+[pos_sale_configurator_option_load](pos_sale_configurator_option_load/) | 14.0.1.0.0 |  | Allow to load sale order with option into the POS
 [sale_configurator_base](sale_configurator_base/) | 14.0.1.0.6 |  | Base module for sale configurator
 [sale_configurator_option](sale_configurator_option/) | 14.0.1.0.1 |  | Base module for sale configurator
 [sale_configurator_option_area](sale_configurator_option_area/) | 14.0.1.0.1 |  | Module to manage Option Typologies
