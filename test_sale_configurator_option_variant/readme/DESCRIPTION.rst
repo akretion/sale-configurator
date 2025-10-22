@@ -1,0 +1,1 @@
+Test module for testing the compatibility between sale_configurator_option and sale_configurator_variant
