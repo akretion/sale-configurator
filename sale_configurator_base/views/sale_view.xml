@@ -67,11 +67,11 @@
             <xpath expr="//form/field[@name='display_type']" position="before">
                 <field name="is_configurable" invisible="1" />
             </xpath>
-            <xpath expr="//field[@name='order_line']//tree" position="attributes">
+            <xpath expr="//field[@name='order_line']//list" position="attributes">
                 <attribute name="decoration-it">parent_id</attribute>
             </xpath>
             <xpath
-                expr="//field[@name='order_line']//tree/field[@name='price_subtotal']"
+                expr="//field[@name='order_line']//list/field[@name='price_subtotal']"
                 position="attributes"
             >
                 <attribute
@@ -80,7 +80,7 @@
                 <attribute name="string">Opt Subtotal</attribute>
             </xpath>
             <xpath
-                expr="//field[@name='order_line']//tree/field[@name='price_subtotal']"
+                expr="//field[@name='order_line']//list/field[@name='price_subtotal']"
                 position="after"
             >
                 <field name="hide_subtotal" invisible="1" />
@@ -93,7 +93,7 @@
                 <field name="parent_id" invisible="1" />
             </xpath>
             <xpath
-                expr="//field[@name='order_line']//tree/field[@name='sequence']"
+                expr="//field[@name='order_line']//list/field[@name='sequence']"
                 position="after"
             >
                 <button
@@ -107,7 +107,7 @@
                 <attribute name="bases">{'reload_on_button': true}</attribute>
             </xpath>
             <xpath
-                expr="//field[@name='order_line']//tree/field[@name='product_template_id']"
+                expr="//field[@name='order_line']//list/field[@name='product_template_id']"
                 position="attributes"
             >
                 <attribute name="class">product</attribute>

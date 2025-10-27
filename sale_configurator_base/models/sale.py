@@ -79,7 +79,7 @@ class SaleOrder(models.Model):
             doc = etree.XML(res["arch"])
             tree = doc.xpath("//field[@name='order_line']/tree")
             editable = tree and tree[0].get("editable")
-            for field in doc.xpath("//field[@name='order_line']/tree/field"):
+            for field in doc.xpath("//field[@name='order_line']/list/field"):
                 fname = field.get("name")
                 if fname != "sequence" and editable:
                     if not self.env["sale.order.line"]._fields[fname].readonly:

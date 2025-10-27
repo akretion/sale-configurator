@@ -47,7 +47,7 @@ class IrUiView(models.Model):
             ._fields_view_get()
         )
         doc = etree.XML(res["arch"])
-        fields = doc.xpath("//field[@name='order_line']/tree/field")
+        fields = doc.xpath("//field[@name='order_line']/list/field")
         items = []
         for field in fields:
             # We remove attrs on price_subtotal as they depend on field parent_id
