@@ -34,7 +34,7 @@ class SaleOrder(models.Model):
             default["order_line"] = [
                 (0, 0, line.copy_data()[0])
                 for line in self.order_line.filtered(
-                    lambda l: not l.is_downpayment and not l.parent_id
+                    lambda line: not line.is_downpayment and not line.parent_id
                 )
             ]
         return super().copy_data(default)

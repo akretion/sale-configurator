@@ -37,7 +37,6 @@
                         class="btn-secondary"
                         special="cancel"
                     />
-
                 </footer>
             </form>
         </field>
@@ -122,5 +121,4 @@
         sequence="100"
         name="Product Configurator"
     />
-
 </odoo>
