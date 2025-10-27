@@ -52,7 +52,7 @@ class ProductConfiguratorOption(models.Model):
         " for the inventory control",
     )
     sequence = fields.Integer(
-        "Sequence", default=1, help="Gives the sequence order when displaying."
+        default=1, help="Gives the sequence order when displaying."
     )
     is_default_option = fields.Boolean(help="Add this option by default.")
     option_qty_type = fields.Selection(
@@ -60,7 +60,6 @@ class ProductConfiguratorOption(models.Model):
             ("proportional_qty", "Proportional Qty"),
             ("independent_qty", "Independent Qty"),
         ],
-        string="Option qty Type",
         default="proportional_qty",
         required=True,
     )

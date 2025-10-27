@@ -203,7 +203,7 @@ class SaleOrderCase(SavepointCase):
                 ],
             }
         )
-        sale.refresh()
+        sale.invalidate_recordset()
         lines = sale.order_line
         self.assertEqual(lines[0].sequence, 0)
         self.assertFalse(lines[0].parent_id)

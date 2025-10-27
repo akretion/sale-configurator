@@ -26,7 +26,6 @@ class SaleOrderLine(models.Model):
         "Is the product configurable Option ?", related="product_id.is_configurable_opt"
     )
     option_unit_qty = fields.Float(
-        string="Option Unit Qty",
         digits="Product Unit of Measure",
         default=1.0,
     )
@@ -62,6 +61,7 @@ class SaleOrderLine(models.Model):
                     uom=record.product_uom.id,
                 )
                 record.price_unit = record._get_display_price(product)
+        return self
 
     @api.depends("parent_option_id")
     def _compute_parent(self):
@@ -71,6 +71,7 @@ class SaleOrderLine(models.Model):
                 record.child_type = "option"
             else:
                 super(SaleOrderLine, record)._compute_parent()
+        return self
 
     def _get_child_type_sort(self):
         res = super()._get_child_type_sort()
@@ -99,6 +100,7 @@ class SaleOrderLine(models.Model):
                     )
                 elif record.option_qty_type == "independent_qty":
                     record.product_uom_qty = record.option_unit_qty
+        return self
 
     @api.onchange("product_uom_qty")
     def onchange_qty_propagate_to_child(self):
@@ -123,7 +125,7 @@ class SaleOrderLine(models.Model):
 
         # We ensure to write the option after all field on the main line a recomputed
         if any(options_list):
-            for line, vals in zip(lines, options_list):
+            for line, vals in zip(lines, options_list, strict=False):
                 if vals:
                     line.write({"option_ids": vals})
 
@@ -179,10 +181,12 @@ class SaleOrderLine(models.Model):
     @api.depends("option_ids")
     def _compute_report_line_is_empty_parent(self):
         super()._compute_report_line_is_empty_parent()
+        return self
 
     @api.depends("option_ids.price_subtotal", "option_ids.price_total")
     def _compute_config_amount(self):
         super()._compute_config_amount()
+        return self
 
     def get_children(self):
         return super().get_children() + self.option_ids

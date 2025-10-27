@@ -24,7 +24,7 @@ class AccountMoveLine(models.Model):
         )
         if view_type == "form" and not self._context.get("force_original_move_form"):
             doc = etree.XML(res["arch"])
-            for field in doc.xpath("//field[@name='invoice_line_ids']/tree/field"):
+            for field in doc.xpath("//field[@name='invoice_line_ids']/list/field"):
                 if field.get("name") != "sequence":
                     update_attrs(
                         field,

@@ -12,12 +12,11 @@ class ProductConfiguratorTemplate(models.Model):
     _description = "Product Configurator Template"
     _order = "name"
 
-    name = fields.Char("Name", index=True, required=True, translate=True)
+    name = fields.Char(index=True, required=True, translate=True)
     code = fields.Char("Internal Reference", index=True)
-    description = fields.Text("Description", translate=True)
+    description = fields.Text(translate=True)
 
     active = fields.Boolean(
-        "Active",
         default=True,
         help="If unchecked, it will allow you to hide\n"
         "the Configurator Template without removing it.",
