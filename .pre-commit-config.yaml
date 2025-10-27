@@ -4,7 +4,6 @@ exclude: |
   ^pim_sale_configurator/|
   ^pos_sale_configurator_option/|
   ^pos_sale_configurator_option_load/|
-  ^sale_configurator_option/|
   ^sale_configurator_option_area/|
   ^sale_configurator_option_bom/|
   ^sale_configurator_option_link/|
