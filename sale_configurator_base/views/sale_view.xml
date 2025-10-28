@@ -74,9 +74,7 @@
                 expr="//field[@name='order_line']//list/field[@name='price_subtotal']"
                 position="attributes"
             >
-                <attribute
-                    name="invisible"
-                >"hide_subtotal"</attribute>
+                <attribute name="invisible">"hide_subtotal"</attribute>
                 <attribute name="string">Opt Subtotal</attribute>
             </xpath>
             <xpath

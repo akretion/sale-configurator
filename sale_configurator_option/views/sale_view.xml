@@ -24,14 +24,11 @@
             </xpath>
             <xpath expr="//field[@name='name']" position="after">
                 <field name="is_configurable_opt" invisible="1" />
-                <label
-                    for="option_ids"
-                    attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
-                />
+                <label for="option_ids" invisible="not is_configurable_opt" />
                 <field
                     name="option_ids"
                     context="{'default_order_id': order_id}"
-                    attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
+                    invisible="not is_configurable_opt"
                 >
                     <list editable="bottom">
                         <!-- There is some magic here, please look at models/ir_ui_view.py
