@@ -17,10 +17,12 @@
     "depends": ["sale"],
     "data": [
         "views/sale_view.xml",
-        "views/assets.xml",
         "templates/sale_report_templates.xml",
         "templates/account_invoice_templates.xml",
     ],
+    "assets": {
+        "web.assets_backend": ["sale_configurator_base/static/src/scss/sale_order.scss"]
+    },
     "demo": [],
     "qweb": [],
 }
