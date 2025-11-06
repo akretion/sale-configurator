@@ -8,16 +8,10 @@
         <field name="model">sale.order.line</field>
         <field name="arch" type="xml">
             <form string="Sale Order Line base Configurator">
-                <sheet>
-                    <field name="order_id" invisible="1" />
-                    <field name="partner_id" invisible="1" />
-                    <field name="pricelist_id" invisible="1" />
-                    <field name="company_id" invisible="1" />
-                    <field name="state" invisible="1" />
-                    <!-- There is some magic here, please look at models/ir_ui_view.py
-                        We dynamically retrieve all field from the sale order form
-                    -->
-                </sheet>
+                <!-- There is some magic here, please look at models/ir_ui_view.py
+                    We dynamically retrieve all the fields from the
+                    sale.order.line form defined in the original sale.order form view.
+                -->
                 <footer>
                     <button
                         name="save_add_product_and_close"
@@ -41,6 +35,7 @@
             </form>
         </field>
     </record>
+
     <record model="ir.actions.act_window" id="action_sale_line_config_base">
         <field name="name">Sale Line Configure bases</field>
         <field name="res_model">sale.order.line</field>
@@ -48,12 +43,12 @@
         <field name="target">new</field>
         <field name="view_id" ref="sale_order_line_config_base_view_form" />
     </record>
+
     <record id="view_order_form" model="ir.ui.view">
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='order_line']" position="before">
-                <field name="id" invisible="1" />
                 <button
                     name="%(action_sale_line_config_base)d"
                     type="action"
@@ -63,9 +58,6 @@
                     context="{'default_order_id': id,
                       'default_name': '/', }"
                 />
-            </xpath>
-            <xpath expr="//form/field[@name='display_type']" position="before">
-                <field name="is_configurable" invisible="1" />
             </xpath>
             <xpath expr="//field[@name='order_line']//list" position="attributes">
                 <attribute name="decoration-it">parent_id</attribute>
@@ -81,14 +73,11 @@
                 expr="//field[@name='order_line']//list/field[@name='price_subtotal']"
                 position="after"
             >
-                <field name="hide_subtotal" invisible="1" />
                 <field
                     name="price_config_subtotal"
                     invisible="parent_id"
                     string="Subtotal"
                 />
-                <field name="is_configurable" invisible="1" />
-                <field name="parent_id" invisible="1" />
             </xpath>
             <xpath
                 expr="//field[@name='order_line']//list/field[@name='sequence']"

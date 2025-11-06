@@ -65,16 +65,9 @@ class SaleOrder(models.Model):
         self.sync_sequence()
 
     @api.model
-    def _fields_view_get(
-        self, view_id=None, view_type="form", toolbar=False, submenu=False
-    ):
-        """fields_view_get comes from Model (not AbstractModel)"""
-        res = super()._fields_view_get(
-            view_id=view_id,
-            view_type=view_type,
-            toolbar=toolbar,
-            submenu=submenu,
-        )
+    def get_view(self, view_id=None, view_type="form", **options):
+        res = super().get_view(view_id, view_type, **options)
+
         if view_type == "form" and not self._context.get("force_original_sale_form"):
             doc = etree.XML(res["arch"])
             tree = doc.xpath("//field[@name='order_line']/tree")

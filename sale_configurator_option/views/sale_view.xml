@@ -10,20 +10,25 @@
             ref="sale_configurator_base.sale_order_line_config_base_view_form"
         />
         <field name="arch" type="xml">
-            <xpath expr="//group/group/field[@name='product_id']" position="attributes">
-                <attribute
-                    name="context"
-                    operation="python_dict"
-                    key="add_default_option"
-                >True</attribute>
+            <xpath
+                expr="//group/group/div/field[@name='product_id']"
+                position="attributes"
+            >
+                <attribute name="context" operation="update">
+                    {
+                        "add_default_option": True,
+                    }
+                </attribute>
             </xpath>
-            <xpath expr="//group/group/field[@name='product_id']" position="attributes">
+            <xpath
+                expr="//group/group/div/field[@name='product_id']"
+                position="attributes"
+            >
                 <attribute
                     name="domain"
                 >[("is_configurable_opt", "=", True)]</attribute>
             </xpath>
             <xpath expr="//field[@name='name']" position="after">
-                <field name="is_configurable_opt" invisible="1" />
                 <label for="option_ids" invisible="not is_configurable_opt" />
                 <field
                     name="option_ids"
@@ -32,8 +37,9 @@
                 >
                     <list editable="bottom">
                         <!-- There is some magic here, please look at models/ir_ui_view.py
-                            We dynamically retrieve all field from the sale order form
-                        -->
+                    We dynamically retrieve all the fields from the
+                    sale.order.line list defined in the original sale.order form view.
+                -->
                     </list>
                 </field>
             </xpath>
@@ -71,7 +77,7 @@
                 expr="//field[@name='option_ids']/list/field[@name='product_template_id']"
                 position="attributes"
             >
-                <attribute name="invisible">1</attribute>
+                <attribute name="column_invisible">1</attribute>
             </xpath>
             <xpath
                 expr="//field[@name='option_ids']/list/field[@name='product_id']"
