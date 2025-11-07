@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 
-from odoo.tests import SavepointCase
+from odoo.tests import TransactionCase
 
 # /!\ /!\ Be carefull when running test /!\ /!\
 # As Odoo post process the installation of accounting
@@ -12,12 +12,17 @@ from odoo.tests import SavepointCase
 # if not you will have inconsistency order in EUR with pricelist in dollars
 
 
-class SaleOrderCase(SavepointCase):
+class SaleOrderCase(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         cls.sale = cls.env.ref("sale_configurator_option.sale_order_1")
-        cls.pricelist = cls.env.ref("product.list0")
+
+        cls.pricelist = cls.env["product.pricelist"].create(
+            {"name": "Pricelist", "sequence": 1}
+        )
+        cls.sale.write({"pricelist_id": cls.pricelist.id})
+
         cls.line_with_opt = cls.env.ref("sale_configurator_option.sale_order_line_1")
         cls.line_opt_1 = cls.env.ref(
             "sale_configurator_option.sale_order_line_option_1"
@@ -135,7 +140,7 @@ class SaleOrderCase(SavepointCase):
     def test_conf_product_change_option(self):
         self.env = self.env(context={"add_default_option": True})
         new_line = self.create_sale_line(self.product_with_option)
-        new_line.product_id_change()
+        new_line._onchange_product_id()
         product_ids = set(new_line.option_ids.mapped("product_id.id"))
         default_options = {self.product_option_1.id, self.product_option_2.id}
         self.assertEqual(product_ids, default_options)

@@ -146,19 +146,6 @@ class SaleOrderLine(models.Model):
         " and taxes in case a parent line (with children lines) "
         "has no price by itself",
     )
-    product_uom_qty = fields.Float(
-        compute="_compute_product_uom_qty",
-        readonly=False,
-        store=True,
-    )
-
-    # In different implementation the price unit can depend on other lines
-    # So in the base module we add an empty generic implementation
-    price_unit = fields.Float(
-        compute="_compute_price_unit",
-        readonly=False,
-        store=True,
-    )
     hide_subtotal = fields.Boolean(compute="_compute_hide_subtotal")
 
     def _compute_hide_subtotal(self):
@@ -170,17 +157,10 @@ class SaleOrderLine(models.Model):
                 and not record.child_ids
             )
 
-    def _compute_price_unit(self):
-        pass
-
     def _compute_parent(self):
         for record in self:
             record.parent_id = None
             record.child_type = None
-
-    def _compute_product_uom_qty(self):
-        # inherit me to add specific behaviours
-        pass
 
     def _get_child_type_sort(self):
         return []
@@ -273,14 +253,6 @@ class SaleOrderLine(models.Model):
             parent_id = self._get_parent_id_from_vals(vals)
             if parent_id and "order_id" not in vals:
                 vals["order_id"] = self.browse(parent_id).order_id.id
-            # TODO remove on next version
-            # On V14 the company_id is empty (as it's a related)
-            # and it will be computed after the create and this raise an security
-            # issue as the ir.rule will check the company_id
-            if "order_id" in vals and "company_id" not in vals:
-                vals["company_id"] = (
-                    self.env["sale.order"].browse(vals["order_id"]).company_id.id
-                )
         return super().create(vals_list)
 
     def write(self, vals):

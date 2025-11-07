@@ -36,6 +36,7 @@ class SaleOrderLine(models.Model):
         ],
         string="Option qty Type",
         compute="_compute_option_qty_type",
+        precompute=True,
         store=True,
         readonly=False,
     )
@@ -46,32 +47,16 @@ class SaleOrderLine(models.Model):
         compute="_compute_product_option_id",
     )
 
-    # TODO in V16 the price_unit is a computed field \o/
-    # so we should be able to drop this
-    @api.depends("product_uom_qty")
-    def _compute_price_unit(self):
-        super()._compute_price_unit()
-        for record in self:
-            if record.child_type == "option":
-                product = record.product_id.with_context(
-                    partner=record.order_id.partner_id,
-                    quantity=record.product_uom_qty,
-                    date=record.order_id.date_order,
-                    pricelist=record.order_id.pricelist_id.id,
-                    uom=record.product_uom.id,
-                )
-                record.price_unit = record._get_display_price(product)
-        return self
+    product_uom_qty = fields.Float(recursive=True)
 
     @api.depends("parent_option_id")
-    def _compute_parent(self):
+    def _compute_parent(self):  # pylint: disable=missing-return
         for record in self:
             if record.parent_option_id:
                 record.parent_id = record.parent_option_id
                 record.child_type = "option"
             else:
                 super(SaleOrderLine, record)._compute_parent()
-        return self
 
     def _get_child_type_sort(self):
         res = super()._get_child_type_sort()
@@ -90,7 +75,7 @@ class SaleOrderLine(models.Model):
         "option_qty_type",
         "parent_option_id.product_uom_qty",
     )
-    def _compute_product_uom_qty(self):
+    def _compute_product_uom_qty(self):  # pylint: disable=missing-return
         super()._compute_product_uom_qty()
         for record in self:
             if record.parent_option_id:
@@ -100,15 +85,6 @@ class SaleOrderLine(models.Model):
                     )
                 elif record.option_qty_type == "independent_qty":
                     record.product_uom_qty = record.option_unit_qty
-        return self
-
-    @api.onchange("product_uom_qty")
-    def onchange_qty_propagate_to_child(self):
-        # When adding a new configurable product the qty is not propagated
-        # correctly to child line with the onchange (it work when modifying)
-        # seem to have a bug in odoo ORM
-        for record in self:
-            record.option_ids._compute_product_uom_qty()
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -148,16 +124,27 @@ class SaleOrderLine(models.Model):
             if record.product_option_id:
                 record.option_qty_type = record.product_option_id.option_qty_type
 
+    def _get_parent_id_from_vals(self, vals):
+        if vals.get("parent_option_id"):
+            return vals["parent_option_id"]
+        else:
+            return super()._get_parent_id_from_vals(vals)
+
+    @api.depends("option_ids")
+    def _compute_report_line_is_empty_parent(self):  # pylint: disable=missing-return
+        super()._compute_report_line_is_empty_parent()
+
+    @api.depends("option_ids.price_subtotal", "option_ids.price_total")
+    def _compute_config_amount(self):  # pylint: disable=missing-return
+        super()._compute_config_amount()
+
+    def get_children(self):
+        return super().get_children() + self.option_ids
+
     @api.onchange("product_id")
-    def product_id_change(self):
-        res = super().product_id_change()
-        # Note we use here the context because we only want to add the default option
-        # in odoo backend when editing a SO
-        # Other module can call the method product_id_change and we do not want
-        # to have weird side effect
-        if self.product_id.is_configurable_opt and self._context.get(
-            "add_default_option"
-        ):
+    def _onchange_product_id(self):
+        res = super()._onchange_product_id()
+        if self.product_id.is_configurable_opt:
             self.option_ids = False
             for opt in self.product_id.configurable_option_ids:
                 if opt.is_default_option:
@@ -168,25 +155,6 @@ class SaleOrderLine(models.Model):
                             "order_id": self.order_id.id,
                         }
                     )
-                    option.product_id_change()
+                    option._onchange_product_id()
                     self.option_ids |= option
         return res
-
-    def _get_parent_id_from_vals(self, vals):
-        if vals.get("parent_option_id"):
-            return vals["parent_option_id"]
-        else:
-            return super()._get_parent_id_from_vals(vals)
-
-    @api.depends("option_ids")
-    def _compute_report_line_is_empty_parent(self):
-        super()._compute_report_line_is_empty_parent()
-        return self
-
-    @api.depends("option_ids.price_subtotal", "option_ids.price_total")
-    def _compute_config_amount(self):
-        super()._compute_config_amount()
-        return self
-
-    def get_children(self):
-        return super().get_children() + self.option_ids
