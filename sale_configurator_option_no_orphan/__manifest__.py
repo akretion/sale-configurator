@@ -10,7 +10,7 @@
     "website": "https://github.com/akretion/sale-configurator",
     "author": " Akretion",
     "license": "AGPL-3",
-    "installable": False,
+    "installable": True,
     "depends": ["sale_configurator_option"],
     "data": ["views/sale_order_view.xml"],
 }

@@ -18,7 +18,6 @@
                     ('company_id', '=', parent.company_id)
                     ]</attribute>
             </xpath>
-
         </field>
     </record>
 </odoo>
