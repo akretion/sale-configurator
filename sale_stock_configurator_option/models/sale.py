@@ -4,17 +4,7 @@
 
 
 from odoo import api, fields, models
-
-
-# TODO for now we simply round with integer qty
-# see when we will have the case to support float qty
-# but not sure we will have the case so let's see latter
-def round_up(val):
-    rounded_qty = round(val, 0)
-    if rounded_qty <= val:
-        return rounded_qty
-    else:
-        return rounded_qty + 1
+from odoo.tools.float_utils import float_round
 
 
 class SaleOrderLine(models.Model):
@@ -42,10 +32,11 @@ class SaleOrderLine(models.Model):
                 else:
                     line.qty_delivered = min(
                         line.product_uom_qty,
-                        round_up(
+                        float_round(
                             parent.qty_delivered
                             / parent.product_uom_qty
-                            * line.product_uom_qty
+                            * line.product_uom_qty,
+                            precision_rounding=line.product_uom.rounding,
                         ),
                     )
             else:
