@@ -20,18 +20,20 @@ def round_up(val):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
+    qty_delivered = fields.Float(recursive=True)
+
     qty_delivered_method = fields.Selection(
         selection_add=[("option_proportional", "Proportional Option")]
     )
 
     def _action_launch_stock_rule(self, previous_product_uom_qty=False):
-        lines = self.filtered(lambda l: l.child_type != "option")
+        lines = self.filtered(lambda line: line.child_type != "option")
         return super(SaleOrderLine, lines)._action_launch_stock_rule(
             previous_product_uom_qty=previous_product_uom_qty
         )
 
     @api.depends("parent_id.qty_delivered", "qty_delivered_method", "product_uom_qty")
-    def _compute_qty_delivered(self):
+    def _compute_qty_delivered(self):  # pylint: disable=missing-return
         for line in self:
             if line.qty_delivered_method == "option_proportional":
                 parent = line.parent_id
@@ -52,8 +54,8 @@ class SaleOrderLine(models.Model):
     def _get_compute_delivered_method(self):
         return "option_proportional"
 
-    @api.depends("parent_id")
-    def _compute_qty_delivered_method(self):
+    @api.depends("child_type")
+    def _compute_qty_delivered_method(self):  # pylint: disable=missing-return
         for line in self:
             if line.child_type == "option":
                 line.qty_delivered_method = line._get_compute_delivered_method()
