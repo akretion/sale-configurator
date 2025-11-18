@@ -157,6 +157,7 @@ class SaleOrderLine(models.Model):
     )
     hide_subtotal = fields.Boolean(compute="_compute_hide_subtotal")
 
+    @api.depends("child_ids", "price_unit", "parent_id")
     def _compute_hide_subtotal(self):
         for record in self:
             record.hide_subtotal = (

@@ -69,8 +69,8 @@
                 position="attributes"
             >
                 <attribute name="string">Opt Subtotal</attribute>
-                <attribute name="invisible">"hide_subtotal"</attribute>
-                <attribute name="column_invisible">"parent.hide_subtotal"</attribute>
+                <attribute name="invisible">hide_subtotal</attribute>
+                <attribute name="column_invisible">parent.hide_subtotal</attribute>
             </xpath>
             <xpath
                 expr="//field[@name='order_line']//list/field[@name='price_subtotal']"
