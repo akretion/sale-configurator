@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 
-from odoo.tests import TransactionCase
+from odoo.tests import Form, TransactionCase
 
 # /!\ /!\ Be carefull when running test /!\ /!\
 # As Odoo post process the installation of accounting
@@ -38,6 +38,7 @@ class SaleOrderCase(TransactionCase):
         )
         cls.product_option_1 = cls.env.ref("sale_configurator_option.product_option_1")
         cls.product_option_2 = cls.env.ref("sale_configurator_option.product_option_2")
+        cls.product_normal = cls.env["product.product"].create({"name": "Product"})
 
     @classmethod
     def _add_pricelist_item(cls, product, qty, price_unit):
@@ -102,6 +103,49 @@ class SaleOrderCase(TransactionCase):
             }
         )
         return sale_line
+
+    def test_sale_option_readonly(self):
+        form = Form(self.sale)
+
+        for i in [0, 1, 2, 3]:
+            with form.order_line.edit(i) as line_form:
+                with self.assertRaisesRegex(AssertionError, "can't write on readonly"):
+                    line_form.product_id = self.product_normal
+                with self.assertRaisesRegex(AssertionError, "can't write on readonly"):
+                    line_form.product_uom_qty = 4
+                with self.assertRaisesRegex(AssertionError, "can't write on readonly"):
+                    line_form.price_unit = 4
+
+    def test_sale_product_editable(self):
+        form = Form(self.sale)
+        with form.order_line.new() as new_line:
+            new_line.product_id = self.product_normal
+            new_line.product_uom_qty = 4
+            new_line.price_unit = 4
+
+    def test_invoice_option_readonly(self):
+        self.sale.action_confirm()
+        invoice = self.sale._create_invoices()
+        form = Form(invoice)
+
+        for i in [1, 2, 3]:
+            with form.invoice_line_ids.edit(i) as line_form:
+                with self.assertRaisesRegex(AssertionError, "can't write on readonly"):
+                    line_form.product_id = self.product_normal
+                with self.assertRaisesRegex(AssertionError, "can't write on readonly"):
+                    line_form.quantity = 4
+                with self.assertRaisesRegex(AssertionError, "can't write on readonly"):
+                    line_form.price_unit = 4
+
+    def test_invoice_product_editable(self):
+        self.sale.action_confirm()
+        invoice = self.sale._create_invoices()
+        form = Form(invoice)
+
+        with form.invoice_line_ids.new() as new_line:
+            new_line.product_id = self.product_normal
+            new_line.quantity = 4
+            new_line.price_unit = 4
 
     def test_total_amount(self):
         self.assertEqual(self.sale.amount_total, 126.50)
@@ -247,3 +291,22 @@ class SaleOrderCase(TransactionCase):
         self.assertNotEqual(main_line, main_line_copy)
         self.assertNotEqual(options[0], options_copy[0])
         self.assertNotEqual(options[1], options_copy[1])
+
+    def test_hide_subtotal(self):
+        sale = self.env["sale.order"].create(
+            {
+                "partner_id": self.env.ref("base.res_partner_1").id,
+                "order_line": [
+                    (
+                        0,
+                        0,
+                        {
+                            "product_id": self.product_normal.id,
+                            "product_uom_qty": 2,
+                        },
+                    )
+                ],
+            }
+        )
+        self.assertTrue(sale.order_line.hide_subtotal)
+        self.assertTrue(sale.hide_subtotal)

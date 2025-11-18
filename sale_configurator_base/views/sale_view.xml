@@ -48,15 +48,17 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='order_line']" position="before">
+            <xpath
+                expr="//field[@name='order_line']/list/control/create[@name='add_product_control']"
+                position="after"
+            >
                 <button
                     name="%(action_sale_line_config_base)d"
                     type="action"
-                    string="Add Configurable Product"
-                    class="btn-primary oe_edit_only oe_left"
+                    string="Add a configurable product"
                     invisible="state not in ('draft', 'sent')"
-                    context="{'default_order_id': id,
-                      'default_name': '/', }"
+                    context="{'default_order_id': parent.id, 'default_name': '/', }"
+                    class="btn-link"
                 />
             </xpath>
             <xpath expr="//field[@name='order_line']//list" position="attributes">
@@ -66,8 +68,9 @@
                 expr="//field[@name='order_line']//list/field[@name='price_subtotal']"
                 position="attributes"
             >
-                <attribute name="invisible">"hide_subtotal"</attribute>
                 <attribute name="string">Opt Subtotal</attribute>
+                <attribute name="invisible">"hide_subtotal"</attribute>
+                <attribute name="column_invisible">"parent.hide_subtotal"</attribute>
             </xpath>
             <xpath
                 expr="//field[@name='order_line']//list/field[@name='price_subtotal']"
@@ -88,7 +91,8 @@
                     type="object"
                     icon="fa-th"
                     invisible="not is_configurable"
-                    string="Open Configurable Product"
+                    string="&#8203;"
+                    column_invisible="not parent.has_configurable_product"
                 />
             </xpath>
             <xpath expr="//field[@name='order_line']" position="attributes">

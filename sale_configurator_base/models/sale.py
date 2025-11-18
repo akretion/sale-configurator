@@ -2,21 +2,11 @@
 # @author Sébastien BEAU <sebastien.beau@akretion.com>
 # @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-import ast
 
 from lxml import etree
 
 from odoo import _, api, fields, models
-from odoo.osv import expression
 from odoo.tools import float_compare
-
-
-# TODO put this in a box tool module
-def update_attrs(node, add_attrs):
-    attrs = ast.literal_eval(node.get("attrs", "{}").replace("\n", "").strip())
-    for key in add_attrs:
-        attrs[key] = expression.OR([attrs.get(key, []), add_attrs[key]])
-    node.set("attrs", str(attrs))
 
 
 class SaleOrder(models.Model):
@@ -25,6 +15,22 @@ class SaleOrder(models.Model):
     main_line_ids = fields.One2many(
         "sale.order.line", "order_id", domain=[("parent_id", "=", False)]
     )
+
+    has_configurable_product = fields.Boolean(
+        compute="_compute_has_configurable_product"
+    )
+
+    hide_subtotal = fields.Boolean(compute="_compute_hide_subtotal")
+
+    @api.depends("order_line.is_configurable")
+    def _compute_has_configurable_product(self):
+        for rec in self:
+            rec.has_configurable_product = any(rec.order_line.mapped("is_configurable"))
+
+    @api.depends("order_line.hide_subtotal")
+    def _compute_hide_subtotal(self):
+        for rec in self:
+            rec.hide_subtotal = all(rec.order_line.mapped("hide_subtotal"))
 
     def copy_data(self, default=None):
         # Option lines should not be copied directly but from parent line option_ids
@@ -70,22 +76,22 @@ class SaleOrder(models.Model):
 
         if view_type == "form" and not self._context.get("force_original_sale_form"):
             doc = etree.XML(res["arch"])
-            tree = doc.xpath("//field[@name='order_line']/tree")
-            editable = tree and tree[0].get("editable")
+            line_list = doc.xpath("//field[@name='order_line']/list")
+            editable = line_list and line_list[0].get("editable")
+
             for field in doc.xpath("//field[@name='order_line']/list/field"):
                 fname = field.get("name")
                 if fname != "sequence" and editable:
                     if not self.env["sale.order.line"]._fields[fname].readonly:
-                        update_attrs(
-                            field,
-                            {
-                                "readonly": [
-                                    "|",
-                                    ("parent_id", "!=", False),
-                                    ("is_configurable", "=", True),
-                                ]
-                            },
-                        )
+                        current = field.get("readonly", "")
+                        if current:
+                            field.set(
+                                "readonly",
+                                current + " or parent_id or is_configurable",
+                            )
+                        else:
+                            field.set("readonly", "parent_id or is_configurable")
+                # FIXME: adapt padding for new widgets sol_product_many2one and sol_text
                 if fname == "product_id":
                     field.set(
                         "class", field.get("class", "") + " configurator_option_padding"
@@ -220,11 +226,7 @@ class SaleOrderLine(models.Model):
             "res_id": self.id,
         }
 
-    @api.depends(
-        "price_subtotal",
-        "price_total",
-        "parent_id",
-    )
+    @api.depends("price_subtotal", "price_total", "parent_id")
     def _compute_config_amount(self):
         """
         Compute the config amounts of the SO line.

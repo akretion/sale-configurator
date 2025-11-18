@@ -5,31 +5,23 @@ from lxml import etree
 
 from odoo import api, models
 
-from odoo.addons.sale_configurator_base.models.sale import update_attrs
-
 
 class AccountMoveLine(models.Model):
     _inherit = "account.move"
 
     @api.model
-    def _fields_view_get(
-        self, view_id=None, view_type="form", toolbar=False, submenu=False
-    ):
+    def get_view(self, view_id=None, view_type="form", **options):
         """fields_view_get comes from Model (not AbstractModel)"""
-        res = super()._fields_view_get(
-            view_id=view_id,
-            view_type=view_type,
-            toolbar=toolbar,
-            submenu=submenu,
-        )
+        res = super().get_view(view_id, view_type, **options)
         if view_type == "form" and not self._context.get("force_original_move_form"):
             doc = etree.XML(res["arch"])
             for field in doc.xpath("//field[@name='invoice_line_ids']/list/field"):
                 if field.get("name") != "sequence":
-                    update_attrs(
-                        field,
-                        {"readonly": [("has_parent", "=", True)]},
-                    )
+                    current = field.get("readonly", "")
+                    if current:
+                        field.set("readonly", current + " or has_parent")
+                    else:
+                        field.set("readonly", "has_parent")
                 if field.get("name") == "product_id":
                     field.set(
                         "class", field.get("class", "") + " configurator_option_padding"
