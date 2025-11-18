@@ -11,6 +11,9 @@
     "author": " Akretion",
     "license": "AGPL-3",
     "installable": True,
-    "depends": ["sale_configurator_option"],
+    "depends": [
+        "base_view_inheritance_extension",
+        "sale_configurator_option",
+    ],
     "data": ["views/sale_order_view.xml"],
 }
