@@ -1,21 +1,12 @@
 # Copyright 2020 Akretion (http://www.akretion.com).
 # @author Sébastien BEAU <sebastien.beau@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-# Copyright 2020 Akretion (http://www.akretion.com).
-# @author Sébastien BEAU <sebastien.beau@akretion.com>
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 
-from odoo.tests import TransactionCase
+from odoo.addons.sale_configurator_option.tests.common import Common
 
 
-class SaleOrderCase(TransactionCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.sale = cls.env.ref("sale_configurator_option.sale_order_1")
-        cls.sale.order_line._compute_qty_delivered_method()
-
+class SaleStockConfiguratorOption(Common):
     def test_qty_delivered_method(self):
         for line in self.sale.order_line.filtered(
             lambda line: line.child_type == "option"
