@@ -14,7 +14,7 @@
         <field name="name">product.configurator.template.form</field>
         <field name="model">product.configurator.template</field>
         <field name="arch" type="xml">
-            <form string="Product">
+            <form string="Configurator Template">
                 <sheet>
                     <widget
                         name="web_ribbon"
@@ -39,13 +39,10 @@
                         <field name="code" />
                     </group>
                     <notebook>
-                        <page
-                            string="Configurable Options"
-                            name="configurable_option_ids"
-                        >
+                        <page string="Options" name="option_ids">
                             <group name="option_settings">
                                 <field
-                                    name="configurable_option_ids"
+                                    name="option_ids"
                                     nolabel="1"
                                     colspan="4"
                                     mode="list"
@@ -68,15 +65,15 @@
         <field name="name">product.configurator.template.search</field>
         <field name="model">product.configurator.template</field>
         <field name="arch" type="xml">
-            <search string="Configurator option Templates">
+            <search string="Product Configurator Templates">
                 <field
                     name="name"
                     string="Configurator Template"
                     filter_domain="['|', ('code', 'ilike', self), ('name', 'ilike', self), ]"
                 />
                 <field
-                    name="configurable_option_ids"
-                    string="Option"
+                    name="option_ids"
+                    string="Options"
                     filter_domain="[('Product.product_id', 'ilike', self)]"
                 />
                 <separator />
@@ -90,7 +87,7 @@
         </field>
     </record>
     <record id="product_configurator_template_action" model="ir.actions.act_window">
-        <field name="name">Configurator Option Templates</field>
+        <field name="name">Product Configurator Templates</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">product.configurator.template</field>
         <field name="view_mode">list,form</field>
@@ -98,14 +95,14 @@
         <field name="search_view_id" ref="product_configurator_template_search_view" />
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Create a new product configurator template
+                Create a new Product Configurator Template
         </p>
         </field>
     </record>
     <menuitem
         action="product_configurator_template_action"
         id="menu_configurator_template"
-        name="Product configurator Templates"
+        name="Product Configurator Templates"
         parent="sale_configurator_base.menu_product_configurator"
         sequence="10"
     />

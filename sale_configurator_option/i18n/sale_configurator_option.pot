@@ -84,9 +84,9 @@ msgid "Child Type"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__configurable_option_ids
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__configurable_option_ids
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__configurable_option_ids
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__option_ids
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__option_ids
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__option_ids
 msgid "Configurable Option Lines"
 msgstr ""
 
@@ -97,7 +97,7 @@ msgstr ""
 
 #. module: sale_configurator_option
 #: model:ir.actions.act_window,name:sale_configurator_option.product_configurator_template_action
-msgid "Configurator Option Templates"
+msgid "Product Configurator Templates"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -461,7 +461,7 @@ msgid "Product Template"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__product_tmpl_ids
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__configurable_product_tmpl_ids
 msgid "Product Tmpl"
 msgstr ""
 
@@ -528,8 +528,8 @@ msgid "Show all records which has next action date is before today"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__local_configurable_option_ids
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__local_configurable_option_ids
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__specific_option_ids
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__specific_option_ids
 msgid "Specific Configurable Option Lines"
 msgstr ""
 
@@ -603,12 +603,12 @@ msgid "Used On Product"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__used_on_product_tmpl_ids
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__used_in_configurable_product_tmpl_ids
 msgid "Used On Product Tmpl"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__used_on_product_tmpl_ids
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__used_in_configurable_product_tmpl_ids
 msgid "Used on product template"
 msgstr ""
 

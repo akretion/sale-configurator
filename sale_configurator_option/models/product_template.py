@@ -27,25 +27,26 @@ class ProductTemplate(models.Model):
     configurator_id = fields.Many2one(
         "product.configurator.template",
         "Product Configurator Template",
-        help="Template used to assign many Options at once to the current "
+        help="Configurator template used to assign many Options at once to the current "
         "Configurable Product.",
     )
-    # The Options of a Configurable Product (configurable_option_ids) can be defined
+    # The Options of a Configurable Product (option_ids) can be defined
     # either by itss related Configurator Template's Options, or by its own
     # specific Options defined on the record.
-    local_configurable_option_ids = fields.One2many(
+    specific_option_ids = fields.One2many(
         "product.configurator.option",
         "configurable_product_tmpl_id",
         "Specific Options",
         copy=True,
         help="Options specific to the current Configurable Product",
     )
-    configurable_option_ids = fields.One2many(
+    option_ids = fields.One2many(
         "product.configurator.option",
         string="Options",
-        compute="_compute_configurable_option_ids",
+        compute="_compute_option_ids",
         copy=True,
-        help="Options for the current Configurable Product",
+        help="Options of the current Configurable Product\n"
+        "(coming from the Configurator or specific to the Product)",
     )
     count_used_on_option_line = fields.Integer(
         "Count Use On Option Line", compute="_compute_count_used_on_option_line"
@@ -63,13 +64,9 @@ class ProductTemplate(models.Model):
             )
 
     @api.depends("configurator_id")
-    def _compute_configurable_option_ids(self):
+    def _compute_option_ids(self):
         for template in self:
             if template.configurator_id:
-                template.configurable_option_ids = (
-                    template.configurator_id.configurable_option_ids
-                )
+                template.option_ids = template.configurator_id.option_ids
             else:
-                template.configurable_option_ids = (
-                    template.local_configurable_option_ids
-                )
+                template.option_ids = template.specific_option_ids

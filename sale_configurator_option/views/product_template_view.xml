@@ -39,28 +39,20 @@
                             <field name="is_not_sold_alone" invisible="not is_option" />
                         </group>
                         <group
-                            name="local_options"
-                            string="Local Options"
+                            name="specific_options"
+                            string="Specific Options"
                             invisible="not is_configurable_opt or configurator_id"
                             colspan="4"
                         >
-                            <field
-                                name="local_configurable_option_ids"
-                                nolabel="1"
-                                mode="list"
-                            />
+                            <field name="specific_option_ids" nolabel="1" mode="list" />
                         </group>
                         <group
-                            name="template_options"
-                            string="Template Options"
+                            name="configurator_options"
+                            string="Options"
                             invisible="not is_configurable_opt or not configurator_id"
                             colspan="4"
                         >
-                            <field
-                                name="configurable_option_ids"
-                                nolabel="1"
-                                mode="list"
-                            />
+                            <field name="option_ids" nolabel="1" mode="list" />
                         </group>
                     </group>
                 </page>

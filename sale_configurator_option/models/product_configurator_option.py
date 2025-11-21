@@ -57,9 +57,9 @@ class ProductConfiguratorOption(models.Model):
         default="proportional_qty",
         required=True,
     )
-    used_on_product_tmpl_ids = fields.Many2many(
+    used_in_configurable_product_tmpl_ids = fields.Many2many(
         comodel_name="product.template",
-        string="Used on product template",
+        string="Configurable Products using this Option",
         compute="_compute_used_on_product_template",
     )
     active = fields.Boolean(compute="_compute_active", store=True)
@@ -78,9 +78,9 @@ class ProductConfiguratorOption(models.Model):
 
     def _compute_used_on_product_template(self):
         for record in self:
-            record.used_on_product_tmpl_ids = (
+            record.used_in_configurable_product_tmpl_ids = (
                 record.configurable_product_tmpl_id
-                + record.configurator_id.product_tmpl_ids
+                + record.configurator_id.configurable_product_tmpl_ids
             )
 
     _sql_constraints = {

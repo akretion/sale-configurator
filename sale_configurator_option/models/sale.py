@@ -71,7 +71,7 @@ class SaleOrderLine(models.Model):
 
     def _get_product_option(self):
         self.ensure_one()
-        return self.parent_option_id.product_id.configurable_option_ids.filtered(
+        return self.parent_option_id.product_id.option_ids.filtered(
             lambda o: o.option_product_id == self.product_id
         )
 
@@ -128,7 +128,7 @@ class SaleOrderLine(models.Model):
         res = super()._onchange_product_id()
         if self.product_id.is_configurable_opt:
             self.option_ids = False
-            for opt in self.product_id.configurable_option_ids:
+            for opt in self.product_id.option_ids:
                 if opt.is_default_option:
                     option = self.new(
                         {

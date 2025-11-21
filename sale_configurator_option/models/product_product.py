@@ -14,7 +14,7 @@ class ProductProduct(models.Model):
         compute="_compute_used_on_product_ids",
         search="_search_used_on_product_ids",
     )
-    used_on_product_tmpl_ids = fields.Many2many(
+    used_in_configurable_product_tmpl_ids = fields.Many2many(
         comodel_name="product.template",
         compute="_compute_used_on_product_ids",
     )
@@ -28,11 +28,11 @@ class ProductProduct(models.Model):
     @api.depends("used_on_option_line_ids")
     def _compute_used_on_product_ids(self):
         for record in self:
-            record.used_on_product_tmpl_ids = (
-                record.used_on_option_line_ids.used_on_product_tmpl_ids
+            record.used_in_configurable_product_tmpl_ids = (
+                record.used_on_option_line_ids.used_in_configurable_product_tmpl_ids
             )
             record.used_on_product_ids = (
-                record.used_on_product_tmpl_ids.product_variant_ids
+                record.used_in_configurable_product_tmpl_ids.product_variant_ids
             )
 
     def _search_used_on_product_ids(self, operator, value):
@@ -44,6 +44,6 @@ class ProductProduct(models.Model):
                 (
                     "id",
                     "in",
-                    product.mapped("configurable_option_ids.option_product_id").ids,
+                    product.mapped("option_ids.option_product_id").ids,
                 )
             ]

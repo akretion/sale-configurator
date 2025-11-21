@@ -21,15 +21,17 @@ class ProductConfiguratorTemplate(models.Model):
         help="If unchecked, it will allow you to hide\n"
         "the Configurator Template without removing it.",
     )
-    configurable_option_ids = fields.One2many(
+    option_ids = fields.One2many(
         "product.configurator.option",
         "configurator_id",
-        "Configurable Option Lines",
+        "Options",
         copy=True,
+        help="If this Configurator is selected for a Configurable Product, "
+        "all these Options will be linked to the product",
     )
-    product_tmpl_ids = fields.One2many(
+    configurable_product_tmpl_ids = fields.One2many(
         "product.template",
         "configurator_id",
-        "Product Templates",
-        help="All the configurable Product Templates following this Configurator",
+        "Configurable Products",
+        help="All the Configurable Products using this Configurator",
     )
