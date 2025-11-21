@@ -48,8 +48,9 @@ class ProductTemplate(models.Model):
         help="Options of the current Configurable Product\n"
         "(coming from the Configurator or specific to the Product)",
     )
-    count_used_on_option_line = fields.Integer(
-        "Count Use On Option Line", compute="_compute_count_used_on_option_line"
+    count_used_as_option = fields.Integer(
+        compute="_compute_count_used_as_option",
+        help="Number of configurator Options made with this product",
     )
 
     @api.depends("is_option")
@@ -57,16 +58,14 @@ class ProductTemplate(models.Model):
         for rec in self:
             rec.is_not_sold_alone = rec.is_option
 
-    def _compute_count_used_on_option_line(self):
-        for record in self:
-            record.count_used_on_option_line = len(
-                record.product_variant_ids.used_on_option_line_ids
-            )
+    def _compute_count_used_as_option(self):
+        for rec in self:
+            rec.count_used_as_option = len(rec.product_variant_ids.used_as_option_ids)
 
     @api.depends("configurator_id")
     def _compute_option_ids(self):
-        for template in self:
-            if template.configurator_id:
-                template.option_ids = template.configurator_id.option_ids
+        for rec in self:
+            if rec.configurator_id:
+                rec.option_ids = rec.configurator_id.option_ids
             else:
-                template.option_ids = template.specific_option_ids
+                rec.option_ids = rec.specific_option_ids

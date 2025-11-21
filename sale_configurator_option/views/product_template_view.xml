@@ -11,17 +11,17 @@
                     context="{'search_default_option_product_tmpl_id': id}"
                     class="oe_stat_button"
                     icon="fa-level-up"
-                    invisible="count_used_on_option_line == 0"
+                    invisible="count_used_as_option == 0"
                 >
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_value">
                             <field
-                                name="count_used_on_option_line"
+                                name="count_used_as_option"
                                 widget="statinfo"
                                 nolabel="1"
                             />
                         </span>
-                        <span class="o_stat_text">Used In Configurable</span>
+                        <span class="o_stat_text">Used as Option</span>
                     </div>
                 </button>
             </div>

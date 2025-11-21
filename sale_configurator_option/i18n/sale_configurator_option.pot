@@ -121,8 +121,8 @@ msgid "Configurator option Templates"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__count_used_on_option_line
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__count_used_on_option_line
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__count_used_as_option
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__count_used_as_option
 msgid "Count Use On Option Line"
 msgstr ""
 
@@ -593,12 +593,12 @@ msgid "Unread Messages Counter"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__used_on_option_line_ids
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__used_as_option_ids
 msgid "Use On Option Line"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__used_on_product_ids
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__used_in_configurable_product_ids
 msgid "Used On Product"
 msgstr ""
 

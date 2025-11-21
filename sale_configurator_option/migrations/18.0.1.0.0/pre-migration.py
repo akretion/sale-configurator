@@ -77,12 +77,30 @@ def migrate(env, version):
                 "configurable_option_ids",
                 "option_ids",
             ),
+            (
+                "product.template",
+                "product_template",
+                "count_used_on_option_line",
+                "count_used_in_options",
+            ),
             # ProductProduct
             (
                 "product.product",
                 "product_product",
                 "used_on_product_tmpl_ids",
                 "used_in_configurable_product_tmpl_ids",
+            ),
+            (
+                "product.product",
+                "product_product",
+                "used_on_product_ids",
+                "used_in_configurable_product_ids",
+            ),
+            (
+                "product.product",
+                "product_product",
+                "used_on_option_line_ids",
+                "used_as_option_ids",
             ),
         ],
     )

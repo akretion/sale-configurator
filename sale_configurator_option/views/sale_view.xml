@@ -70,9 +70,8 @@
             >
                 <attribute
                     name="domain"
-                >[('is_option', '=', True),('used_on_product_ids', '=', parent.product_id)]</attribute>
+                >[('is_option', '=', True),('used_in_configurable_product_ids', '=', parent.product_id)]</attribute>
             </xpath>
-            <!-- In case that you have the configurator activated -->
             <xpath
                 expr="//field[@name='option_ids']/list/field[@name='product_template_id']"
                 position="attributes"
