@@ -15,7 +15,6 @@ from .common import Common
 
 
 class SaleConfiguratorOption(Common):
-    @classmethod
     def _add_pricelist_item(cls, product, qty, price_unit):
         cls.env["product.pricelist.item"].create(
             {
@@ -28,7 +27,6 @@ class SaleConfiguratorOption(Common):
             }
         )
 
-    @classmethod
     def _create_sale_order(cls):
         return cls.env["sale.order"].create(
             {
@@ -66,7 +64,7 @@ class SaleConfiguratorOption(Common):
             }
         )
 
-    def create_sale_line(self, product):
+    def _create_sale_line(self, product):
         sale_line = self.env["sale.order.line"].create(
             {
                 "name": product.name,
@@ -158,7 +156,7 @@ class SaleConfiguratorOption(Common):
 
     def test_conf_product_change_option(self):
         self.env = self.env(context={"add_default_option": True})
-        new_line = self.create_sale_line(self.product_with_opt)
+        new_line = self._create_sale_line(self.product_with_opt)
         new_line._onchange_product_id()
         product_ids = set(new_line.option_ids.mapped("product_id.id"))
         default_options = {self.product_opt_1.id, self.product_opt_2.id}

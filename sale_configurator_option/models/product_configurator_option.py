@@ -23,8 +23,7 @@ class ProductConfiguratorOption(models.Model):
         index=True,
         ondelete="cascade",
     )
-    # TODO we should add a prefix => configurable_product_tmpl_id
-    product_tmpl_id = fields.Many2one(
+    configurable_product_tmpl_id = fields.Many2one(
         "product.template",
         "Parent Product Template",
         auto_join=True,
@@ -71,18 +70,22 @@ class ProductConfiguratorOption(models.Model):
     active = fields.Boolean(compute="_compute_active", store=True)
 
     @api.depends(
-        "product_id.active", "product_tmpl_id.active", "product_conf_tmpl_id.active"
+        "product_id.active",
+        "configurable_product_tmpl_id.active",
+        "product_conf_tmpl_id.active",
     )
     def _compute_active(self):
         for record in self:
             record.active = record.product_id.active and (
-                record.product_tmpl_id.active or record.product_conf_tmpl_id.active
+                record.configurable_product_tmpl_id.active
+                or record.product_conf_tmpl_id.active
             )
 
     def _compute_used_on_product_template(self):
         for record in self:
             record.used_on_product_tmpl_ids = (
-                record.product_tmpl_id + record.product_conf_tmpl_id.product_tmpl_ids
+                record.configurable_product_tmpl_id
+                + record.product_conf_tmpl_id.product_tmpl_ids
             )
 
     @api.onchange("product_id")
@@ -108,8 +111,8 @@ class ProductConfiguratorOption(models.Model):
 
     _sql_constraints = {
         (
-            "product_tmpl_id_product_id_unique",
-            "UNIQUE(product_tmpl_id,product_id)",
+            "configurable_product_tmpl_id_product_id_unique",
+            "UNIQUE(configurable_product_tmpl_id,product_id)",
             "Option must be unique by configurable product",
         )
     }

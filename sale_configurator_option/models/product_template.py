@@ -17,7 +17,7 @@ class ProductTemplate(models.Model):
         "Is an Option Product ?",
         help="Check this, if the product is an option used in configurable product",
     )
-    sale_alone_forbidden = fields.Boolean(
+    is_not_sold_alone = fields.Boolean(
         "Is only an option",
         help="This product can't be sold without a configuration",
         default=False,
@@ -28,7 +28,7 @@ class ProductTemplate(models.Model):
     )
     local_configurable_option_ids = fields.One2many(
         "product.configurator.option",
-        "product_tmpl_id",
+        "configurable_product_tmpl_id",
         "Specific Configurable Option Lines",
         copy=True,
     )

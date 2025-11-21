@@ -12,7 +12,7 @@
     "author": " Akretion",
     "license": "AGPL-3",
     "installable": True,
-    "external_dependencies": {"python": [], "bin": []},
+    "external_dependencies": {"python": ["openupgradelib"]},
     "depends": [
         "base_view_inheritance_extension",
         "sale_configurator_base",

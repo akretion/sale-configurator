@@ -36,7 +36,7 @@
                                 colspan="2"
                             />
                             <field
-                                name="sale_alone_forbidden"
+                                name="is_not_sold_alone"
                                 invisible="is_configurable_opt"
                             />
                         </group>

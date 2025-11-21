@@ -139,6 +139,7 @@ class SaleOrderLine(models.Model):
         store=True,
     )
     pricelist_id = fields.Many2one(related="order_id.pricelist_id", string="Pricelist")
+
     # There is already an order_partner_id in the sale line class
     # but we want to make the view as much compatible between child view
     # wo want a native view do parent.partner_id we want to have the same behaviour
