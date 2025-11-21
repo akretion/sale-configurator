@@ -17,7 +17,7 @@
         <field name="model">product.configurator.option</field>
         <field name="arch" type="xml">
             <list editable="bottom" decoration-muted="not active">
-                <field name="product_conf_tmpl_id" />
+                <field name="configurator_id" />
                 <field name="configurable_product_tmpl_id" />
                 <field name="option_product_id" />
                 <field name="option_qty_type" />
@@ -31,7 +31,7 @@
         <field name="model">product.configurator.option</field>
         <field name="arch" type="xml">
             <search string="Option">
-                <field name="product_conf_tmpl_id" />
+                <field name="configurator_id" />
                 <field
                     name="configurable_product_tmpl_id"
                     domain="[('is_configurable_opt', '=', True)]"

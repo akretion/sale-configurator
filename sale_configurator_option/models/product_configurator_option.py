@@ -13,7 +13,7 @@ class ProductConfiguratorOption(models.Model):
     _description = "Product Configurator Option"
 
     # An Option's parent can be either a configurator.template or a product.template
-    product_conf_tmpl_id = fields.Many2one(
+    configurator_id = fields.Many2one(
         "product.configurator.template",
         "Parent Configurator Template",
         auto_join=True,
@@ -67,20 +67,20 @@ class ProductConfiguratorOption(models.Model):
     @api.depends(
         "option_product_id.active",
         "configurable_product_tmpl_id.active",
-        "product_conf_tmpl_id.active",
+        "configurator_id.active",
     )
     def _compute_active(self):
         for record in self:
             record.active = record.option_product_id.active and (
                 record.configurable_product_tmpl_id.active
-                or record.product_conf_tmpl_id.active
+                or record.configurator_id.active
             )
 
     def _compute_used_on_product_template(self):
         for record in self:
             record.used_on_product_tmpl_ids = (
                 record.configurable_product_tmpl_id
-                + record.product_conf_tmpl_id.product_tmpl_ids
+                + record.configurator_id.product_tmpl_ids
             )
 
     _sql_constraints = {

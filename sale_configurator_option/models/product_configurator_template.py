@@ -23,13 +23,13 @@ class ProductConfiguratorTemplate(models.Model):
     )
     configurable_option_ids = fields.One2many(
         "product.configurator.option",
-        "product_conf_tmpl_id",
+        "configurator_id",
         "Configurable Option Lines",
         copy=True,
     )
     product_tmpl_ids = fields.One2many(
         "product.template",
-        "product_conf_tmpl_id",
+        "configurator_id",
         "Product Templates",
         help="All the configurable Product Templates following this Configurator",
     )

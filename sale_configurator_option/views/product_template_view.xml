@@ -32,7 +32,7 @@
                             <field name="is_configurable_opt" invisible="is_option" />
                             <field name="is_option" invisible="is_configurable_opt" />
                             <field
-                                name="product_conf_tmpl_id"
+                                name="configurator_id"
                                 invisible="not is_configurable_opt"
                                 colspan="2"
                             />
@@ -41,7 +41,7 @@
                         <group
                             name="local_options"
                             string="Local Options"
-                            invisible="not is_configurable_opt or product_conf_tmpl_id"
+                            invisible="not is_configurable_opt or configurator_id"
                             colspan="4"
                         >
                             <field
@@ -53,7 +53,7 @@
                         <group
                             name="template_options"
                             string="Template Options"
-                            invisible="not is_configurable_opt or not product_conf_tmpl_id"
+                            invisible="not is_configurable_opt or not configurator_id"
                             colspan="4"
                         >
                             <field

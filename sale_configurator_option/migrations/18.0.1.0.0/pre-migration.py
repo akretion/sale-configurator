@@ -27,6 +27,12 @@ def migrate(env, version):
                 "option_product_id",
             ),
             (
+                "product.configurator.option",
+                "product_configurator_option",
+                "product_conf_tmpl_id",
+                "configurator_id",
+            ),
+            (
                 "product.template",
                 "product_template",
                 "sale_alone_forbidden",

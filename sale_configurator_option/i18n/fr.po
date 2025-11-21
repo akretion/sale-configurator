@@ -424,7 +424,7 @@ msgid "Options"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__product_conf_tmpl_id
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__configurator_id
 msgid "Parent Configurable Template"
 msgstr "Modèle parent configurable"
 
@@ -498,8 +498,8 @@ msgid "Qty type"
 msgstr "Type de qté"
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__product_conf_tmpl_id
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__product_conf_tmpl_id
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__configurator_id
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__configurator_id
 msgid "Related Configurable Template"
 msgstr "Modèle de configurateur"
 
