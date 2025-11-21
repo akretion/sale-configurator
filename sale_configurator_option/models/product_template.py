@@ -18,9 +18,11 @@ class ProductTemplate(models.Model):
         help="Check this, if the product is an option used in configurable product",
     )
     is_not_sold_alone = fields.Boolean(
-        "Is only an option",
-        help="This product can't be sold without a configuration",
+        help="This Option can only be sold as part of a Configurable Product",
         default=False,
+        compute="_compute_is_not_sold_alone",
+        readonly=False,
+        store=True,
     )
     product_conf_tmpl_id = fields.Many2one(
         "product.configurator.template",
@@ -41,6 +43,11 @@ class ProductTemplate(models.Model):
     count_used_on_option_line = fields.Integer(
         "Count Use On Option Line", compute="_compute_count_used_on_option_line"
     )
+
+    @api.depends("is_option")
+    def _compute_is_not_sold_alone(self):
+        for rec in self:
+            rec.is_not_sold_alone = rec.is_option
 
     def _compute_count_used_on_option_line(self):
         for record in self:

@@ -36,10 +36,7 @@
                                 invisible="not is_configurable_opt"
                                 colspan="2"
                             />
-                            <field
-                                name="is_not_sold_alone"
-                                invisible="is_configurable_opt"
-                            />
+                            <field name="is_not_sold_alone" invisible="not is_option" />
                         </group>
                         <group
                             name="local_options"
