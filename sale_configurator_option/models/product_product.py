@@ -22,6 +22,7 @@ class ProductProduct(models.Model):
         "product.configurator.option",
         "product_id",
         "Use On Option Line",
+        help="All the Options using this Product",
     )
 
     @api.depends("used_on_option_line_ids")

@@ -28,5 +28,8 @@ class ProductConfiguratorTemplate(models.Model):
         copy=True,
     )
     product_tmpl_ids = fields.One2many(
-        "product.template", "product_conf_tmpl_id", "Product Tmpl"
+        "product.template",
+        "product_conf_tmpl_id",
+        "Product Templates",
+        help="All the configurable Product Templates following this Configurator",
     )

@@ -5,9 +5,8 @@
         <field name="model">product.configurator.template</field>
         <field name="arch" type="xml">
             <list>
-                <field name="code" />
+                <field name="code" class="col-2" />
                 <field name="name" />
-                <field name="active" invisible="1" />
             </list>
         </field>
     </record>
@@ -17,8 +16,6 @@
         <field name="arch" type="xml">
             <form string="Product">
                 <sheet>
-                    <field name="id" invisible="True" />
-                    <field name="active" invisible="1" />
                     <widget
                         name="web_ribbon"
                         title="Archived"
@@ -89,23 +86,6 @@
                     domain="[('active','=',False)]"
                 />
                 <separator />
-                <filter
-                    string="Late Activities"
-                    name="activities_overdue"
-                    domain="[('activity_ids.date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"
-                    help="Show all records which has next action date is before today"
-                />
-                <filter
-                    string="Today Activities"
-                    name="activities_today"
-                    domain="[('activity_ids.date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"
-                />
-                <filter
-                    string="Future Activities"
-                    name="activities_upcoming_all"
-                    domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))
-                    ]"
-                />
             </search>
         </field>
     </record>
@@ -118,7 +98,7 @@
         <field name="search_view_id" ref="product_configurator_template_search_view" />
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Create a new product configurator cemplate
+                Create a new product configurator template
         </p>
         </field>
     </record>
