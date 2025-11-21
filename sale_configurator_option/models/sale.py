@@ -72,7 +72,7 @@ class SaleOrderLine(models.Model):
     def _get_product_option(self):
         self.ensure_one()
         return self.parent_option_id.product_id.configurable_option_ids.filtered(
-            lambda o: o.product_id == self.product_id
+            lambda o: o.option_product_id == self.product_id
         )
 
     @api.depends("product_id")
@@ -132,7 +132,7 @@ class SaleOrderLine(models.Model):
                 if opt.is_default_option:
                     option = self.new(
                         {
-                            "product_id": opt.product_id.id,
+                            "product_id": opt.option_product_id.id,
                             "parent_option_id": self.id,
                             "order_id": self.order_id.id,
                         }

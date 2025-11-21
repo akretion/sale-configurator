@@ -20,7 +20,7 @@ class ProductProduct(models.Model):
     )
     used_on_option_line_ids = fields.One2many(
         "product.configurator.option",
-        "product_id",
+        "option_product_id",
         "Use On Option Line",
         help="All the Options using this Product",
     )
@@ -41,5 +41,9 @@ class ProductProduct(models.Model):
         else:
             product = self.env["product.product"].browse(value)
             return [
-                ("id", "in", product.mapped("configurable_option_ids.product_id").ids)
+                (
+                    "id",
+                    "in",
+                    product.mapped("configurable_option_ids.option_product_id").ids,
+                )
             ]

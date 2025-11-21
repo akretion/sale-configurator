@@ -41,7 +41,7 @@ class Common(TransactionCase):
         cls.config_opt_1 = ConfigOption.create(
             {
                 "configurable_product_tmpl_id": cls.product_with_opt_tmpl.id,
-                "product_id": cls.product_opt_1.id,
+                "option_product_id": cls.product_opt_1.id,
                 "is_default_option": True,
                 "option_qty_type": "proportional_qty",
                 "sequence": 1,
@@ -50,7 +50,7 @@ class Common(TransactionCase):
         cls.config_opt_2 = ConfigOption.create(
             {
                 "configurable_product_tmpl_id": cls.product_with_opt_tmpl.id,
-                "product_id": cls.product_opt_2.id,
+                "option_product_id": cls.product_opt_2.id,
                 "is_default_option": True,
                 "option_qty_type": "independent_qty",
                 "sequence": 2,
@@ -59,7 +59,7 @@ class Common(TransactionCase):
         cls.config_opt_3 = ConfigOption.create(
             {
                 "configurable_product_tmpl_id": cls.product_with_opt_tmpl.id,
-                "product_id": cls.product_opt_3.id,
+                "option_product_id": cls.product_opt_3.id,
                 "option_qty_type": "proportional_qty",
                 "sequence": 3,
             }

@@ -9,38 +9,38 @@ from odoo import api, fields, models
 class ProductConfiguratorOption(models.Model):
     _name = "product.configurator.option"
     _order = "sequence, id"
-    _rec_name = "product_id"
+    _rec_name = "option_product_id"
     _description = "Product Configurator Option"
 
+    # An Option's parent can be either a configurator.template or a product.template
     product_conf_tmpl_id = fields.Many2one(
         "product.configurator.template",
-        "Parent Configurable Template",
+        "Parent Configurator Template",
         auto_join=True,
         index=True,
         ondelete="cascade",
     )
     configurable_product_tmpl_id = fields.Many2one(
         "product.template",
-        "Parent Product Template",
+        "Parent Configurable Product Template",
         auto_join=True,
         index=True,
         ondelete="cascade",
     )
-    # TODO we should add a prefix => option_product_id
-    product_id = fields.Many2one(
+    option_product_id = fields.Many2one(
         "product.product",
-        "Option Product Variant",
+        "Product",
         required=True,
         domain=[("is_option", "=", True)],
     )
     option_product_tmpl_id = fields.Many2one(
-        related="product_id.product_tmpl_id",
-        string="Option Product Template",
+        related="option_product_id.product_tmpl_id",
+        string="Product Template",
         store=True,
     )
     product_uom_id = fields.Many2one(
         "uom.uom",
-        related="product_id.uom_id",
+        related="option_product_id.uom_id",
         help="Informative Unit of Measure, just to be displayed in Options views. "
         "Not used technically",
     )
@@ -65,13 +65,13 @@ class ProductConfiguratorOption(models.Model):
     active = fields.Boolean(compute="_compute_active", store=True)
 
     @api.depends(
-        "product_id.active",
+        "option_product_id.active",
         "configurable_product_tmpl_id.active",
         "product_conf_tmpl_id.active",
     )
     def _compute_active(self):
         for record in self:
-            record.active = record.product_id.active and (
+            record.active = record.option_product_id.active and (
                 record.configurable_product_tmpl_id.active
                 or record.product_conf_tmpl_id.active
             )
@@ -83,15 +83,10 @@ class ProductConfiguratorOption(models.Model):
                 + record.product_conf_tmpl_id.product_tmpl_ids
             )
 
-    @api.onchange("product_id")
-    def onchange_product_id(self):
-        if self.product_id:
-            self.product_uom_id = self.product_id.uom_id.id
-
     _sql_constraints = {
         (
-            "configurable_product_tmpl_id_product_id_unique",
-            "UNIQUE(configurable_product_tmpl_id,product_id)",
+            "configurable_product_tmpl_id_option_product_id_unique",
+            "UNIQUE(configurable_product_tmpl_id,option_product_id)",
             "Option must be unique by configurable product",
         )
     }
