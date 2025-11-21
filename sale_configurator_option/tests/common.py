@@ -87,7 +87,7 @@ class Common(TransactionCase):
                 "order_id": cls.sale.id,
                 "parent_option_id": cls.line_product_with_opt.id,
                 "product_id": cls.product_opt_1.id,
-                "option_unit_qty": 2,
+                "option_qty": 2,
                 "option_qty_type": "proportional_qty",
             }
         )
@@ -97,7 +97,7 @@ class Common(TransactionCase):
                 "order_id": cls.sale.id,
                 "parent_option_id": cls.line_product_with_opt.id,
                 "product_id": cls.product_opt_2.id,
-                "option_unit_qty": 3,
+                "option_qty": 3,
                 "option_qty_type": "proportional_qty",
             }
         )
@@ -107,7 +107,7 @@ class Common(TransactionCase):
                 "order_id": cls.sale.id,
                 "parent_option_id": cls.line_product_with_opt.id,
                 "product_id": cls.product_opt_3.id,
-                "option_unit_qty": 1,
+                "option_qty": 1,
                 "option_qty_type": "proportional_qty",
             }
         )

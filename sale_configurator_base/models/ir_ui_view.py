@@ -40,7 +40,7 @@ class IrUiView(models.Model):
                         return True
         return False
 
-    def _get_sale_line_tree_item(self):
+    def _get_sale_line_list_item(self):
         res = (
             self.env["sale.order"]
             .with_context(force_original_sale_form=True)
@@ -76,7 +76,7 @@ class IrUiView(models.Model):
         """Return a list of 3-tuple giving information on which inheriting view
         has to be completed and how to complete it:
         1) the XMLID of the view to be completed
-        2) the view type ("form" or "tree") of the sale.order.line's view to be added
+        2) the view type ("form" or "list") of the sale.order.line's view to be added
         3) the xpath locating where the sale.order.line's view as to be added"""
 
         # To be overriden in other modules.

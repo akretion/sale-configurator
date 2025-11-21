@@ -29,9 +29,9 @@
                 >[("is_configurable_opt", "=", True)]</attribute>
             </xpath>
             <xpath expr="//field[@name='name']" position="after">
-                <label for="option_ids" invisible="not is_configurable_opt" />
+                <label for="child_option_ids" invisible="not is_configurable_opt" />
                 <field
-                    name="option_ids"
+                    name="child_option_ids"
                     context="{'default_order_id': order_id}"
                     invisible="not is_configurable_opt"
                 >
@@ -51,21 +51,21 @@
         <field name="inherit_id" ref="sale_order_line_config_option_view_form_base" />
         <field name="arch" type="xml">
             <xpath
-                expr="//field[@name='option_ids']/list/field[@name='product_uom_qty']"
+                expr="//field[@name='child_option_ids']/list/field[@name='product_uom_qty']"
                 position="before"
             >
-                <field name="option_unit_qty" string="Qty" />
+                <field name="option_qty" string="Qty" />
                 <field name="option_qty_type" string="Qty type" optional="hide" />
             </xpath>
             <xpath
-                expr="//field[@name='option_ids']/list/field[@name='product_uom_qty']"
+                expr="//field[@name='child_option_ids']/list/field[@name='product_uom_qty']"
                 position="attributes"
             >
                 <attribute name="readonly">1</attribute>
                 <attribute name="string">Total Qty</attribute>
             </xpath>
             <xpath
-                expr="//field[@name='option_ids']/list/field[@name='product_id']"
+                expr="//field[@name='child_option_ids']/list/field[@name='product_id']"
                 position="attributes"
             >
                 <attribute
@@ -73,13 +73,13 @@
                 >[('is_option', '=', True),('used_in_configurable_product_ids', '=', parent.product_id)]</attribute>
             </xpath>
             <xpath
-                expr="//field[@name='option_ids']/list/field[@name='product_template_id']"
+                expr="//field[@name='child_option_ids']/list/field[@name='product_template_id']"
                 position="attributes"
             >
                 <attribute name="column_invisible">1</attribute>
             </xpath>
             <xpath
-                expr="//field[@name='option_ids']/list/field[@name='product_id']"
+                expr="//field[@name='child_option_ids']/list/field[@name='product_id']"
                 position="attributes"
             >
                 <attribute name="optional" />

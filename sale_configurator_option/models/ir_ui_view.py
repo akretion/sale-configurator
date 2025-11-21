@@ -13,8 +13,8 @@ class IrUiView(models.Model):
         res.append(
             (
                 "sale_configurator_option.sale_order_line_config_option_view_form_base",
-                "tree",
-                "//field[@name='option_ids']/list",
+                "list",
+                "//field[@name='child_option_ids']/list",
             )
         )
         return res

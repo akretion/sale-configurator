@@ -38,12 +38,12 @@ class SaleConfiguratorOption(Common):
                         {
                             "product_id": cls.product_with_opt.id,
                             "product_uom_qty": 2,
-                            "option_ids": [
+                            "child_option_ids": [
                                 (
                                     0,
                                     0,
                                     {
-                                        "option_unit_qty": 5,
+                                        "option_qty": 5,
                                         "product_id": cls.product_opt_1.id,
                                         "option_qty_type": "proportional_qty",
                                     },
@@ -52,7 +52,7 @@ class SaleConfiguratorOption(Common):
                                     0,
                                     0,
                                     {
-                                        "option_unit_qty": 2,
+                                        "option_qty": 2,
                                         "product_id": cls.product_opt_2.id,
                                         "option_qty_type": "proportional_qty",
                                     },
@@ -138,7 +138,7 @@ class SaleConfiguratorOption(Common):
         self.assertEqual(self.line_product_with_opt.price_config_total, 241.5)
 
     def test_change_option_qty(self):
-        self.line_opt_1.option_unit_qty = 10
+        self.line_opt_1.option_qty = 10
         self.assertEqual(self.line_opt_1.product_uom_qty, 10)
         self.assertEqual(self.line_opt_1.price_subtotal, 100)
         self.assertEqual(self.line_product_with_opt.price_config_subtotal, 190)
@@ -158,11 +158,11 @@ class SaleConfiguratorOption(Common):
         self.env = self.env(context={"add_default_option": True})
         new_line = self._create_sale_line(self.product_with_opt)
         new_line._onchange_product_id()
-        product_ids = set(new_line.option_ids.mapped("product_id.id"))
+        product_ids = set(new_line.child_option_ids.mapped("product_id.id"))
         default_options = {self.product_opt_1.id, self.product_opt_2.id}
         self.assertEqual(product_ids, default_options)
 
-    def test_create_sale_with_option_ids(self):
+    def test_create_sale_with_child_option_ids(self):
         sale = self._create_sale_order()
         lines = sale.order_line
         self.assertEqual(len(lines), 3)
@@ -198,13 +198,13 @@ class SaleConfiguratorOption(Common):
                             "sequence": 10,
                             "product_id": self.product_with_opt.id,
                             "product_uom_qty": 2,
-                            "option_ids": [
+                            "child_option_ids": [
                                 (
                                     0,
                                     0,
                                     {
                                         "sequence": 30,
-                                        "option_unit_qty": 5,
+                                        "option_qty": 5,
                                         "product_id": self.product_opt_1.id,
                                         "option_qty_type": "proportional_qty",
                                     },
@@ -214,7 +214,7 @@ class SaleConfiguratorOption(Common):
                                     0,
                                     {
                                         "sequence": 20,
-                                        "option_unit_qty": 2,
+                                        "option_qty": 2,
                                         "product_id": self.product_opt_2.id,
                                         "option_qty_type": "proportional_qty",
                                     },
@@ -247,7 +247,7 @@ class SaleConfiguratorOption(Common):
         self.assertEqual(options[1].parent_id, main_line)
         self.assertEqual(options[0].parent_option_id, main_line)
         self.assertEqual(options[1].parent_option_id, main_line)
-        self.assertEqual(options, main_line.option_ids)
+        self.assertEqual(options, main_line.child_option_ids)
 
         sale_copy = sale.copy()
         self.assertEqual(len(sale_copy.order_line), 3)
@@ -259,7 +259,7 @@ class SaleConfiguratorOption(Common):
         self.assertEqual(options_copy[1].parent_id, main_line_copy)
         self.assertEqual(options_copy[0].parent_option_id, main_line_copy)
         self.assertEqual(options_copy[1].parent_option_id, main_line_copy)
-        self.assertEqual(options_copy, main_line_copy.option_ids)
+        self.assertEqual(options_copy, main_line_copy.child_option_ids)
 
         self.assertNotEqual(main_line, main_line_copy)
         self.assertNotEqual(options[0], options_copy[0])

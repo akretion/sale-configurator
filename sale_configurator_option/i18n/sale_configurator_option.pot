@@ -397,7 +397,7 @@ msgid "Option Product Variant"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__option_unit_qty
+#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__option_qty
 msgid "Option Unit Qty"
 msgstr ""
 
@@ -451,7 +451,7 @@ msgid "Product Configurator Template"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__product_option_id
+#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__option_id
 msgid "Product Option"
 msgstr ""
 

@@ -102,5 +102,24 @@ def migrate(env, version):
                 "used_on_option_line_ids",
                 "used_as_option_ids",
             ),
+            # SaleOrderLine
+            (
+                "sale.order.line",
+                "sale_order_line",
+                "option_ids",
+                "child_option_ids",
+            ),
+            (
+                "sale.order.line",
+                "sale_order_line",
+                "option_unit_qty",
+                "option_qty",
+            ),
+            (
+                "sale.order.line",
+                "sale_order_line",
+                "product_option_id",
+                "option_id",
+            ),
         ],
     )
