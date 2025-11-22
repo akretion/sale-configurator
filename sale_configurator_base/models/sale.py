@@ -140,11 +140,18 @@ class SaleOrderLine(models.Model):
     )
     pricelist_id = fields.Many2one(related="order_id.pricelist_id", string="Pricelist")
 
-    # There is already an order_partner_id in the sale line class
-    # but we want to make the view as much compatible between child view
-    # wo want a native view do parent.partner_id we want to have the same behaviour
-    # with the child line (but in that case the parent is a sale order line
-    partner_id = fields.Many2one(related="order_id.partner_id", string="Order Customer")
+    # This duplicated field is required because Odoo's native field is named
+    # "order_partner_id" and we need a field explicitly named "partner_id" with the
+    # same value.
+    #
+    # We extract the sale.order.line list and form views from the native
+    # sale.order form and reuse them in our own views. These extracted views
+    # contain references to "parent.partner_id".
+    #
+    # In our context, the parent is not the sale.order (order_id) but another
+    # sale.order.line.As it is simpler to keep these "parent.partner_id" references,
+    # we provide this mirrored field for compatibility.
+    partner_id = fields.Many2one(related="order_id.partner_id")
 
     is_configurable = fields.Boolean(
         "Line is a configurable Product ?",
