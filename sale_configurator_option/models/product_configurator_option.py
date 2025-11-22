@@ -9,7 +9,7 @@ from odoo import api, fields, models
 class ProductConfiguratorOption(models.Model):
     _name = "product.configurator.option"
     _order = "sequence, id"
-    _rec_name = "option_product_id"
+    _rec_name = "product_id"
     _description = "Product Configurator Option"
 
     # An Option's parent can be either a configurator.template or a product.template
@@ -27,20 +27,20 @@ class ProductConfiguratorOption(models.Model):
         index=True,
         ondelete="cascade",
     )
-    option_product_id = fields.Many2one(
+    product_id = fields.Many2one(
         "product.product",
         "Product",
         required=True,
         domain=[("is_option", "=", True)],
     )
     option_product_tmpl_id = fields.Many2one(
-        related="option_product_id.product_tmpl_id",
+        related="product_id.product_tmpl_id",
         string="Product Template",
         store=True,
     )
     product_uom_id = fields.Many2one(
         "uom.uom",
-        related="option_product_id.uom_id",
+        related="product_id.uom_id",
         help="Informative Unit of Measure, just to be displayed in Options views. "
         "Not used technically",
     )
@@ -65,13 +65,13 @@ class ProductConfiguratorOption(models.Model):
     active = fields.Boolean(compute="_compute_active", store=True)
 
     @api.depends(
-        "option_product_id.active",
+        "product_id.active",
         "configurable_product_tmpl_id.active",
         "configurator_id.active",
     )
     def _compute_active(self):
         for record in self:
-            record.active = record.option_product_id.active and (
+            record.active = record.product_id.active and (
                 record.configurable_product_tmpl_id.active
                 or record.configurator_id.active
             )
@@ -85,8 +85,8 @@ class ProductConfiguratorOption(models.Model):
 
     _sql_constraints = {
         (
-            "configurable_product_tmpl_id_option_product_id_unique",
-            "UNIQUE(configurable_product_tmpl_id,option_product_id)",
+            "configurable_product_tmpl_id_product_id_unique",
+            "UNIQUE(configurable_product_tmpl_id,product_id)",
             "Option must be unique by configurable product",
         )
     }

@@ -24,14 +24,14 @@ def migrate(env, version):
             (
                 "product.configurator.option",
                 "product_configurator_option",
-                "product_id",
-                "option_product_id",
+                "product_conf_tmpl_id",
+                "configurator_id",
             ),
             (
                 "product.configurator.option",
                 "product_configurator_option",
-                "product_conf_tmpl_id",
-                "configurator_id",
+                "option_product_tmpl_id",
+                "product_tmpl_id",
             ),
             (
                 "product.configurator.option",

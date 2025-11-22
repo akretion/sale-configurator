@@ -29,7 +29,7 @@
             name="configurable_product_tmpl_id"
             ref="product_with_option_product_template"
         />
-        <field name="option_product_id" ref="product_option_1" />
+        <field name="product_id" ref="product_option_1" />
         <field name="is_default_option">True</field>
         <field name="option_qty_type">proportional_qty</field>
         <field name="sequence">1</field>
@@ -39,7 +39,7 @@
             name="configurable_product_tmpl_id"
             ref="product_with_option_product_template"
         />
-        <field name="option_product_id" ref="product_option_2" />
+        <field name="product_id" ref="product_option_2" />
         <field name="is_default_option">True</field>
         <field name="option_qty_type">independent_qty</field>
         <field name="sequence">2</field>
@@ -49,7 +49,7 @@
             name="configurable_product_tmpl_id"
             ref="product_with_option_product_template"
         />
-        <field name="option_product_id" ref="product_option_3" />
+        <field name="product_id" ref="product_option_3" />
         <field name="option_qty_type">proportional_qty</field>
         <field name="sequence">3</field>
     </record>

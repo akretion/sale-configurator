@@ -20,7 +20,7 @@ class ProductProduct(models.Model):
     )
     used_as_option_ids = fields.One2many(
         "product.configurator.option",
-        "option_product_id",
+        "product_id",
         "Options made with this Product",
     )
 
@@ -39,4 +39,4 @@ class ProductProduct(models.Model):
             raise UserError(_("Operator %s not supported") % operator)
         else:
             product = self.env["product.product"].browse(value)
-            return [("id", "in", product.mapped("option_ids.option_product_id").ids)]
+            return [("id", "in", product.mapped("option_ids.product_id").ids)]
