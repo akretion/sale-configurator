@@ -387,7 +387,7 @@ msgid "Option"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__option_product_tmpl_id
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__product_tmpl_id
 msgid "Option Product Template"
 msgstr ""
 
@@ -402,7 +402,7 @@ msgid "Option Unit Qty"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.constraint,message:sale_configurator_option.constraint_product_configurator_option_product_tmpl_id_product_id_unique
+#: model:ir.model.constraint,message:sale_configurator_option.constraint_product_configurator_product_tmpl_id_product_id_unique
 msgid "Option must be unique by configurable product"
 msgstr ""
 
@@ -427,10 +427,6 @@ msgstr ""
 msgid "Parent Option"
 msgstr ""
 
-#. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__product_tmpl_id
-msgid "Parent Product Template"
-msgstr ""
 
 #. module: sale_configurator_option
 #: model:ir.model,name:sale_configurator_option.model_product_product

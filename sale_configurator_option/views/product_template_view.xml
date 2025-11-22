@@ -8,7 +8,7 @@
                 <button
                     name="%(product_configurator_option_action)d"
                     type="action"
-                    context="{'search_default_option_product_tmpl_id': id}"
+                    context="{'search_default_product_tmpl_id': id}"
                     class="oe_stat_button"
                     icon="fa-level-up"
                     invisible="count_used_as_option == 0"

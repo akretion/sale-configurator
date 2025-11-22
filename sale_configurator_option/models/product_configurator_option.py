@@ -33,7 +33,7 @@ class ProductConfiguratorOption(models.Model):
         required=True,
         domain=[("is_option", "=", True)],
     )
-    option_product_tmpl_id = fields.Many2one(
+    product_tmpl_id = fields.Many2one(
         related="product_id.product_tmpl_id",
         string="Product Template",
         store=True,
