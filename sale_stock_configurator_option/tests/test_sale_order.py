@@ -9,7 +9,7 @@ from odoo.addons.sale_configurator_option.tests.common import Common
 class SaleStockConfiguratorOption(Common):
     def test_qty_delivered_method(self):
         for line in self.sale.order_line.filtered(
-            lambda line: line.child_type == "option"
+            lambda line: line.config_type == "option"
         ):
             self.assertEqual(line.qty_delivered_method, "option_proportional")
 

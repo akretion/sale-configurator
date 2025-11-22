@@ -19,7 +19,7 @@ class IrUiView(models.Model):
     def _get_sale_line_item(self, view_type):
         return getattr(self, f"_get_sale_line_{view_type}_item")()
 
-    def add_field_in_tree(self, field):
+    def add_field_in_list(self, field):
         return field.get("name") != "price_config_subtotal"
 
     def _sl_field_have_invalid_attrs_parent_field(self, field):
@@ -57,7 +57,7 @@ class IrUiView(models.Model):
             if self._sl_field_have_invalid_attrs_parent_field(field):
                 continue
             # We remove this field that do not make sense on child view
-            if self.add_field_in_tree(field):
+            if self.add_field_in_list(field):
                 items.append(field)
         return items
 

@@ -17,7 +17,7 @@ class SaleOrderLine(models.Model):
     )
 
     def _action_launch_stock_rule(self, previous_product_uom_qty=False):
-        lines = self.filtered(lambda line: line.child_type != "option")
+        lines = self.filtered(lambda line: line.config_type != "option")
         return super(SaleOrderLine, lines)._action_launch_stock_rule(
             previous_product_uom_qty=previous_product_uom_qty
         )
@@ -45,10 +45,10 @@ class SaleOrderLine(models.Model):
     def _get_compute_delivered_method(self):
         return "option_proportional"
 
-    @api.depends("child_type")
+    @api.depends("product_id")
     def _compute_qty_delivered_method(self):  # pylint: disable=missing-return
         for line in self:
-            if line.child_type == "option":
+            if line.product_id.config_type == "option":
                 line.qty_delivered_method = line._get_compute_delivered_method()
             else:
                 super(SaleOrderLine, line)._compute_qty_delivered_method()

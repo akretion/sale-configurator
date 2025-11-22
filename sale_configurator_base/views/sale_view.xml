@@ -90,7 +90,7 @@
                     name="open_sale_line_config_base"
                     type="object"
                     icon="fa-th"
-                    invisible="not is_configurable"
+                    invisible="config_type != 'configurable'"
                     string="&#8203;"
                     column_invisible="not parent.has_configurable_product"
                 />

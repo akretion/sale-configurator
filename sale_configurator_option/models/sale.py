@@ -12,7 +12,7 @@ class SaleOrderLine(models.Model):
     parent_option_id = fields.Many2one(
         "sale.order.line", string="Parent Option", index=True
     )
-    child_type = fields.Selection(
+    config_type = fields.Selection(
         selection_add=[("option", "Option")],
         ondelete={"option": "set null"},
     )
@@ -21,11 +21,6 @@ class SaleOrderLine(models.Model):
         "parent_option_id",
         "Options",
         copy=True,
-    )
-    is_configurable_opt = fields.Boolean(
-        "Is Configurable with Options?",
-        related="product_id.is_configurable_opt",
-        help="if True, this is the Line of a Configurable Product based on Options",
     )
     option_qty = fields.Float(
         digits="Product Unit of Measure",
@@ -59,11 +54,8 @@ class SaleOrderLine(models.Model):
     def get_children(self):
         return super().get_children() + self.child_option_ids
 
-    def _is_line_configurable(self):
-        if self.is_configurable_opt:
-            return True
-        else:
-            return super()._is_line_configurable()
+    def _get_config_type(self):
+        return self.product_id.config_type or super()._get_config_type()
 
     def _get_parent_id_from_vals(self, vals):
         if vals.get("parent_option_id"):
@@ -87,7 +79,7 @@ class SaleOrderLine(models.Model):
         for record in self:
             if record.parent_option_id:
                 record.parent_id = record.parent_option_id
-                record.child_type = "option"
+                # record.config_type = "option"
             else:
                 super(SaleOrderLine, record)._compute_parent()
 
@@ -128,7 +120,7 @@ class SaleOrderLine(models.Model):
         # a compute field, but it does not work in v18 because of too much confusions
         # between NewId and real records. Let's try again in next versions!
         res = super()._onchange_product_id()
-        if self.product_id.is_configurable_opt:
+        if self.product_id.config_type == "configurable":
             self.child_option_ids = False
             for opt in self.product_id.option_ids:
                 if opt.is_default_option:

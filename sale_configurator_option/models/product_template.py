@@ -9,14 +9,13 @@ from odoo import api, fields, models
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    is_configurable_opt = fields.Boolean(
-        "Is a Configurable Product ?",
-        help="Check this, if the product is configurable with options",
+    config_type = fields.Selection(
+        [("configurable", "Configurable Product"), ("option", "Option")],
+        string="Configuration type",
+        help="Defines whether the product is a Configurable Product or an Option "
+        "linked to another Configurable Product",
     )
-    is_option = fields.Boolean(
-        "Is an Option Product ?",
-        help="Check this, if the product is an option used in configurable product",
-    )
+
     is_not_sold_alone = fields.Boolean(
         help="This Option can only be sold as part of a Configurable Product",
         default=False,
@@ -31,8 +30,8 @@ class ProductTemplate(models.Model):
         "Configurable Product.",
     )
     # The Options of a Configurable Product (option_ids) can be defined
-    # either by itss related Configurator Template's Options, or by its own
-    # specific Options defined on the record.
+    # either by its related Configurator Template's Options, or by its own
+    # specific Options defined here.
     specific_option_ids = fields.One2many(
         "product.configurator.option",
         "configurable_product_tmpl_id",
@@ -53,10 +52,10 @@ class ProductTemplate(models.Model):
         help="Number of configurator Options made with this product",
     )
 
-    @api.depends("is_option")
+    @api.depends("config_type")
     def _compute_is_not_sold_alone(self):
         for rec in self:
-            rec.is_not_sold_alone = rec.is_option
+            rec.is_not_sold_alone = rec.config_type == "option"
 
     def _compute_count_used_as_option(self):
         for rec in self:

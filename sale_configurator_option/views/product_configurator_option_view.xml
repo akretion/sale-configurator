@@ -34,10 +34,13 @@
                 <field name="configurator_id" />
                 <field
                     name="configurable_product_tmpl_id"
-                    domain="[('is_configurable_opt', '=', True)]"
+                    domain="[('config_type', '=', 'configurable')]"
                 />
-                <field name="product_tmpl_id" domain="[('is_option', '=', True)]" />
-                <field name="product_id" domain="[('is_option', '=', True)]" />
+                <field
+                    name="product_tmpl_id"
+                    domain="[('config_type', '=', 'option')]"
+                />
+                <field name="product_id" domain="[('config_type', '=', 'option')]" />
                 <filter
                     string="Archived"
                     name="inactive"

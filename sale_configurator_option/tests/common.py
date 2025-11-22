@@ -19,20 +19,20 @@ class Common(TransactionCase):
         cls.product_with_opt = Product.create(
             {
                 "name": "Product With Option",
-                "is_configurable_opt": True,
+                "config_type": "configurable",
                 "list_price": 0,
             }
         )
         cls.product_with_opt_tmpl = cls.product_with_opt.product_tmpl_id
 
         cls.product_opt_1 = Product.create(
-            {"name": "Option 1", "lst_price": 10, "is_option": True}
+            {"name": "Option 1", "lst_price": 10, "config_type": "option"}
         )
         cls.product_opt_2 = Product.create(
-            {"name": "Option 2", "lst_price": 20, "is_option": True}
+            {"name": "Option 2", "lst_price": 20, "config_type": "option"}
         )
         cls.product_opt_3 = Product.create(
-            {"name": "Option 3", "lst_price": 30, "is_option": True}
+            {"name": "Option 3", "lst_price": 30, "config_type": "option"}
         )
         cls.product_normal = Product.create({"name": "Product"})
 

@@ -26,14 +26,17 @@
             >
                 <attribute
                     name="domain"
-                >[("is_configurable_opt", "=", True)]</attribute>
+                >[("config_type", "=", "configurable")]</attribute>
             </xpath>
             <xpath expr="//field[@name='name']" position="after">
-                <label for="child_option_ids" invisible="not is_configurable_opt" />
+                <label
+                    for="child_option_ids"
+                    invisible="config_type != 'configurable'"
+                />
                 <field
                     name="child_option_ids"
                     context="{'default_order_id': order_id}"
-                    invisible="not is_configurable_opt"
+                    invisible="config_type != 'configurable'"
                 >
                     <list editable="bottom">
                         <!-- There is some magic here, please look at models/ir_ui_view.py
@@ -70,7 +73,7 @@
             >
                 <attribute
                     name="domain"
-                >[('is_option', '=', True),('used_in_configurable_product_ids', '=', parent.product_id)]</attribute>
+                >[('config_type', '=', 'option'),('used_in_configurable_product_ids', '=', parent.product_id)]</attribute>
             </xpath>
             <xpath
                 expr="//field[@name='child_option_ids']/list/field[@name='product_template_id']"

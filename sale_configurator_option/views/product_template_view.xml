@@ -29,19 +29,21 @@
                 <page name="config_options" string="Configurator Options">
                     <group name="options">
                         <group name="setting" colspan="4">
-                            <field name="is_configurable_opt" invisible="is_option" />
-                            <field name="is_option" invisible="is_configurable_opt" />
+                            <field name="config_type" />
                             <field
                                 name="configurator_id"
-                                invisible="not is_configurable_opt"
+                                invisible="config_type != 'configurable'"
                                 colspan="2"
                             />
-                            <field name="is_not_sold_alone" invisible="not is_option" />
+                            <field
+                                name="is_not_sold_alone"
+                                invisible="config_type == 'configurable'"
+                            />
                         </group>
                         <group
                             name="specific_options"
                             string="Specific Options"
-                            invisible="not is_configurable_opt or configurator_id"
+                            invisible="config_type != 'configurable' or configurator_id"
                             colspan="4"
                         >
                             <field name="specific_option_ids" nolabel="1" mode="list" />
@@ -49,7 +51,7 @@
                         <group
                             name="configurator_options"
                             string="Options"
-                            invisible="not is_configurable_opt or not configurator_id"
+                            invisible="config_type != 'configurable' or not configurator_id"
                             colspan="4"
                         >
                             <field name="option_ids" nolabel="1" mode="list" />

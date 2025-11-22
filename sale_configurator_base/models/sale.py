@@ -22,10 +22,10 @@ class SaleOrder(models.Model):
 
     hide_subtotal = fields.Boolean(compute="_compute_hide_subtotal")
 
-    @api.depends("order_line.is_configurable")
+    @api.depends("order_line.config_type")
     def _compute_has_configurable_product(self):
         for rec in self:
-            rec.has_configurable_product = any(rec.order_line.mapped("is_configurable"))
+            rec.has_configurable_product = any(rec.order_line.mapped("config_type"))
 
     @api.depends("order_line.hide_subtotal")
     def _compute_hide_subtotal(self):
@@ -87,10 +87,10 @@ class SaleOrder(models.Model):
                         if current:
                             field.set(
                                 "readonly",
-                                current + " or parent_id or is_configurable",
+                                current + " or config_type",
                             )
                         else:
-                            field.set("readonly", "parent_id or is_configurable")
+                            field.set("readonly", "config_type")
                 # FIXME: adapt padding for new widgets sol_product_many2one and sol_text
                 if fname == "product_id":
                     field.set(
@@ -123,9 +123,7 @@ class SaleOrderLine(models.Model):
     # (with real id and with Newid) so please instead use get_children method
     # child_ids is used for reporting
     child_ids = fields.One2many("sale.order.line", "parent_id", "Children Lines")
-    child_type = fields.Selection(
-        [], compute="_compute_parent", store=True, precompute=True
-    )
+
     price_config_subtotal = fields.Monetary(
         compute="_compute_config_amount",
         string="Config Subtotal",
@@ -149,14 +147,21 @@ class SaleOrderLine(models.Model):
     # contain references to "parent.partner_id".
     #
     # In our context, the parent is not the sale.order (order_id) but another
-    # sale.order.line.As it is simpler to keep these "parent.partner_id" references,
+    # sale.order.line. As it is simpler to keep these "parent.partner_id" references,
     # we provide this mirrored field for compatibility.
-    partner_id = fields.Many2one(related="order_id.partner_id")
+    partner_id = fields.Many2one(related="order_id.partner_id", string="Order Customer")
 
-    is_configurable = fields.Boolean(
-        "Line is a configurable Product ?",
-        compute="_compute_is_configurable",
+    # Add items to this Selection for any new type of children.
+    # (cf sale_configurator_option for example)
+    config_type = fields.Selection(
+        [("configurable", "Configurable")],
+        string="Configuration type",
+        help="Defines whether the line refers to a configurable product or "
+        "to one of its child items ('option', 'variant', etc.)",
+        compute="_compute_config_type",
+        store=True,
     )
+
     report_line_is_empty_parent = fields.Boolean(
         compute="_compute_report_line_is_empty_parent",
         help="Technical field used in the report to hide subtotals"
@@ -178,7 +183,7 @@ class SaleOrderLine(models.Model):
     def _compute_parent(self):
         for record in self:
             record.parent_id = None
-            record.child_type = None
+            record.config_type = None
 
     def _get_child_type_sort(self):
         return []
@@ -191,7 +196,7 @@ class SaleOrderLine(models.Model):
         types.sort()
         for _position, child_type in types:
             for line in self.get_children().sorted("sequence"):
-                if line.child_type == child_type:
+                if line.config_type == child_type:
                     line.sequence = len(done)
                     done.append(line)
 
@@ -206,11 +211,11 @@ class SaleOrderLine(models.Model):
                 rec.report_line_is_empty_parent = True
 
     @api.depends("product_id")
-    def _compute_is_configurable(self):
+    def _compute_config_type(self):
         for record in self:
-            record.is_configurable = record._is_line_configurable()
+            record.config_type = record._get_config_type()
 
-    def _is_line_configurable(self):
+    def _get_config_type(self):
         return False
 
     def save_add_product_and_close(self):
@@ -264,6 +269,7 @@ class SaleOrderLine(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
+            # Correct parent_id for children lines whose parent is a configurable line
             parent_id = self._get_parent_id_from_vals(vals)
             if parent_id and "order_id" not in vals:
                 vals["order_id"] = self.browse(parent_id).order_id.id

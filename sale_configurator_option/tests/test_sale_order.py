@@ -167,7 +167,7 @@ class SaleConfiguratorOption(Common):
         lines = sale.order_line
         self.assertEqual(len(lines), 3)
         self.assertEqual(lines[0].product_uom_qty, 2)
-        self.assertTrue(lines[0].is_configurable)
+        self.assertEqual(lines[0].config_type, "configurable")
         self.assertEqual(lines[1].product_uom_qty, 10)
         self.assertEqual(lines[1].price_subtotal, 100)
 
