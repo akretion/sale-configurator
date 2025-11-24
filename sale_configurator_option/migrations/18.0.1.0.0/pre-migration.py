@@ -5,12 +5,31 @@ import logging
 
 from openupgradelib import openupgrade
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
+
+
+def _delete_views_referencing_old_fields(env):
+    old_fields = [
+        "is_configurable_opt",
+        "is_option",
+        "is_configurable",
+        "has_configurable",
+    ]
+
+    views = env["ir.ui.view"]
+    for field_name in old_fields:
+        views |= env["ir.ui.view"].search(
+            [("model", "=", "sale.order.line"), ("arch_db", "ilike", f"%{field_name}%")]
+        )
+
+    if views:
+        _logger.info(f"Deleting {len(views)} views referencing old fields")
+        views.unlink()
 
 
 @openupgrade.migrate()
 def migrate(env, version):
-    logger.info("Renaming fields in sale_configurator_option")
+    _logger.info("Renaming fields in sale_configurator_option")
     openupgrade.rename_fields(
         env,
         [
@@ -123,3 +142,5 @@ def migrate(env, version):
             ),
         ],
     )
+
+    _delete_views_referencing_old_fields(env)
