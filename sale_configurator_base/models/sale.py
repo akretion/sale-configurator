@@ -159,7 +159,6 @@ class SaleOrderLine(models.Model):
         help="Defines whether the line refers to a configurable product or "
         "to one of its child items ('option', 'variant', etc.)",
         compute="_compute_config_type",
-        store=True,
     )
 
     report_line_is_empty_parent = fields.Boolean(
@@ -183,7 +182,6 @@ class SaleOrderLine(models.Model):
     def _compute_parent(self):
         for record in self:
             record.parent_id = None
-            record.config_type = None
 
     def _get_child_type_sort(self):
         return []

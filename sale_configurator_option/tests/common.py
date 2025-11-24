@@ -36,7 +36,7 @@ class Common(TransactionCase):
         )
         cls.product_normal = Product.create({"name": "Product"})
 
-        # Options Configurators
+        # Configurator Options
         # -------------------
         cls.config_opt_1 = ConfigOption.create(
             {

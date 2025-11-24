@@ -79,7 +79,6 @@ class SaleOrderLine(models.Model):
         for record in self:
             if record.parent_option_id:
                 record.parent_id = record.parent_option_id
-                # record.config_type = "option"
             else:
                 super(SaleOrderLine, record)._compute_parent()
 

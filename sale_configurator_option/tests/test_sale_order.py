@@ -7,18 +7,12 @@ from odoo.tests import Form
 
 from .common import Common
 
-# /!\ /!\ Be carefull when running test /!\ /!\
-# As Odoo post process the installation of accounting
-# you must first install sale module (so the pricelist will be in dollars)
-# then you install the sale_configurator_option module so the data are in dollars
-# if not you will have inconsistency order in EUR with pricelist in dollars
-
 
 class SaleConfiguratorOption(Common):
-    def _add_pricelist_item(cls, product, qty, price_unit):
-        cls.env["product.pricelist.item"].create(
+    def _add_pricelist_item(self, product, qty, price_unit):
+        self.env["product.pricelist.item"].create(
             {
-                "pricelist_id": cls.pricelist.id,
+                "pricelist_id": self.pricelist.id,
                 "applied_on": "1_product",
                 "product_tmpl_id": product.product_tmpl_id.id,
                 "compute_price": "fixed",
@@ -27,16 +21,16 @@ class SaleConfiguratorOption(Common):
             }
         )
 
-    def _create_sale_order(cls):
-        return cls.env["sale.order"].create(
+    def _create_sale_order(self):
+        return self.env["sale.order"].create(
             {
-                "partner_id": cls.partner.id,
+                "partner_id": self.partner.id,
                 "order_line": [
                     (
                         0,
                         0,
                         {
-                            "product_id": cls.product_with_opt.id,
+                            "product_id": self.product_with_opt.id,
                             "product_uom_qty": 2,
                             "child_option_ids": [
                                 (
@@ -44,7 +38,7 @@ class SaleConfiguratorOption(Common):
                                     0,
                                     {
                                         "option_qty": 5,
-                                        "product_id": cls.product_opt_1.id,
+                                        "product_id": self.product_opt_1.id,
                                         "option_qty_type": "proportional_qty",
                                     },
                                 ),
@@ -53,7 +47,7 @@ class SaleConfiguratorOption(Common):
                                     0,
                                     {
                                         "option_qty": 2,
-                                        "product_id": cls.product_opt_2.id,
+                                        "product_id": self.product_opt_2.id,
                                         "option_qty_type": "proportional_qty",
                                     },
                                 ),
@@ -185,6 +179,16 @@ class SaleConfiguratorOption(Common):
         self.assertEqual(len(lines), 3)
         self.assertEqual(lines[1].price_unit, 5)
         self.assertEqual(lines[2].price_unit, 10)
+
+    def test_create_line_before_save(self):
+        line = self.env["sale.order.line"].create(
+            {"order_id": self.sale.id, "name": "test"}
+        )
+
+        form = Form(line)
+        form.product_id = self.product_with_opt
+        self.assertEqual(form.config_type, "configurable")
+        self.assertEqual(len(form.child_option_ids), 2)
 
     def test_order_line_order_create_check_sequence(self):
         sale = self.env["sale.order"].create(
