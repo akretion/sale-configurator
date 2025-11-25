@@ -11,24 +11,19 @@ class AccountMoveLine(models.Model):
 
     @api.model
     def get_view(self, view_id=None, view_type="form", **options):
-        """fields_view_get comes from Model (not AbstractModel)"""
         res = super().get_view(view_id, view_type, **options)
         if view_type == "form" and not self._context.get("force_original_move_form"):
             doc = etree.XML(res["arch"])
+
             for field in doc.xpath("//field[@name='invoice_line_ids']/list/field"):
-                if field.get("name") != "sequence":
-                    current = field.get("readonly", "")
-                    if current:
-                        field.set("readonly", current + " or has_parent")
-                    else:
-                        field.set("readonly", "has_parent")
-                if field.get("name") == "product_id":
-                    field.set(
-                        "class", field.get("class", "") + " configurator_option_padding"
-                    )
-                if field.get("name") == "name":
-                    field.set(
-                        "class", field.get("class", "") + " configurator_option_padding"
-                    )
+                fname = field.get("name")
+                field_def = self.env["account.move.line"]._fields.get(fname)
+                if fname == "sequence" or not field_def or field_def.readonly:
+                    continue
+
+                # Make the Options lines readonly
+                current = field.get("readonly")
+                new_readonly = f"{current} or has_parent" if current else "has_parent"
+                field.set("readonly", new_readonly)
             res["arch"] = etree.tostring(doc, pretty_print=True)
         return res

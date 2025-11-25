@@ -1,9 +1,24 @@
-/* Different field types will use td or span */
+/* Reduce column's width of action buttons opening Configurable Products
 
-tr.text-it > td > span.configurator_option_padding {
-    padding-left: 30px;
+    As we need to reduce the column header and there is no way to target only the
+    "open_sale_line_config_base" button's column, we reduce all the action buttons
+    columns in the SaleOrderLine list.
+
+*/
+.o_form_view.o_sale_order .o_list_view th.o_list_button {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
 }
 
-tr.text-it > td.configurator_option_padding {
-    padding-left: 30px;
+/* Padding on Product/Description lines in Italic (Product Options) in SaleOrder */
+.o_form_view.o_sale_order .o_data_row.fst-italic .o_sol_product_many2one_cell {
+    padding-left: 30px !important;
+}
+
+/* Padding on Product/Description lines in Italic (Product Options) in AccountMove*/
+.o_form_view.o_account_move_form_view
+    .o_data_row.fst-italic
+    td.o_product_label_section_and_note_field_cell {
+    padding-left: 30px !important;
 }

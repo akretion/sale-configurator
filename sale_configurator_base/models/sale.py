@@ -76,32 +76,17 @@ class SaleOrder(models.Model):
 
         if view_type == "form" and not self._context.get("force_original_sale_form"):
             doc = etree.XML(res["arch"])
-            line_list = doc.xpath("//field[@name='order_line']/list")
-            editable = line_list and line_list[0].get("editable")
 
             for field in doc.xpath("//field[@name='order_line']/list/field"):
                 fname = field.get("name")
-                if fname != "sequence" and editable:
-                    if not self.env["sale.order.line"]._fields[fname].readonly:
-                        current = field.get("readonly", "")
-                        if current:
-                            field.set(
-                                "readonly",
-                                current + " or config_type",
-                            )
-                        else:
-                            field.set("readonly", "config_type")
-                # FIXME: adapt padding for new widgets sol_product_many2one and sol_text
-                if fname == "product_id":
-                    field.set(
-                        "class", field.get("class", "") + " configurator_option_padding"
-                    )
-                if fname == "name":
-                    field.set(
-                        "class",
-                        field.get("class", "")
-                        + " description configurator_option_padding",
-                    )
+                field_def = self.env["sale.order.line"]._fields.get(fname)
+                if fname == "sequence" or not field_def or field_def.readonly:
+                    continue
+
+                # Make the Options and Configurable Products readonly
+                current = field.get("readonly", "")
+                new_readonly = f"{current} or config_type" if current else "config_type"
+                field.set("readonly", new_readonly)
             res["arch"] = etree.tostring(doc, pretty_print=True).decode("utf-8")
         return res
 

@@ -1,5 +1,6 @@
-from openupgradelib import openupgrade
 import logging
+
+from openupgradelib import openupgrade
 
 _logger = logging.getLogger(__name__)
 

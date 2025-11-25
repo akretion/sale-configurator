@@ -82,6 +82,8 @@ class SaleConfiguratorOption(Common):
                     line_form.product_uom_qty = 4
                 with self.assertRaisesRegex(AssertionError, "can't write on readonly"):
                     line_form.price_unit = 4
+                with self.assertRaisesRegex(AssertionError, "can't write on readonly"):
+                    line_form.price_subtotal = 4
 
     def test_sale_product_editable(self):
         form = Form(self.sale)
@@ -89,6 +91,8 @@ class SaleConfiguratorOption(Common):
             new_line.product_id = self.product_normal
             new_line.product_uom_qty = 4
             new_line.price_unit = 4
+            with self.assertRaisesRegex(AssertionError, "can't write on readonly"):
+                new_line.price_subtotal = 4
 
     def test_invoice_option_readonly(self):
         self.sale.action_confirm()
@@ -103,6 +107,8 @@ class SaleConfiguratorOption(Common):
                     line_form.quantity = 4
                 with self.assertRaisesRegex(AssertionError, "can't write on readonly"):
                     line_form.price_unit = 4
+                with self.assertRaisesRegex(AssertionError, "can't write on readonly"):
+                    line_form.price_subtotal = 4
 
     def test_invoice_product_editable(self):
         self.sale.action_confirm()
@@ -113,6 +119,8 @@ class SaleConfiguratorOption(Common):
             new_line.product_id = self.product_normal
             new_line.quantity = 4
             new_line.price_unit = 4
+            with self.assertRaisesRegex(AssertionError, "can't write on readonly"):
+                new_line.price_subtotal = 4
 
     def test_total_amount(self):
         self.assertEqual(self.sale.amount_total, 126.50)
