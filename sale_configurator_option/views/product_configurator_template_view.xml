@@ -46,6 +46,7 @@
                                     nolabel="1"
                                     colspan="4"
                                     mode="list"
+                                    context="{'list_view_ref': 'sale_configurator_option.product_configurator_option_view_list'}"
                                 />
                                 <field
                                     name="description"

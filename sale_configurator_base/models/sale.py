@@ -103,10 +103,8 @@ class SaleOrderLine(models.Model):
         store=True,
         precompute=True,
     )
-    # Becarefull never use child_ids in computed field because odoo is going
-    # to do crazy thing, indead inside you will have duplicated data
-    # (with real id and with Newid) so please instead use get_children method
-    # child_ids is used for reporting
+    # Becarefull, never use child_ids in computed field, use get_children() instead
+    # to avoid duplicates and confusions between NewId records and real records.
     child_ids = fields.One2many("sale.order.line", "parent_id", "Children Lines")
 
     price_config_subtotal = fields.Monetary(

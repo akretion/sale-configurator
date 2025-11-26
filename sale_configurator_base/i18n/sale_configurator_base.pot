@@ -4,13 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 14.0\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-18 08:50+0000\n"
-"PO-Revision-Date: 2022-07-18 08:50+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -19,7 +16,7 @@ msgstr ""
 #. module: sale_configurator_base
 #: model_terms:ir.ui.view,arch_db:sale_configurator_base.report_saleorder_document
 msgid "<span>Sub-total</span>"
-msgstr "<span>Sous-total</span>"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model_terms:ir.ui.view,arch_db:sale_configurator_base.report_saleorder_document
@@ -28,47 +25,44 @@ msgstr ""
 
 #. module: sale_configurator_base
 #: model_terms:ir.ui.view,arch_db:sale_configurator_base.view_order_form
-#, fuzzy
 msgid "Add a configurable product"
-msgstr "Ajouter produit configurable"
+msgstr ""
 
 #. module: sale_configurator_base
 #. odoo-python
 #: code:addons/sale_configurator_base/models/sale.py:0
 msgid "Base Configurator"
-msgstr "Configurateur"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model_terms:ir.ui.view,arch_db:sale_configurator_base.sale_order_line_config_base_view_form
 msgid "Cancel"
-msgstr "Annuler"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__child_ids
 msgid "Children Lines"
-msgstr "Lignes"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__price_config_subtotal
 msgid "Config Subtotal"
-msgstr "Sous-total Config"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__price_config_total
 msgid "Config Total"
-msgstr "Total Config"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields.selection,name:sale_configurator_base.selection__sale_order_line__config_type__configurable
-#, fuzzy
 msgid "Configurable"
-msgstr "Ajouter produit configurable"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__config_type
-#, fuzzy
 msgid "Configuration type"
-msgstr "Configurateur"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields,help:sale_configurator_base.field_sale_order_line__config_type
@@ -79,20 +73,19 @@ msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order__has_configurable_product
-#, fuzzy
 msgid "Has Configurable Product"
-msgstr "Ajouter produit configurable"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields,field_description:sale_configurator_base.field_account_move_line__has_parent
 msgid "Has Parent"
-msgstr "Est enfant"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order__hide_subtotal
 #: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__hide_subtotal
 msgid "Hide Subtotal"
-msgstr "Masquer sous-total"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields,help:sale_configurator_base.field_sale_order_line__pricelist_id
@@ -102,28 +95,27 @@ msgstr ""
 #. module: sale_configurator_base
 #: model:ir.model,name:sale_configurator_base.model_account_move_line
 msgid "Journal Item"
-msgstr "Écriture comptable"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order__main_line_ids
 msgid "Main Line"
-msgstr "Ligne principale"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model_terms:ir.ui.view,arch_db:sale_configurator_base.view_order_form
 msgid "Opt Subtotal"
-msgstr "Sous-total Option"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__partner_id
-#, fuzzy
 msgid "Order Customer"
-msgstr "Client"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__parent_id
 msgid "Parent Line"
-msgstr "Ligne parente"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__pricelist_id
@@ -133,7 +125,7 @@ msgstr ""
 #. module: sale_configurator_base
 #: model:ir.ui.menu,name:sale_configurator_base.menu_product_configurator
 msgid "Product Configurator"
-msgstr "Configurateur de produit"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__report_line_is_empty_parent
@@ -153,27 +145,27 @@ msgstr ""
 #. module: sale_configurator_base
 #: model:ir.model,name:sale_configurator_base.model_sale_order
 msgid "Sales Order"
-msgstr "Bon de commande"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model,name:sale_configurator_base.model_sale_order_line
 msgid "Sales Order Line"
-msgstr "Lignes de devis"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model_terms:ir.ui.view,arch_db:sale_configurator_base.sale_order_line_config_base_view_form
 msgid "Save & Close"
-msgstr "Enregistrer et fermer"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model_terms:ir.ui.view,arch_db:sale_configurator_base.sale_order_line_config_base_view_form
 msgid "Save & New"
-msgstr "Enregistrer et nouveau"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model_terms:ir.ui.view,arch_db:sale_configurator_base.view_order_form
 msgid "Subtotal"
-msgstr "Sous-total"
+msgstr ""
 
 #. module: sale_configurator_base
 #: model:ir.model.fields,help:sale_configurator_base.field_sale_order_line__report_line_is_empty_parent
@@ -185,4 +177,4 @@ msgstr ""
 #. module: sale_configurator_base
 #: model:ir.model,name:sale_configurator_base.model_ir_ui_view
 msgid "View"
-msgstr "Vue"
+msgstr ""

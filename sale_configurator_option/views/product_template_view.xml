@@ -46,13 +46,19 @@
                             invisible="config_type != 'configurable' or configurator_id"
                             colspan="4"
                         >
-                            <field name="specific_option_ids" nolabel="1" mode="list" />
+                            <field
+                                name="specific_option_ids"
+                                nolabel="1"
+                                mode="list"
+                                context="{'list_view_ref': 'sale_configurator_option.product_configurator_option_view_list'}"
+                            />
                         </group>
                         <group
                             name="configurator_options"
                             string="Options"
                             invisible="config_type != 'configurable' or not configurator_id"
                             colspan="4"
+                            context="{'list_view_ref': 'sale_configurator_option.product_configurator_option_view_list'}"
                         >
                             <field name="option_ids" nolabel="1" mode="list" />
                         </group>

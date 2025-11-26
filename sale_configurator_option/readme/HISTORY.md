@@ -6,8 +6,8 @@
 | Model | Old Field Name | New Field Name |
 | :--- | :--- | :--- |
 | **ProductConfiguratorOption** | `product_conf_tmpl_id` | `configurator_id` |
-| | `product_tmpl_id` | `configurable_product_tmpl_id` |
-| | `option_product_tmpl_id` | `product_tmpl_id` |
+| | ⚠️ `product_tmpl_id` | `configurable_product_tmpl_id` |
+| | `option_product_tmpl_id` | `product_tmpl_id` ⚠️ |
 | | `used_on_product_tmpl_ids` | `used_in_configurable_product_tmpl_ids` |
 | **ProductConfiguratorTemplate** | `configurable_option_ids` | `option_ids` |
 | | `product_tmpl_ids` | `configurable_product_tmpl_ids` |

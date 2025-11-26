@@ -15,15 +15,13 @@
 
     <record id="product_configurator_option_full_view_list" model="ir.ui.view">
         <field name="model">product.configurator.option</field>
+        <field name="inherit_id" ref="product_configurator_option_view_list" />
+        <field name="mode">primary</field>
         <field name="arch" type="xml">
-            <list editable="bottom" decoration-muted="not active">
+            <xpath expr="//field[@name='sequence']" position="after">
                 <field name="configurator_id" />
                 <field name="configurable_product_tmpl_id" />
-                <field name="product_id" />
-                <field name="option_qty_type" />
-                <field name="product_uom_id" />
-                <field name="is_default_option" />
-            </list>
+            </xpath>
         </field>
     </record>
 
