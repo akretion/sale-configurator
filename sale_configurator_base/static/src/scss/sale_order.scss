@@ -1,11 +1,14 @@
 /* Reduce column's width of action buttons opening Configurable Products
 
     As we need to reduce the column header and there is no way to target only the
-    "open_sale_line_config_base" button's column, we reduce all the action buttons
-    columns in the SaleOrderLine list.
+    "open_sale_line_config_base" button's column, (beacuase headers of action button
+    are nearly empty) we focus on the "the action button column in second position of
+    the order_line table".
 
 */
-.o_form_view.o_sale_order .o_list_view th.o_list_button {
+.o_form_view.o_sale_order
+    .o_field_one2many[name="order_line"]
+    th.o_list_button:nth-child(2) {
     width: 40px !important;
     min-width: 40px !important;
     max-width: 40px !important;
