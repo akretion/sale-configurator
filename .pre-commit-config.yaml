@@ -5,7 +5,6 @@ exclude: |
   ^pos_sale_configurator_option/|
   ^pos_sale_configurator_option_load/|
   ^sale_configurator_option_area/|
-  ^sale_configurator_option_bom/|
   ^sale_configurator_option_link/|
   ^sale_configurator_option_product/|
   ^sale_configurator_option_restricted_qty/|

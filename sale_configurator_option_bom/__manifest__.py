@@ -11,9 +11,9 @@
     "category": "Uncategorized",
     "website": "https://github.com/akretion/sale-configurator",
     "author": "Akretion, Odoo Community Association (OCA)",
-    "version": "14.0.1.0.0",
+    "version": "18.0.1.0.0",
     "application": False,
-    "installable": False,
+    "installable": True,
     "depends": [
         "mrp",
         "sale_configurator_option",

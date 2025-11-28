@@ -14,7 +14,6 @@ class MrpBomLine(models.Model):
     )
 
     def _skip_bom_line(self, product):
-
         if self.related_option_id:
             return True
         else:

@@ -7,7 +7,7 @@ from odoo.tests.common import SavepointCase
 
 class TestProcess(SavepointCase):
     @classmethod
-    def setUpClassUsers(cls):
+    def setUpClassUsers(cls):  # pylint: disable=missing-return
         super().setUpClassUsers()
         cls.shopfloor_user.groups_id += cls.env.ref("stock.group_stock_manager")
 
