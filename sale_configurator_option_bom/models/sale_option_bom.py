@@ -10,14 +10,14 @@ class MrpBomLine(models.Model):
     related_option_id = fields.Many2one(
         "product.configurator.option",
         "Option ref",
-        domain="[('product_tmpl_id', '=', parent_product_tmpl_id)]",
+        domain="[('configurable_product_tmpl_id', '=', parent_product_tmpl_id)]",
     )
 
-    def _skip_bom_line(self, product):
+    def _skip_bom_line(self, product, never_attribute_values=False):
         if self.related_option_id:
             return True
         else:
-            return super()._skip_bom_line(product)
+            return super()._skip_bom_line(product, never_attribute_values)
 
 
 class MrpProduction(models.Model):
@@ -32,7 +32,7 @@ class MrpProduction(models.Model):
                     (
                         "related_option_id.id",
                         "in",
-                        prod.sale_line_ids.option_ids.product_option_id.ids,
+                        prod.sale_line_id.child_option_ids.option_id.ids,
                     ),
                     ("bom_id", "=", prod.bom_id.id),
                 ],
@@ -43,7 +43,7 @@ class MrpProduction(models.Model):
             options = self.env["sale.order.line"].read_group(
                 [
                     ("product_id.type", "=", "service"),
-                    ("id", "in", prod.sale_line_ids.option_ids.ids),
+                    ("id", "in", prod.sale_line_id.child_option_ids.ids),
                 ],
                 fields=["product_uom_qty:sum"],
                 groupby=["product_id", "product_uom"],
@@ -53,6 +53,7 @@ class MrpProduction(models.Model):
                 list_lines = []
                 list_product_id = []
                 for line in lines:
+                    total_qty_line = 0
                     for option in options:
                         if (
                             self.env["product.configurator.option"]
