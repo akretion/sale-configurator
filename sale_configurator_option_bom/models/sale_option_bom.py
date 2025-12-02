@@ -9,7 +9,7 @@ class MrpBomLine(models.Model):
 
     related_option_id = fields.Many2one(
         "product.configurator.option",
-        "Option ref",
+        "Related Option",
         domain="[('configurable_product_tmpl_id', '=', parent_product_tmpl_id)]",
     )
 
