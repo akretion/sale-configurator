@@ -36,7 +36,7 @@ class SaleOrderLine(models.Model):
     discount = fields.Float(compute="_compute_discount", readonly=False, store=True)
 
     @api.depends("parent_variant_id")
-    def _compute_parent(self):
+    def _compute_parent(self):  # pylint: disable=missing-return
         for record in self:
             if record.parent_variant_id:
                 record.parent_id = record.parent_variant_id
@@ -70,7 +70,7 @@ class SaleOrderLine(models.Model):
             return super()._get_display_price(product)
 
     @api.depends("parent_variant_id.product_uom_qty", "product_id")
-    def _compute_price_unit(self):
+    def _compute_price_unit(self):  # pylint: disable=missing-return
         super()._compute_price_unit()
         for record in self:
             if record.parent_variant_id and record.product_id:
@@ -83,7 +83,7 @@ class SaleOrderLine(models.Model):
                 record._onchange_discount()
 
     @api.depends("variant_ids.product_uom_qty")
-    def _compute_product_uom_qty(self):
+    def _compute_product_uom_qty(self):  # pylint: disable=missing-return
         super()._compute_product_uom_qty()
         for record in self:
             if record.variant_ids:
@@ -141,11 +141,11 @@ class SaleOrderLine(models.Model):
             return super()._get_parent_id_from_vals(vals)
 
     @api.depends("variant_ids")
-    def _compute_report_line_is_empty_parent(self):
+    def _compute_report_line_is_empty_parent(self):  # pylint: disable=missing-return
         super()._compute_report_line_is_empty_parent()
 
     @api.depends("variant_ids.price_subtotal", "variant_ids.price_total")
-    def _compute_config_amount(self):
+    def _compute_config_amount(self):  # pylint: disable=missing-return
         super()._compute_config_amount()
 
     def get_children(self):

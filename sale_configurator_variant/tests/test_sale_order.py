@@ -101,7 +101,7 @@ class SaleOrderCase(SavepointCase):
         new_line.product_tmpl_id_change()
         self._conf_product_add_variants(new_line)
         line_product_variant_1 = new_line.variant_ids.filtered(
-            lambda l: l.product_id == self.product_variant_1
+            lambda line: line.product_id == self.product_variant_1
         )
         self.assertEqual(line_product_variant_1.price_unit, 750)
         self.env["product.pricelist.item"].create(
@@ -115,7 +115,7 @@ class SaleOrderCase(SavepointCase):
             }
         )
         line_product_variant_2 = new_line.variant_ids.filtered(
-            lambda l: l.product_id == self.product_variant_2
+            lambda line: line.product_id == self.product_variant_2
         )
         line_product_variant_2.product_uom_qty = 6
         self.assertEqual(line_product_variant_1.price_unit, 600)
