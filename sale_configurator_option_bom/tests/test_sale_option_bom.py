@@ -186,7 +186,6 @@ class TestProcess(Common):
         production_ids = self.sale_order.mrp_production_ids
         self.assertNotIn(self.product_opt_2, production_ids.move_raw_ids.product_id)
         self.assertNotIn(self.product_opt_3, production_ids.move_raw_ids.product_id)
-        self.assertIn(self.component, production_ids.move_raw_ids.product_id)
 
         production = production_ids.filtered(
             lambda m: m.product_id == self.configurable_product
@@ -196,17 +195,21 @@ class TestProcess(Common):
         )
 
         move_component_1 = production.move_raw_ids
+        self.assertEqual(self.component, move_component_1.product_id)
         # BoM: 2 components related to "Option 2" for each Configurable Product
-        # Sale Order: 1 "Option 2" sold
+        # Sale Order Line n°1: 1 "Option 2" sold
         # Expected Component quantity to manufacture = 2 * 1
         self.assertEqual(move_component_1.product_uom_qty, 2)
 
         move_component_2 = production2.move_raw_ids
+        self.assertEqual(self.component, move_component_2.product_id)
         # BoM for each Configurable Product n°2:
         #     - 4 components related to "Option 2"
         #     - 2 components related to "Option 3"
-        # Sale Order:
+        # Sale Order Line n°2:
         #     - 3 "Option 2" sold
         #     - 1 "Option 3" sold
-        # Expected component quantity to manufacture = 4 * 3 + 2 * 1
-        self.assertEqual(move_component_2.product_uom_qty, 14)
+        # Expected component quantity to manufacture:
+        #     - one line of 4 * 3 components
+        #     - one line of 2 * 1 components
+        self.assertEqual(move_component_2.mapped("product_uom_qty"), [12, 2])
