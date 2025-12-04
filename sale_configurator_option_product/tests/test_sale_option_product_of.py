@@ -2,122 +2,88 @@
 # @author Thomas BONNERUE <thomas.bonnerue@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import SUPERUSER_ID
-from odoo.tests.common import SavepointCase
+from odoo import Command
+
+from odoo.addons.sale_configurator_option.tests.common import Common
 
 
-class TestProcess(SavepointCase):
+class TestProcess(Common):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.env = cls.env(user=SUPERUSER_ID)  # CommonCase gives us a new user
-        cls.partner = cls.env.ref("base.res_partner_1")
+        cls.partner = cls.env["res.partner"].create({"name": "Partner"})
+
+        cls.product_opt_1.write({"type": "service"})
+        cls.product_opt_2.write({"type": "consu"})
+
         cls.env.ref("stock.route_warehouse0_mto").active = True
-        cls.option_1 = cls.env.ref("sale_configurator_option.product_option_1")
-        cls.option_2 = cls.env.ref("sale_configurator_option.product_option_2")
-        cls.option_3 = cls.env.ref("sale_configurator_option.product_option_3")
-        (cls.option_1 + cls.option_2 + cls.option_3).write(
-            {
-                "type": "product",
-            }
-        )
-        cls.option_1.write({"type": "service"})
-        cls.product_with_option = cls.env["product.product"].create(
+        routes = [
+            cls.env.ref("stock.route_warehouse0_mto").id,
+            cls.env.ref("mrp.route_warehouse0_manufacture").id,
+        ]
+        cls.configurable_product = cls.env["product.product"].create(
             {
                 "name": "Optional product",
-                "type": "product",
-                "route_ids": [
-                    (
-                        6,
-                        0,
-                        [
-                            cls.env.ref("stock.route_warehouse0_mto").id,
-                            cls.env.ref("mrp.route_warehouse0_manufacture").id,
-                        ],
-                    )
-                ],
-                "local_configurable_option_ids": [
-                    (0, 0, {"product_id": cls.option_1.id}),
-                    (0, 0, {"product_id": cls.option_2.id}),
-                    (0, 0, {"product_id": cls.option_3.id}),
+                "type": "consu",
+                "route_ids": [Command.set(routes)],
+                "specific_option_ids": [
+                    Command.create({"product_id": cls.product_opt_1.id}),
+                    Command.create({"product_id": cls.product_opt_2.id}),
                 ],
             }
         )
-        cls.product_option = cls.env["product.product"].create(
-            {
-                "name": "product option consu",
-                "type": "product",
-            }
+        cls.component = cls.env["product.product"].create(
+            {"name": "Component", "type": "consu"}
         )
-        cls.bom_product_option = cls.env["mrp.bom"].create(
+        cls.bom_configurable_product = cls.env["mrp.bom"].create(
             {
-                "product_tmpl_id": cls.product_with_option.product_tmpl_id.id,
+                "product_tmpl_id": cls.configurable_product.product_tmpl_id.id,
                 "product_qty": 1,
                 "bom_line_ids": [
-                    (
-                        0,
-                        0,
+                    Command.create({"product_id": cls.component.id, "product_qty": 1})
+                ],
+            }
+        )
+
+        cls.sale_order = cls.env["sale.order"].create(
+            {
+                "partner_id": cls.partner.id,
+                "order_line": [
+                    Command.create(
                         {
-                            "product_id": cls.product_option.id,
-                            "product_qty": 1,
+                            "product_id": cls.configurable_product.id,
+                            "product_uom_qty": 2,
+                            "child_option_ids": [
+                                Command.create(
+                                    {
+                                        "product_id": cls.product_opt_1.id,
+                                        "option_qty": 1,
+                                        "option_qty_type": "proportional_qty",
+                                    },
+                                ),
+                                Command.create(
+                                    {
+                                        "product_id": cls.product_opt_2.id,
+                                        "option_qty": 3,
+                                        "option_qty_type": "proportional_qty",
+                                    }
+                                ),
+                            ],
                         },
                     )
                 ],
             }
         )
 
-        vals = {
-            "partner_id": cls.partner.id,
-            "order_line": [
-                (
-                    0,
-                    0,
-                    {
-                        "product_id": cls.product_with_option.id,
-                        "product_uom_qty": 2,
-                        "option_ids": [
-                            (
-                                0,
-                                0,
-                                {
-                                    "product_id": cls.option_1.id,
-                                    "option_unit_qty": 1,
-                                    "option_qty_type": "proportional_qty",
-                                },
-                            ),
-                            (
-                                0,
-                                0,
-                                {
-                                    "product_id": cls.option_2.id,
-                                    "option_unit_qty": 1,
-                                    "option_qty_type": "proportional_qty",
-                                },
-                            ),
-                        ],
-                    },
-                )
-            ],
-        }
-        cls.sale_order = cls.env["sale.order"].create(vals)
-
-    def test_basic_process(self):
+    def test_add_option_to_manufacture_order(self):
         self.sale_order.action_confirm()
-        production = self.sale_order.production_ids.filtered(
-            lambda m: m.product_id == self.product_with_option
+        production = self.sale_order.mrp_production_ids
+
+        self.assertNotIn(self.product_opt_1, production.move_raw_ids.product_id)
+        self.assertIn(self.component, production.move_raw_ids.product_id)
+        self.assertIn(self.product_opt_2, production.move_raw_ids.product_id)
+
+        move_opt_2 = production.move_raw_ids.filtered(
+            lambda m: m.product_id == self.product_opt_2
         )
-        self.assertTrue(production)
-        line_option_1 = False
-        line_product_2 = False
-        line_product_3 = False
-        for line in production.move_raw_ids:
-            if line.product_id.id == self.option_1.id:
-                line_option_1 = True
-            if line.product_id.id == self.option_2.id:
-                line_product_2 = True
-                self.assertEqual(line.product_uom_qty, 2)
-            if line.product_id.id == self.option_3.id:
-                line_product_3 = True
-        self.assertFalse(line_option_1)
-        self.assertTrue(line_product_2)
-        self.assertFalse(line_product_3)
+        self.assertEqual(move_opt_2.product_uom_qty, 6)

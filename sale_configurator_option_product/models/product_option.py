@@ -9,23 +9,15 @@ class MrpProduction(models.Model):
 
     def _get_moves_raw_values(self):
         moves = super()._get_moves_raw_values()
-        moves_temp = []
         for prod in self:
-            moves_temp = self.env["sale.order.line"].read_group(
-                [
-                    ("product_id.type", "=", "product"),
-                    ("id", "in", prod.sale_line_ids.option_ids.ids),
-                ],
-                fields=["product_uom_qty:sum"],
-                groupby=["product_id", "product_uom"],
-                lazy=False,
+            option_line_ids = prod.sale_line_id.child_option_ids.filtered(
+                lambda o: o.product_id.type == "consu"
             )
-            for lines in moves_temp:
+            for line in option_line_ids:
                 moves.append(
                     prod._get_move_raw_values(
-                        self.env["product.product"].browse(lines["product_id"][0]),
-                        lines["product_uom_qty"],
-                        self.env["uom.uom"].browse(lines["product_uom"][0]),
+                        line.product_id, line.product_uom_qty, line.product_uom
                     )
                 )
+
         return moves
