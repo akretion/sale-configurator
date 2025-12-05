@@ -1,7 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<!-- Copyright 2020 Akretion (http://www.akretion.com).
-     @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
-     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<?xml version='1.0' encoding='utf-8' ?>
 <odoo>
     <record id="sale_order_line_config_variant_view_form_base" model="ir.ui.view">
         <field name="model">sale.order.line</field>
@@ -13,34 +10,29 @@
             <xpath expr="//field[@name='product_id']" position="before">
                 <field name="is_multi_variant_line" />
                 <field
-                    name="product_tmpl_id"
-                    attrs="{'invisible': [('is_multi_variant_line', '=', False)],
-                    'required': [('is_multi_variant_line', '=', True)]}"
+                    name="product_template_id"
+                    invisible="not is_multi_variant_line"
+                    required="is_multi_variant_line"
                 />
             </xpath>
             <xpath expr="//field[@name='product_id']" position="attributes">
-                <attribute
-                    name="attrs"
-                >{'readonly': [('product_updatable', '=', False)],
-                    'invisible': [('is_multi_variant_line', '=',True)],
-                    'required': [('display_type', '=', False)]}</attribute>
+                <attribute name="readonly">not product_updatable</attribute>
+                <attribute name="invisible">is_multi_variant_line</attribute>
+                <attribute name="required">not display_type</attribute>
             </xpath>
 
             <xpath expr="//field[@name='name']" position="after">
-                <label
-                    for="variant_ids"
-                    attrs="{'invisible': [('is_multi_variant_line', '=', False)]}"
-                />
+                <label for="variant_ids" invisible="not is_multi_variant_line" />
                 <field
                     name="variant_ids"
                     context="{'default_order_id': order_id}"
-                    attrs="{'invisible': [('is_multi_variant_line', '=', False)]}"
+                    invisible="not is_multi_variant_line"
                 >
-                    <tree editable="bottom">
+                    <list editable="bottom">
                         <!-- There is some magic here, please look at models/ir_ui_view.py
                              We dynamically retrieve all field from the sale order form
                         -->
-                    </tree>
+                    </list>
                 </field>
             </xpath>
         </field>
@@ -51,15 +43,15 @@
         <field name="inherit_id" ref="sale_order_line_config_variant_view_form_base" />
         <field name="arch" type="xml">
             <xpath
-                expr="//field[@name='variant_ids']/tree/field[@name='product_id']"
+                expr="//field[@name='variant_ids']/list/field[@name='product_id']"
                 position="attributes"
             >
                 <attribute
                     name="domain"
-                >[('product_tmpl_id','=', parent.product_tmpl_id)]</attribute>
+                >[('product_tmpl_id','=', parent.product_template_id)]</attribute>
             </xpath>
             <xpath
-                expr="//field[@name='variant_ids']/tree/field[@name='product_uom_qty']"
+                expr="//field[@name='variant_ids']/list/field[@name='product_uom_qty']"
                 position="attributes"
             >
                 <attribute name="sum">Total</attribute>

@@ -10,13 +10,13 @@ class Common(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        Product = cls.env["product.product"]
+        cls.Product = cls.env["product.product"]
         ConfigOption = cls.env["product.configurator.option"]
-        SaleOrderLine = cls.env["sale.order.line"]
+        cls.SaleOrderLine = cls.env["sale.order.line"]
 
         # Products
         # --------
-        cls.product_with_opt = Product.create(
+        cls.product_with_opt = cls.Product.create(
             {
                 "name": "Product With Option",
                 "config_type": "configurable",
@@ -25,16 +25,16 @@ class Common(TransactionCase):
         )
         cls.product_with_opt_tmpl = cls.product_with_opt.product_tmpl_id
 
-        cls.product_opt_1 = Product.create(
+        cls.product_opt_1 = cls.Product.create(
             {"name": "Option 1", "lst_price": 10, "config_type": "option"}
         )
-        cls.product_opt_2 = Product.create(
+        cls.product_opt_2 = cls.Product.create(
             {"name": "Option 2", "lst_price": 20, "config_type": "option"}
         )
-        cls.product_opt_3 = Product.create(
+        cls.product_opt_3 = cls.Product.create(
             {"name": "Option 3", "lst_price": 30, "config_type": "option"}
         )
-        cls.product_normal = Product.create({"name": "Product"})
+        cls.product_normal = cls.Product.create({"name": "Product"})
 
         # Configurator Options
         # -------------------
@@ -76,13 +76,13 @@ class Common(TransactionCase):
             {"partner_id": cls.partner.id, "pricelist_id": cls.pricelist.id}
         )
 
-        cls.line_product_with_opt = SaleOrderLine.create(
+        cls.line_product_with_opt = cls.SaleOrderLine.create(
             {
                 "order_id": cls.sale.id,
                 "product_id": cls.product_with_opt.id,
             }
         )
-        cls.line_opt_1 = SaleOrderLine.create(
+        cls.line_opt_1 = cls.SaleOrderLine.create(
             {
                 "order_id": cls.sale.id,
                 "parent_option_id": cls.line_product_with_opt.id,
@@ -92,7 +92,7 @@ class Common(TransactionCase):
             }
         )
 
-        cls.line_opt_2 = SaleOrderLine.create(
+        cls.line_opt_2 = cls.SaleOrderLine.create(
             {
                 "order_id": cls.sale.id,
                 "parent_option_id": cls.line_product_with_opt.id,
@@ -102,7 +102,7 @@ class Common(TransactionCase):
             }
         )
 
-        cls.line_opt_3 = SaleOrderLine.create(
+        cls.line_opt_3 = cls.SaleOrderLine.create(
             {
                 "order_id": cls.sale.id,
                 "parent_option_id": cls.line_product_with_opt.id,

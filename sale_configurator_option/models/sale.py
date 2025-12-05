@@ -104,6 +104,8 @@ class SaleOrderLine(models.Model):
         for record in self:
             if record.option_id:
                 record.option_qty_type = record.option_id.option_qty_type
+            else:
+                record.option_qty_type = False
 
     @api.depends("child_option_ids")
     def _compute_report_line_is_empty_parent(self):  # pylint: disable=missing-return
