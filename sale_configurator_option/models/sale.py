@@ -48,7 +48,7 @@ class SaleOrderLine(models.Model):
 
     def _get_child_type_sort(self):
         res = super()._get_child_type_sort()
-        res.append((20, "option"))
+        res.append((30, "option"))
         return res
 
     def get_children(self):
@@ -140,19 +140,24 @@ class SaleOrderLine(models.Model):
     def create(self, vals_list):
         options_list = [vals.pop("child_option_ids", None) for vals in vals_list]
         lines = super().create(vals_list)
-        # For weird reason it seem that the product_uom_qty have been not recomputed
-        # correctly. Recompute is only triggered in the onchange
-        # and the onchange do not propagate the qty see the following test:
-        # test_sale_order.py::SaleOrderCase::test_create_sale_with_child_option_ids
-        # Note maybe it's because the product_uom_qty have a default value
-        # and so the create will add it, end then if we have a value the recompute
-        # is note done
+
+        # The product_uom_qty is not computed during the create (maybe because of the
+        # default value '1.0' in sale module?), so we force the compute here.
         lines._compute_product_uom_qty()
 
         # We ensure to write the option after all field on the main line are recomputed
+        # otherwise 'child_option_ids' is erased during the create
         if any(options_list):
             for line, vals in zip(lines, options_list, strict=False):
                 if vals:
                     line.write({"child_option_ids": vals})
 
         return lines
+
+    def write(self, vals):
+        super().write(vals)
+        # As we write "child_option_ids" at the end of the create, we need to define
+        # the sequences of the newly created lines who have this parent/child hierarchy
+        if "child_option_ids" in vals:
+            self.order_id.sync_sequence()
+        return True

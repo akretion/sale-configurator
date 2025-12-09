@@ -120,3 +120,11 @@ class SaleOrderLine(models.Model):
                     line.write({"variant_ids": vals})
 
         return lines
+
+    def write(self, vals):
+        super().write(vals)
+        # As we write "variant_ids" at the end of the create, we need to define
+        # the sequences of the newly created lines who have this parent/child hierarchy
+        if "variant_ids" in vals:
+            self.order_id.sync_sequence()
+        return True

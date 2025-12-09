@@ -66,10 +66,6 @@ class SaleOrder(models.Model):
             self.sync_sequence()
         return True
 
-    @api.onchange("order_line")
-    def onchange_sale_line_sequence(self):
-        self.sync_sequence()
-
     @api.model
     def get_view(self, view_id=None, view_type="form", **options):
         res = super().get_view(view_id, view_type, **options)
@@ -250,14 +246,9 @@ class SaleOrderLine(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            # Correct parent_id for children lines whose parent is a configurable line
+            # Children lines created from the wizard are linked to their
+            # parent's order_id here
             parent_id = self._get_parent_id_from_vals(vals)
             if parent_id and "order_id" not in vals:
                 vals["order_id"] = self.browse(parent_id).order_id.id
         return super().create(vals_list)
-
-    def write(self, vals):
-        super().write(vals)
-        if "option_ids" in vals:
-            self.order_id.sync_sequence()
-        return True

@@ -185,3 +185,48 @@ class TestOptionWithVariant(Common):
         self.assertEqual(lines[4].price_unit, 230)
 
         self.assertEqual(lines[0].price_config_subtotal, 31000)
+
+    def test_sequence_variant_with_option(self):
+        self.env["sale.order.line"].create(
+            {
+                "order_id": self.sale.id,
+                "is_multi_variant_line": True,
+                "product_template_id": self.product_with_var_opt.id,
+                "product_id": self.variant_1.id,
+                "name": "Test",
+                "variant_ids": [
+                    Command.create(
+                        {
+                            "product_uom_qty": 30,
+                            "product_id": self.variant_1.id,
+                        },
+                    ),
+                    Command.create(
+                        {
+                            "product_uom_qty": 20,
+                            "product_id": self.variant_2.id,
+                        },
+                    ),
+                ],
+                "child_option_ids": [
+                    Command.create(
+                        {
+                            "option_qty": 1,
+                            "product_id": self.product_opt_1.id,
+                            "option_qty_type": "proportional_qty",
+                        },
+                    ),
+                    Command.create(
+                        {
+                            "option_qty": 2,
+                            "product_id": self.product_opt_2.id,
+                            "option_qty_type": "proportional_qty",
+                        },
+                    ),
+                ],
+            },
+        )
+        lines = self.sale.order_line.sorted("sequence")
+        self.assertEqual(lines[5].config_type, "configurable")
+        self.assertEqual(lines[6].config_type, "variant")
+        self.assertEqual(lines[8].config_type, "option")

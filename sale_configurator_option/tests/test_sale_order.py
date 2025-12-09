@@ -2,7 +2,7 @@
 # @author Sébastien BEAU <sebastien.beau@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-
+from odoo import Command
 from odoo.tests import Form
 
 from .common import Common
@@ -26,25 +26,19 @@ class SaleConfiguratorOption(Common):
             {
                 "partner_id": self.partner.id,
                 "order_line": [
-                    (
-                        0,
-                        0,
+                    Command.create(
                         {
                             "product_id": self.product_with_opt.id,
                             "product_uom_qty": 2,
                             "child_option_ids": [
-                                (
-                                    0,
-                                    0,
+                                Command.create(
                                     {
                                         "option_qty": 5,
                                         "product_id": self.product_opt_1.id,
                                         "option_qty_type": "proportional_qty",
                                     },
                                 ),
-                                (
-                                    0,
-                                    0,
+                                Command.create(
                                     {
                                         "option_qty": 2,
                                         "product_id": self.product_opt_2.id,
@@ -203,17 +197,13 @@ class SaleConfiguratorOption(Common):
             {
                 "partner_id": self.partner.id,
                 "order_line": [
-                    (
-                        0,
-                        0,
+                    Command.create(
                         {
                             "sequence": 10,
                             "product_id": self.product_with_opt.id,
                             "product_uom_qty": 2,
                             "child_option_ids": [
-                                (
-                                    0,
-                                    0,
+                                Command.create(
                                     {
                                         "sequence": 30,
                                         "option_qty": 5,
@@ -221,9 +211,7 @@ class SaleConfiguratorOption(Common):
                                         "option_qty_type": "proportional_qty",
                                     },
                                 ),
-                                (
-                                    0,
-                                    0,
+                                Command.create(
                                     {
                                         "sequence": 20,
                                         "option_qty": 2,
@@ -247,6 +235,32 @@ class SaleConfiguratorOption(Common):
         self.assertEqual(lines[2].sequence, 2)
         self.assertTrue(lines[1].parent_id)
         self.assertEqual(lines[2].product_id, self.product_opt_1)
+
+    def test_order_line_write_check_sequence(self):
+        sale = self._create_sale_order()
+        line_normal = self.env["sale.order.line"].create(
+            {"product_id": self.product_normal.id, "order_id": sale.id}
+        )
+        line_configurable = sale.order_line.filtered(
+            lambda x: x.product_id == self.product_with_opt
+        )
+        # Inital sequences
+        self.assertEqual(line_configurable.sequence, 0)
+        self.assertEqual(line_normal.sequence, 10)
+
+        # Mimicking the sequence widget's Drag and Drop
+        sale.write(
+            {"order_line": [Command.update(line_configurable.id, {"sequence": 2})]}
+        )
+        # New sequences
+        self.assertEqual(line_configurable.sequence, 0)
+        self.assertEqual(line_normal.sequence, 3)
+
+        sale.write(
+            {"order_line": [Command.update(line_configurable.id, {"sequence": 20})]}
+        )
+        self.assertEqual(line_configurable.sequence, 1)
+        self.assertEqual(line_normal.sequence, 0)
 
     def test_copy_sale(self):
         sale = self._create_sale_order()
@@ -282,13 +296,8 @@ class SaleConfiguratorOption(Common):
             {
                 "partner_id": self.partner.id,
                 "order_line": [
-                    (
-                        0,
-                        0,
-                        {
-                            "product_id": self.product_normal.id,
-                            "product_uom_qty": 2,
-                        },
+                    Command.create(
+                        {"product_id": self.product_normal.id, "product_uom_qty": 2},
                     )
                 ],
             }
