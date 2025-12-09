@@ -7,7 +7,7 @@
             ref="sale_configurator_base.sale_order_line_config_base_view_form"
         />
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='product_id']" position="before">
+            <xpath expr="//label[@for='product_id']" position="before">
                 <field name="is_multi_variant_line" />
                 <field
                     name="product_template_id"
@@ -15,10 +15,11 @@
                     required="is_multi_variant_line"
                 />
             </xpath>
-            <xpath expr="//field[@name='product_id']" position="attributes">
-                <attribute name="readonly">not product_updatable</attribute>
+            <xpath expr="//field[@name='product_id']/.." position="attributes">
                 <attribute name="invisible">is_multi_variant_line</attribute>
-                <attribute name="required">not display_type</attribute>
+            </xpath>
+            <xpath expr="//label[@for='product_id']" position="attributes">
+                <attribute name="invisible">is_multi_variant_line</attribute>
             </xpath>
 
             <xpath expr="//field[@name='name']" position="after">
@@ -42,6 +43,12 @@
         <field name="model">sale.order.line</field>
         <field name="inherit_id" ref="sale_order_line_config_variant_view_form_base" />
         <field name="arch" type="xml">
+            <xpath
+                expr="//field[@name='variant_ids']/list/field[@name='product_template_id']"
+                position="attributes"
+            >
+                <attribute name="invisible">1</attribute>
+            </xpath>
             <xpath
                 expr="//field[@name='variant_ids']/list/field[@name='product_id']"
                 position="attributes"

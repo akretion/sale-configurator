@@ -101,7 +101,6 @@ class TestOptionWithVariant(Common):
                         {
                             "is_multi_variant_line": True,
                             "product_template_id": cls.product_with_var_opt.id,
-                            # TODO: comment le remplir automatiquement sans onchange?
                             "product_id": cls.variant_1.id,
                             "name": "Test",
                             "variant_ids": [

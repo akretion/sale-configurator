@@ -81,6 +81,15 @@ class SaleOrderLine(models.Model):
     def _compute_config_type(self):  # pylint: disable=missing-return
         super()._compute_config_type()
 
+    @api.onchange("product_template_id")
+    def product_tmpl_id_change(self):
+        self.variant_ids = False
+        if self.product_template_id:
+            # ToFIX set product_id to False raise error on[
+            #  _sql_constraints = accountable_required_fields
+            self.product_id = self.product_template_id.product_variant_id
+            self.product_uom = self.product_template_id.uom_id
+
     def get_children(self):
         return super().get_children() + self.variant_ids
 
