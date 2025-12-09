@@ -48,14 +48,12 @@ class SaleOrderLine(models.Model):
         self.ensure_one()
         return sum(self.variant_ids.mapped("product_uom_qty"))
 
-    @api.depends("parent_variant_id.product_uom_qty")
+    @api.depends("parent_variant_id", "parent_variant_id.product_uom_qty")
     def _compute_pricelist_item_id(self):  # pylint: disable=missing-return
         """Compute Variant's price_unit based on its Parent's quantity and UoM."""
         super()._compute_pricelist_item_id()
-
         for line in self:
             parent_variant = line.parent_variant_id
-
             if parent_variant and parent_variant.product_template_id:
                 line.pricelist_item_id = line.order_id.pricelist_id._get_product_rule(
                     parent_variant.product_template_id,
@@ -67,6 +65,9 @@ class SaleOrderLine(models.Model):
     @api.depends("parent_variant_id.product_uom_qty")
     def _compute_price_unit(self):  # pylint: disable=missing-return
         super()._compute_price_unit()
+        for rec in self:
+            if rec.variant_ids:
+                rec.price_unit = 0
 
     @api.depends("variant_ids")
     def _compute_report_line_is_empty_parent(self):  # pylint: disable=missing-return
@@ -76,12 +77,16 @@ class SaleOrderLine(models.Model):
     def _compute_config_amount(self):  # pylint: disable=missing-return
         super()._compute_config_amount()
 
+    @api.depends("product_template_id")
+    def _compute_config_type(self):  # pylint: disable=missing-return
+        super()._compute_config_type()
+
     def get_children(self):
         return super().get_children() + self.variant_ids
 
     def _get_child_type_sort(self):
         res = super()._get_child_type_sort()
-        res.append((10, "variant"))
+        res.append((20, "variant"))
         return res
 
     def _get_config_type(self):
@@ -101,3 +106,17 @@ class SaleOrderLine(models.Model):
             return vals["parent_variant_id"]
         else:
             return super()._get_parent_id_from_vals(vals)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        variants_list = [vals.pop("variant_ids", None) for vals in vals_list]
+        lines = super().create(vals_list)
+
+        # We ensure to write variants after all field on the main line are recomputed
+        # otherwise 'variant_ids' is erased during the create
+        if any(variants_list):
+            for line, vals in zip(lines, variants_list, strict=False):
+                if vals:
+                    line.write({"variant_ids": vals})
+
+        return lines

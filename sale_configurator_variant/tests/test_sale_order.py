@@ -8,15 +8,10 @@ from odoo import Command
 from odoo.addons.sale_configurator_option.tests.common import Common
 
 
-class SaleOrderCase(Common):
+class SaleConfiguratorVariant(Common):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.partner = cls.env["res.partner"].create({"name": "Test Customer"})
-        cls.pricelist = cls.env["product.pricelist"].create(
-            {"name": "Pricelist", "sequence": 1}
-        )
-        cls.uom = cls.env.ref("uom.product_uom_unit")
 
         # Product with Variants
         # ----------------------
@@ -27,7 +22,7 @@ class SaleOrderCase(Common):
         cls.attr_ref = Attribute.create(
             {"name": "Attribute Ref", "create_variant": "always"}
         )
-        value_ids = AttributeValue.create(
+        cls.value_ids = AttributeValue.create(
             [{"name": f"V {i}", "attribute_id": cls.attr_ref.id} for i in range(1, 6)]
         )
 
@@ -36,12 +31,11 @@ class SaleOrderCase(Common):
                 "name": "Test Configurable Product",
                 "list_price": 750,
                 "taxes_id": [Command.set([])],
-                "uom_id": cls.env.ref("uom.product_uom_unit").id,
                 "attribute_line_ids": [
                     Command.create(
                         {
                             "attribute_id": cls.attr_ref.id,
-                            "value_ids": [Command.set(value_ids.ids)],
+                            "value_ids": [Command.set(cls.value_ids.ids)],
                         },
                     ),
                 ],
@@ -74,9 +68,6 @@ class SaleOrderCase(Common):
                 "product_template_id": cls.product_with_variant.id,
                 "is_multi_variant_line": True,
                 "price_unit": 0,
-                # FIXME : why is it needed?
-                # (it was fixed by product_tmpl_id_change in v14)
-                "product_uom": cls.uom.id,
             }
         )
         cls.line_variant_1 = cls.SaleOrderLine.create(
@@ -133,8 +124,6 @@ class SaleOrderCase(Common):
                 "product_id": product_tmpl.product_variant_id.id,
                 "price_unit": product_tmpl.list_price,
                 "order_id": self.sale.id,
-                # FIXME : why is it needed? (sur l'UI besoin de cocher la case
-                # pour ajouter un product.template)
                 "is_multi_variant_line": True,
             }
         )
@@ -169,7 +158,6 @@ class SaleOrderCase(Common):
     def test_conf_product_variant_price_global_qty(self):
         # Check if qty of one variant change price of other variant change
         new_line = self.create_sale_line_parent(self.product_with_variant)
-        # new_line.product_tmpl_id_change()
         self._conf_product_add_variants(new_line)
         line_product_variant_1 = new_line.variant_ids.filtered(
             lambda line: line.product_id == self.product_variant_1
