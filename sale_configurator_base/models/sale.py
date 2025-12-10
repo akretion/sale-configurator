@@ -16,16 +16,14 @@ class SaleOrder(models.Model):
         "sale.order.line", "order_id", domain=[("parent_id", "=", False)]
     )
 
-    has_configurable_product = fields.Boolean(
-        compute="_compute_has_configurable_product"
-    )
+    is_config_type = fields.Boolean(compute="_compute_is_config_type")
 
     hide_subtotal = fields.Boolean(compute="_compute_hide_subtotal")
 
     @api.depends("order_line.config_type")
-    def _compute_has_configurable_product(self):
+    def _compute_is_config_type(self):
         for rec in self:
-            rec.has_configurable_product = any(rec.order_line.mapped("config_type"))
+            rec.is_config_type = any(rec.order_line.mapped("config_type"))
 
     @api.depends("order_line.hide_subtotal")
     def _compute_hide_subtotal(self):

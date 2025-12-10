@@ -72,7 +72,7 @@ msgid ""
 msgstr ""
 
 #. module: sale_configurator_base
-#: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order__has_configurable_product
+#: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order__is_config_type
 msgid "Has Configurable Product"
 msgstr ""
 

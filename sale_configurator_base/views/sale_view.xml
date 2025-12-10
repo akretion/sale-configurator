@@ -92,7 +92,7 @@
                     icon="fa-th"
                     invisible="config_type != 'configurable'"
                     string="&#8203;"
-                    column_invisible="not parent.has_configurable_product"
+                    column_invisible="not parent.is_config_type"
                 />
             </xpath>
             <xpath expr="//field[@name='order_line']" position="attributes">
