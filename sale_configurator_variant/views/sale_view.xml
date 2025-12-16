@@ -55,7 +55,7 @@
             >
                 <attribute name="domain" operation="domain_add" join_operator="AND">
                     [('product_tmpl_id','=', parent.product_template_id)]
-                </attribute>            
+                </attribute>
             </xpath>
             <xpath
                 expr="//field[@name='variant_ids']/list/field[@name='product_uom_qty']"

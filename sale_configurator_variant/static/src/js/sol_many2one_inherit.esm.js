@@ -1,4 +1,5 @@
-/** @odoo-module **/
+/* Copyright 2025 Akretion
+ * License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). */
 
 import {SaleOrderLineProductField} from "@sale/js/sale_product_field";
 import {patch} from "@web/core/utils/patch";

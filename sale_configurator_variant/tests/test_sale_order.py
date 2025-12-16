@@ -53,7 +53,7 @@ class SaleConfiguratorVariant(Common):
 
         # Extra Price for Variant 3:
         cls.product_variant_3.product_template_attribute_value_ids.write(
-            {"price_extra": 50.40}
+            {"price_extra": 50}
         )
 
         # Sale Order
@@ -68,7 +68,6 @@ class SaleConfiguratorVariant(Common):
                 "product_template_id": cls.product_with_variant.id,
                 "product_id": cls.product_variant_1.id,
                 "is_configurable_with_variant": True,
-                "price_unit": 0,
             }
         )
         cls.line_variant_1 = cls.SaleOrderLine.create(
@@ -156,37 +155,32 @@ class SaleConfiguratorVariant(Common):
 
     def test_total_amount(self):
         self.assertEqual(self.sale.amount_tax, 0)
-        self.assertEqual(self.sale.amount_total, 6850.80)
-        self.assertEqual(self.sale.amount_untaxed, 6850.80)
+        self.assertEqual(self.sale.amount_total, 6850)
+        self.assertEqual(self.sale.amount_untaxed, 6850)
 
     def test_update_price(self):
         self.sale._recompute_prices()
-        self.assertEqual(self.sale.amount_total, 6850.80)
-        self.assertEqual(self.sale.amount_untaxed, 6850.80)
+        self.assertEqual(self.sale.amount_total, 6850)
+        self.assertEqual(self.sale.amount_untaxed, 6850)
         self.assertEqual(self.sale.amount_tax, 0)
 
-    def test_conf_total_amount_price(self):
-        self.assertEqual(self.line_with_variant.price_config_subtotal, 6850.80)
-        self.assertEqual(self.line_with_variant.price_config_total, 6850.80)
+    def test_price_config_total(self):
+        self.assertEqual(self.line_with_variant.price_config_subtotal, 6850)
+        self.assertEqual(self.line_with_variant.price_config_total, 6850)
         self.assertEqual(self.line_variant_1.price_config_total, 0)
         self.assertEqual(self.line_variant_2.price_config_total, 0)
         self.assertEqual(self.line_variant_3.price_config_total, 0)
 
-    def test_conf_product_variant_qty(self):
+    def test_parent_quantity(self):
         new_line = self.create_sale_line_parent(self.product_with_variant)
         self._conf_product_add_variants(new_line)
         self.assertEqual(new_line.product_uom_qty, 5)
         new_line.variant_ids[0].product_uom_qty = 3
         self.assertEqual(new_line.product_uom_qty, 7)
 
-    def test_conf_product_variant_price_global_qty(self):
-        # Check if qty of one variant change price of other variant change
-        new_line = self.create_sale_line_parent(self.product_with_variant)
-        self._conf_product_add_variants(new_line)
-        line_product_variant_1 = new_line.variant_ids.filtered(
-            lambda line: line.product_id == self.product_variant_1
-        )
-        self.assertEqual(line_product_variant_1.price_unit, 750)
+    def test_variant_price_depends_on_global_qty(self):
+        self.assertEqual(self.line_variant_1.price_unit, 750)
+
         self.env["product.pricelist.item"].create(
             {
                 "pricelist_id": self.pricelist.id,
@@ -197,9 +191,35 @@ class SaleConfiguratorVariant(Common):
                 "min_quantity": 10,
             }
         )
-        line_product_variant_2 = new_line.variant_ids.filtered(
-            lambda line: line.product_id == self.product_variant_2
-        )
-        line_product_variant_2.product_uom_qty = 6
+        self.line_variant_2.product_uom_qty = 4
 
-        self.assertEqual(line_product_variant_1.price_unit, 600)
+        self.assertEqual(self.line_variant_1.price_unit, 600)
+        self.assertEqual(self.line_variant_2.price_unit, 600)
+        self.assertEqual(self.line_variant_3.price_unit, 640)
+
+    def test_variant_price_depends_on_global_qty_and_local_pricelist(self):
+        self.env["product.pricelist.item"].create(
+            [
+                {
+                    "pricelist_id": self.pricelist.id,
+                    "applied_on": "1_product",
+                    "product_tmpl_id": self.product_with_variant.id,
+                    "compute_price": "percentage",
+                    "percent_price": 20,
+                    "min_quantity": 10,
+                },
+                {
+                    "pricelist_id": self.pricelist.id,
+                    "applied_on": "0_product_variant",
+                    "product_id": self.product_variant_2.id,
+                    "compute_price": "percentage",
+                    "percent_price": 50,
+                    "min_quantity": 10,
+                },
+            ]
+        )
+        self.line_variant_3.product_uom_qty = 3
+
+        self.assertEqual(self.line_variant_1.price_unit, 600)
+        self.assertEqual(self.line_variant_2.price_unit, 375)
+        self.assertEqual(self.line_variant_3.price_unit, 640)

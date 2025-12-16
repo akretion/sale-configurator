@@ -48,13 +48,14 @@ class SaleOrderLine(models.Model):
 
     @api.depends("parent_variant_id", "parent_variant_id.product_uom_qty")
     def _compute_pricelist_item_id(self):  # pylint: disable=missing-return
-        """Compute Variant's price_unit based on its Parent's quantity and UoM."""
+        """Compute Variant's price_unit based on its Parent's quantity and UoM.
+        (Parent's quantity == the sum of all the Variants quantities)"""
         super()._compute_pricelist_item_id()
         for line in self:
             parent_variant = line.parent_variant_id
             if parent_variant and parent_variant.product_template_id:
                 line.pricelist_item_id = line.order_id.pricelist_id._get_product_rule(
-                    parent_variant.product_template_id,
+                    line.product_id,
                     quantity=parent_variant.product_uom_qty or 1.0,
                     uom=parent_variant.product_uom,
                     date=line._get_order_date(),
@@ -62,6 +63,7 @@ class SaleOrderLine(models.Model):
 
     @api.depends("parent_variant_id.product_uom_qty")
     def _compute_price_unit(self):  # pylint: disable=missing-return
+        """The variant's parent has always price_unit == 0"""
         super()._compute_price_unit()
         for rec in self:
             if rec.variant_ids:
