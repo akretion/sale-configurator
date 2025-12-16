@@ -6,7 +6,7 @@
 {
     "name": "Sale Configurator Variant",
     "summary": "Extend sale configurator to manage product variant",
-    "version": "18.0.0.0.0",
+    "version": "18.0.1.0.0",
     "category": "Sale",
     "website": "https://github.com/akretion/sale-configurator",
     "author": " Akretion",
@@ -21,7 +21,7 @@
         "web.assets_backend": [
             "after",
             "sale/static/src/js/**/*",
-            "sale_configurator_variant/static/src/js/sol_many2one_inherit.js",
+            "sale_configurator_variant/static/src/js/sol_many2one_inherit.esm.js",
         ]
     },
     "qweb": [],

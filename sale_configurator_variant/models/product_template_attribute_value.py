@@ -11,7 +11,7 @@ class ProductTemplateAttributeValue(models.Model):
         """Keep only product.template's name in sale.order.line's description
         for the line of a configurable product with Variants"""
         res = super()._get_combination_name()
-        if self._context.get("is_multi_variant_line"):
+        if self._context.get("is_configurable_with_variant"):
             return ""
 
         return res

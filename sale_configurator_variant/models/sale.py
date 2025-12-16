@@ -23,9 +23,7 @@ class SaleOrderLine(models.Model):
         context={"default_config_type": "variant"},
         copy=True,
     )
-    is_multi_variant_line = fields.Boolean(
-        "Multi variant",
-    )
+    is_configurable_with_variant = fields.Boolean("With variants?")
 
     @api.depends("parent_variant_id")
     def _compute_parent(self):  # pylint: disable=missing-return
@@ -101,7 +99,7 @@ class SaleOrderLine(models.Model):
     def _get_config_type(self):
         if self.parent_variant_id:
             return "variant"
-        elif self.is_multi_variant_line:
+        elif self.is_configurable_with_variant:
             return "configurable"
         else:
             return super()._get_config_type()
@@ -120,9 +118,9 @@ class SaleOrderLine(models.Model):
         """Keep only product.template's name in sale.order.line's description
         for the line of a configurable product with Variants"""
 
-        if self.is_multi_variant_line and self.product_template_id:
+        if self.is_configurable_with_variant and self.product_template_id:
             description = super(
-                SaleOrderLine, self.with_context(is_multi_variant_line=True)
+                SaleOrderLine, self.with_context(is_configurable_with_variant=True)
             )._get_sale_order_line_multiline_description_sale()
 
             # Force to recompute product_id's display_name after this change

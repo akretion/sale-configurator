@@ -66,7 +66,7 @@ class SaleConfiguratorVariant(Common):
                 "order_id": cls.sale.id,
                 "product_template_id": cls.product_with_variant.id,
                 "product_id": cls.product_variant_1.id,
-                "is_multi_variant_line": True,
+                "is_configurable_with_variant": True,
                 "price_unit": 0,
             }
         )
@@ -124,7 +124,7 @@ class SaleConfiguratorVariant(Common):
                 "product_id": product_tmpl.product_variant_id.id,
                 "price_unit": product_tmpl.list_price,
                 "order_id": self.sale.id,
-                "is_multi_variant_line": True,
+                "is_configurable_with_variant": True,
             }
         )
         return sale_line
@@ -149,6 +149,12 @@ class SaleConfiguratorVariant(Common):
         self.assertEqual(self.sale.amount_tax, 0)
         self.assertEqual(self.sale.amount_total, 6850.80)
         self.assertEqual(self.sale.amount_untaxed, 6850.80)
+
+    def test_update_price(self):
+        self.sale._recompute_prices()
+        self.assertEqual(self.sale.amount_total, 6850.80)
+        self.assertEqual(self.sale.amount_untaxed, 6850.80)
+        self.assertEqual(self.sale.amount_tax, 0)
 
     def test_conf_total_amount_price(self):
         self.assertEqual(self.line_with_variant.price_config_subtotal, 6850.80)
@@ -188,10 +194,3 @@ class SaleConfiguratorVariant(Common):
         line_product_variant_2.product_uom_qty = 6
 
         self.assertEqual(line_product_variant_1.price_unit, 600)
-
-    def test_update_price(self):
-        self.sale._recompute_prices()
-        # FIXME : Why this test is needed? Same values as the first one
-        self.assertEqual(self.sale.amount_total, 6850.80)
-        self.assertEqual(self.sale.amount_untaxed, 6850.80)
-        self.assertEqual(self.sale.amount_tax, 0)

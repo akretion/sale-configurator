@@ -99,7 +99,7 @@ class TestOptionWithVariant(Common):
                 "order_line": [
                     Command.create(
                         {
-                            "is_multi_variant_line": True,
+                            "is_configurable_with_variant": True,
                             "product_template_id": cls.product_with_var_opt.id,
                             "product_id": cls.variant_1.id,
                             "name": "Test",
@@ -189,7 +189,7 @@ class TestOptionWithVariant(Common):
         self.env["sale.order.line"].create(
             {
                 "order_id": self.sale.id,
-                "is_multi_variant_line": True,
+                "is_configurable_with_variant": True,
                 "product_template_id": self.product_with_var_opt.id,
                 "product_id": self.variant_1.id,
                 "name": "Test",
