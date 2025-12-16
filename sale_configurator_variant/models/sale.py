@@ -83,8 +83,6 @@ class SaleOrderLine(models.Model):
     def product_tmpl_id_change(self):
         self.variant_ids = False
         if self.product_template_id:
-            # ToFIX set product_id to False raise error on[
-            #  _sql_constraints = accountable_required_fields
             self.product_id = self.product_template_id.product_variant_id
             self.product_uom = self.product_template_id.uom_id
 

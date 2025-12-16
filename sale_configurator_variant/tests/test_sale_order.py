@@ -4,6 +4,7 @@
 
 
 from odoo import Command
+from odoo.tests import Form
 
 from odoo.addons.sale_configurator_option.tests.common import Common
 
@@ -128,6 +129,14 @@ class SaleConfiguratorVariant(Common):
             }
         )
         return sale_line
+
+    def test_onchange_product_template_id(self):
+        with Form(
+            self.env["sale.order.line"].with_context(default_order_id=self.sale.id)
+        ) as line_form:
+            line_form.is_configurable_with_variant = True
+            line_form.product_template_id = self.product_with_variant
+            self.assertEqual(line_form.product_id, self.product_variant_1)
 
     def test_config_type(self):
         new_line = self.create_sale_line_parent(self.product_with_variant)
