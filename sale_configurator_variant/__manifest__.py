@@ -17,5 +17,12 @@
     "depends": ["sale_configurator_option"],
     "data": ["views/sale_view.xml"],
     "demo": ["demo/sale_demo.xml"],
+    "assets": {
+        "web.assets_backend": [
+            "after",
+            "sale/static/src/js/**/*",
+            "sale_configurator_variant/static/src/js/sol_many2one_inherit.js",
+        ]
+    },
     "qweb": [],
 }

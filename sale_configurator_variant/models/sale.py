@@ -116,6 +116,21 @@ class SaleOrderLine(models.Model):
         else:
             return super()._get_parent_id_from_vals(vals)
 
+    def _get_sale_order_line_multiline_description_sale(self):
+        """Keep only product.template's name in sale.order.line's description
+        for the line of a configurable product with Variants"""
+
+        if self.is_multi_variant_line and self.product_template_id:
+            description = super(
+                SaleOrderLine, self.with_context(is_multi_variant_line=True)
+            )._get_sale_order_line_multiline_description_sale()
+
+            # Force to recompute product_id's display_name after this change
+            self.product_id.invalidate_recordset(["display_name"])
+            return description
+
+        return super()._get_sale_order_line_multiline_description_sale()
+
     @api.model_create_multi
     def create(self, vals_list):
         variants_list = [vals.pop("variant_ids", None) for vals in vals_list]

@@ -63,9 +63,9 @@ class SaleConfiguratorVariant(Common):
 
         cls.line_with_variant = cls.SaleOrderLine.create(
             {
-                "name": "Test",
                 "order_id": cls.sale.id,
                 "product_template_id": cls.product_with_variant.id,
+                "product_id": cls.product_variant_1.id,
                 "is_multi_variant_line": True,
                 "price_unit": 0,
             }
@@ -135,6 +135,15 @@ class SaleConfiguratorVariant(Common):
         for line in new_line.variant_ids:
             self.assertEqual(line.config_type, "variant")
         self.assertEqual(new_line.config_type, "configurable")
+
+    def test_parent_variant_name(self):
+        self.assertEqual(self.sale.order_line[0].name, "Test Configurable Product")
+        self.assertEqual(
+            self.sale.order_line[1].name, "Test Configurable Product (V 1)"
+        )
+        self.assertEqual(
+            self.sale.order_line[2].name, "Test Configurable Product (V 2)"
+        )
 
     def test_total_amount(self):
         self.assertEqual(self.sale.amount_tax, 0)
