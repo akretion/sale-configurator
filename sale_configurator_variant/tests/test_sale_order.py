@@ -30,6 +30,7 @@ class SaleConfiguratorVariant(Common):
         cls.product_with_variant = Template.create(
             {
                 "name": "Test Configurable Product",
+                "description_sale": "Description",
                 "list_price": 750,
                 "taxes_id": [Command.set([])],
                 "attribute_line_ids": [
@@ -51,10 +52,8 @@ class SaleConfiguratorVariant(Common):
         cls.product_variant_4 = cls.variants[3]
         cls.product_variant_5 = cls.variants[4]
 
-        # Extra Price for Variant 3:
-        cls.product_variant_3.product_template_attribute_value_ids.write(
-            {"price_extra": 50}
-        )
+        cls.product_variant_2.description_sale = "Description"
+        cls.product_variant_3.product_template_attribute_value_ids.price_extra = 50
 
         # Sale Order
         # ----------
@@ -145,7 +144,9 @@ class SaleConfiguratorVariant(Common):
         self.assertEqual(new_line.config_type, "configurable")
 
     def test_parent_variant_name(self):
-        self.assertEqual(self.sale.order_line[0].name, "Test Configurable Product")
+        self.assertEqual(
+            self.sale.order_line[0].name, "Test Configurable Product\nDescription"
+        )
         self.assertEqual(
             self.sale.order_line[1].name, "Test Configurable Product (V 1)"
         )
