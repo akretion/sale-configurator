@@ -53,7 +53,7 @@ class SaleOrderLine(models.Model):
         super()._compute_pricelist_item_id()
         for line in self:
             parent_variant = line.parent_variant_id
-            if parent_variant and parent_variant.product_template_id:
+            if parent_variant and line.product_id:
                 line.pricelist_item_id = line.order_id.pricelist_id._get_product_rule(
                     line.product_id,
                     quantity=parent_variant.product_uom_qty or 1.0,

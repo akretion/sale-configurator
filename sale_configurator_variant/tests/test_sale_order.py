@@ -136,6 +136,17 @@ class SaleConfiguratorVariant(Common):
             line_form.product_template_id = self.product_with_variant
             self.assertEqual(line_form.product_id, self.product_variant_1)
 
+    def test_quantity_readonly(self):
+        with Form(
+            self.env["sale.order.line"].with_context(default_order_id=self.sale.id)
+        ) as line_form:
+            line_form.is_configurable_with_variant = True
+            line_form.product_template_id = self.product_with_variant
+            with line_form.variant_ids.new() as variant:
+                variant.product_id = self.product_variant_4
+            with self.assertRaisesRegex(AssertionError, "can't write on readonly"):
+                line_form.product_uom_qty = 3
+
     def test_config_type(self):
         new_line = self.create_sale_line_parent(self.product_with_variant)
         self._conf_product_add_variants(new_line)

@@ -21,6 +21,9 @@
             <xpath expr="//label[@for='product_id']" position="attributes">
                 <attribute name="invisible">is_configurable_with_variant</attribute>
             </xpath>
+            <xpath expr="//field[@name='product_uom_qty']" position="attributes">
+                <attribute name="readonly">variant_ids</attribute>
+            </xpath>
 
             <xpath expr="//field[@name='name']" position="after">
                 <label for="variant_ids" invisible="not is_configurable_with_variant" />
@@ -31,7 +34,8 @@
                 >
                     <list editable="bottom">
                         <!-- There is some magic here, please look at models/ir_ui_view.py
-                             We dynamically retrieve all field from the sale order form
+                    We dynamically retrieve all the fields from the
+                    sale.order.line list defined in the original sale.order form view.
                         -->
                     </list>
                 </field>
