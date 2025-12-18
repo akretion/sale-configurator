@@ -14,8 +14,9 @@
     "installable": True,
     "external_dependencies": {"python": ["openupgradelib"]},
     "depends": [
-        "base_view_inheritance_extension",
         "sale_configurator_base",
+        # https://github.com/OCA/server-tools
+        "base_view_inheritance_extension",
     ],
     "data": [
         "views/account_move_view.xml",

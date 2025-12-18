@@ -5,20 +5,19 @@
 
 from odoo import Command
 from odoo.tests import Form
+from odoo.tests.common import TransactionCase
 
-from odoo.addons.sale_configurator_option.tests.common import Common
 
-
-class SaleConfiguratorVariant(Common):
+class SaleConfiguratorVariant(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-
         # Product with Variants
         # ----------------------
         Template = cls.env["product.template"]
         Attribute = cls.env["product.attribute"]
         AttributeValue = cls.env["product.attribute.value"]
+        SaleOrderLine = cls.env["sale.order.line"]
 
         cls.attr_ref = Attribute.create(
             {"name": "Attribute Ref", "create_variant": "always"}
@@ -57,11 +56,15 @@ class SaleConfiguratorVariant(Common):
 
         # Sale Order
         # ----------
+        cls.partner = cls.env["res.partner"].create({"name": "Test Customer"})
+        cls.pricelist = cls.env["product.pricelist"].create(
+            {"name": "Pricelist", "sequence": 1}
+        )
         cls.sale = cls.env["sale.order"].create(
             {"partner_id": cls.partner.id, "pricelist_id": cls.pricelist.id}
         )
 
-        cls.line_with_variant = cls.SaleOrderLine.create(
+        cls.line_with_variant = SaleOrderLine.create(
             {
                 "order_id": cls.sale.id,
                 "product_template_id": cls.product_with_variant.id,
@@ -69,7 +72,7 @@ class SaleConfiguratorVariant(Common):
                 "is_configurable_with_variant": True,
             }
         )
-        cls.line_variant_1 = cls.SaleOrderLine.create(
+        cls.line_variant_1 = SaleOrderLine.create(
             {
                 "order_id": cls.sale.id,
                 "parent_variant_id": cls.line_with_variant.id,
@@ -78,7 +81,7 @@ class SaleConfiguratorVariant(Common):
             }
         )
 
-        cls.line_variant_2 = cls.SaleOrderLine.create(
+        cls.line_variant_2 = SaleOrderLine.create(
             {
                 "order_id": cls.sale.id,
                 "parent_variant_id": cls.line_with_variant.id,
@@ -87,7 +90,7 @@ class SaleConfiguratorVariant(Common):
             }
         )
 
-        cls.line_variant_3 = cls.SaleOrderLine.create(
+        cls.line_variant_3 = SaleOrderLine.create(
             {
                 "order_id": cls.sale.id,
                 "parent_variant_id": cls.line_with_variant.id,

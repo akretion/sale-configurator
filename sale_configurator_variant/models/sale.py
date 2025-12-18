@@ -23,6 +23,7 @@ class SaleOrderLine(models.Model):
         context={"default_config_type": "variant"},
         copy=True,
     )
+    product_uom_qty = fields.Float(recursive=True)
     is_configurable_with_variant = fields.Boolean("With variants?")
 
     @api.depends("parent_variant_id")
@@ -36,11 +37,15 @@ class SaleOrderLine(models.Model):
     @api.depends("variant_ids.product_uom_qty")
     def _compute_product_uom_qty(self):  # pylint: disable=missing-return
         """Parent's quantity is the sum of its Variants quantities."""
-        super()._compute_product_uom_qty()
 
-        for record in self:
-            if record.variant_ids:
-                record.product_uom_qty = record._get_child_qty()
+        parents = self.filtered(lambda r: r.variant_ids)
+        for rec in parents:
+            rec.product_uom_qty = rec._get_child_qty()
+
+        # We force computing parents with variant BEFORE other lines
+        # in order to have the correct parent's quantity before computing
+        # potential option children quantities (which depend on their parent's quantity)
+        super(SaleOrderLine, self - parents)._compute_product_uom_qty()
 
     def _get_child_qty(self):
         self.ensure_one()

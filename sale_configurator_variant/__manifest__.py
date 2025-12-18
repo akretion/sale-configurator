@@ -13,8 +13,12 @@
     "license": "AGPL-3",
     "application": False,
     "installable": True,
-    "external_dependencies": {"python": [], "bin": []},
-    "depends": ["sale_configurator_option"],
+    "external_dependencies": {"python": ["openupgradelib"]},
+    "depends": [
+        "sale_configurator_base",
+        # https://github.com/OCA/server-tools
+        "base_view_inheritance_extension",
+    ],
     "data": ["views/sale_view.xml"],
     "demo": ["demo/sale_demo.xml"],
     "assets": {
