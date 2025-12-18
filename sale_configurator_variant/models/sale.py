@@ -26,6 +26,18 @@ class SaleOrderLine(models.Model):
     product_uom_qty = fields.Float(recursive=True)
     is_configurable_with_variant = fields.Boolean("With variants?")
 
+    product_id = fields.Many2one(
+        compute="_compute_product_id",
+        readonly=False,
+        store=True,
+        precompute=True,
+    )
+
+    @api.depends("product_template_id")
+    def _compute_product_id(self):
+        for rec in self:
+            rec.product_id = rec.product_template_id.product_variant_id
+
     @api.depends("parent_variant_id")
     def _compute_parent(self):  # pylint: disable=missing-return
         for record in self:
@@ -85,13 +97,6 @@ class SaleOrderLine(models.Model):
     @api.depends("product_template_id")
     def _compute_config_type(self):  # pylint: disable=missing-return
         super()._compute_config_type()
-
-    @api.onchange("product_template_id")
-    def product_tmpl_id_change(self):
-        self.variant_ids = False
-        if self.product_template_id:
-            self.product_id = self.product_template_id.product_variant_id
-            self.product_uom = self.product_template_id.uom_id
 
     def get_children(self):
         return super().get_children() + self.variant_ids
