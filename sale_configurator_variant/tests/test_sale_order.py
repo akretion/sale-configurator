@@ -193,7 +193,7 @@ class SaleConfiguratorVariant(TransactionCase):
         new_line.variant_ids[0].product_uom_qty = 3
         self.assertEqual(new_line.product_uom_qty, 7)
 
-    def test_variant_price_depends_on_global_qty(self):
+    def test_variant_price_depends_on_global_qty_discount_disabled(self):
         self.assertEqual(self.line_variant_1.price_unit, 750)
 
         self.env["product.pricelist.item"].create(
@@ -206,11 +206,53 @@ class SaleConfiguratorVariant(TransactionCase):
                 "min_quantity": 10,
             }
         )
+        # Price does not change while min_qty < 10
+        self.assertEqual(self.line_variant_1.price_unit, 750)
+        self.assertEqual(self.line_variant_1.discount, 0)
+
         self.line_variant_2.product_uom_qty = 4
 
+        self.assertEqual(self.line_variant_1.discount, 0)
         self.assertEqual(self.line_variant_1.price_unit, 600)
         self.assertEqual(self.line_variant_2.price_unit, 600)
         self.assertEqual(self.line_variant_3.price_unit, 640)
+
+    def test_variant_price_depends_on_global_qty_discount_enabled(self):
+        self.env.user.groups_id += self.env.ref("sale.group_discount_per_so_line")
+        self.assertEqual(self.line_variant_1.price_unit, 750)
+
+        self.env["product.pricelist.item"].create(
+            {
+                "pricelist_id": self.pricelist.id,
+                "applied_on": "1_product",
+                "product_tmpl_id": self.product_with_variant.id,
+                "compute_price": "percentage",
+                "percent_price": 20,
+                "min_quantity": 10,
+            }
+        )
+        # Price does not change while min_qty < 10
+        self.assertEqual(self.line_variant_1.discount, 0)
+        self.assertEqual(self.line_variant_1.price_unit, 750)
+        self.assertEqual(self.line_variant_1.price_subtotal, 3000)
+
+        self.line_variant_2.product_uom_qty = 4
+
+        # Discount applied when parent quantity = 10
+        self.assertEqual(self.line_variant_1.discount, 20)
+        self.assertEqual(self.line_variant_2.discount, 20)
+        self.assertEqual(self.line_variant_3.discount, 20)
+
+        self.assertEqual(self.line_variant_1.price_unit, 750)
+        self.assertEqual(self.line_variant_2.price_unit, 750)
+        self.assertEqual(self.line_variant_3.price_unit, 800)
+
+        # Discount only on subtotal
+        # Expected price_subtotal == 4 * 600
+        self.assertEqual(self.line_variant_1.price_subtotal, 2400)
+        self.assertEqual(self.line_variant_2.price_subtotal, 2400)
+        # Expected price_subtotal == 2 * 640
+        self.assertEqual(self.line_variant_3.price_subtotal, 1280)
 
     def test_variant_price_depends_on_global_qty_and_local_pricelist(self):
         self.env["product.pricelist.item"].create(

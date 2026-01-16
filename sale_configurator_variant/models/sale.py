@@ -79,6 +79,42 @@ class SaleOrderLine(models.Model):
                 )
 
     @api.depends("parent_variant_id.product_uom_qty")
+    def _compute_discount(self):  # pylint: disable=missing-return
+        super()._compute_discount()
+
+    # Override the 2 methods used to compute discount (when the discount security group
+    # is enabled) with Parent's quantity and UoM
+    def _get_pricelist_price(self):
+        price = super()._get_pricelist_price()
+        parent_variant = self.parent_variant_id
+        if parent_variant:
+            price = self.pricelist_item_id._compute_price(
+                product=self.product_id.with_context(
+                    **self._get_product_price_context()
+                ),
+                quantity=parent_variant.product_uom_qty or 1.0,
+                uom=parent_variant.product_uom,
+                date=self._get_order_date(),
+                currency=self.currency_id,
+            )
+        return price
+
+    def _get_pricelist_price_before_discount(self):
+        base_price = super()._get_pricelist_price_before_discount()
+        parent_variant = self.parent_variant_id
+        if parent_variant:
+            base_price = self.pricelist_item_id._compute_price_before_discount(
+                product=self.product_id.with_context(
+                    **self._get_product_price_context()
+                ),
+                quantity=parent_variant.product_uom_qty or 1.0,
+                uom=parent_variant.product_uom,
+                date=self._get_order_date(),
+                currency=self.currency_id,
+            )
+        return base_price
+
+    @api.depends("parent_variant_id.product_uom_qty")
     def _compute_price_unit(self):  # pylint: disable=missing-return
         """The variant's parent has always price_unit == 0"""
         super()._compute_price_unit()
