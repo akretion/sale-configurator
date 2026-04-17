@@ -9,15 +9,14 @@
         "Module to manage Link betwen Options"
         " (the choise off one option add anthor option)"
     ),
-    "version": "14.0.1.0.1",
+    "version": "18.0.1.0.0",
     "category": "Uncategorized",
     "website": "https://github.com/akretion/sale-configurator",
     "author": " Akretion",
     "license": "AGPL-3",
     "application": False,
-    "installable": False,
-    "external_dependencies": {"python": [], "bin": []},
+    "installable": True,
     "depends": ["sale_configurator_option"],
-    "data": ["views/product_configurator_option_view.xml"],
-    "qweb": [],
+    "data": ["views/product_configurator_option_view.xml",
+             "views/sale_view.xml"],
 }
