@@ -55,7 +55,14 @@ class SaleOrderLine(models.Model):
         return super().get_children() + self.child_option_ids
 
     def _get_config_type(self):
-        return self.product_id.config_type or super()._get_config_type()
+        p_type = self.product_id.config_type
+        if self.parent_option_id and p_type == "option":
+            return "option"
+
+        if p_type == "configurable":
+            return "configurable"
+
+        return super()._get_config_type()
 
     def _get_parent_id_from_vals(self, vals):
         if vals.get("parent_option_id"):

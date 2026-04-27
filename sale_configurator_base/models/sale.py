@@ -16,7 +16,7 @@ class SaleOrder(models.Model):
         "sale.order.line", "order_id", domain=[("parent_id", "=", False)]
     )
 
-    is_config_type = fields.Boolean(compute="_compute_is_config_type")
+    is_config_type = fields.Boolean(compute="_compute_is_config_type", store=True)
 
     hide_subtotal = fields.Boolean(compute="_compute_hide_subtotal")
 
@@ -136,6 +136,7 @@ class SaleOrderLine(models.Model):
         help="Defines whether the line refers to a configurable product or "
         "to one of its child items ('option', 'variant', etc.)",
         compute="_compute_config_type",
+        store=True
     )
 
     report_line_is_empty_parent = fields.Boolean(
