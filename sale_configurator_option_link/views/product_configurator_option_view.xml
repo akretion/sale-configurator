@@ -3,16 +3,16 @@
      @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
-    <record model="ir.ui.view" id="product_configurator_option_view_tree">
+    <record model="ir.ui.view" id="product_configurator_option_view_list">
         <field name="model">product.configurator.option</field>
         <field
             name="inherit_id"
-            ref="sale_configurator_option.product_configurator_option_view_tree"
+            ref="sale_configurator_option.product_configurator_option_view_list"
         />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='option_qty_type']" position="after">
                 <field name="included_by_product_id" />
-                <field name="included_by_option_id" invisible="1" />
+                <field name="included_by_option_id" optional="hide" />
             </xpath>
         </field>
     </record>

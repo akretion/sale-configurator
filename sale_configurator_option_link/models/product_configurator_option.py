@@ -18,7 +18,7 @@ class ProductConfiguratorOption(models.Model):
     )
 
     included_by_product_id = fields.Many2one(
-        "product.product", "Inclueded by Product", domain=[("is_option", "=", True)]
+        "product.product", "Included by Product", domain=[("config_type", "=", "option")]
     )
     included_option_ids = fields.One2many(
         "product.configurator.option", "included_by_option_id"
@@ -34,7 +34,7 @@ class ProductConfiguratorOption(models.Model):
     @api.depends("included_by_product_id")
     def _compute_included_by_option_id(self):
         for option in self:
-            options = option.product_tmpl_id.configurable_option_ids.filtered(
+            options = option.configurable_product_tmpl_id.option_ids.filtered(
                 lambda o: o.product_id == option.included_by_product_id
             )
             option.included_by_option_id = options and options[0] or False

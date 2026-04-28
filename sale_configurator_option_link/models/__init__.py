@@ -1,2 +1,2 @@
 from . import sale
-from . import product
+from . import product_configurator_option
