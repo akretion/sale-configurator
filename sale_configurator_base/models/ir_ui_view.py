@@ -4,7 +4,7 @@
 
 
 import logging
-from ast import literal_eval
+import re
 
 from lxml import etree
 
@@ -19,25 +19,29 @@ class IrUiView(models.Model):
     def _get_sale_line_item(self, view_type):
         return getattr(self, f"_get_sale_line_{view_type}_item")()
 
-    def add_field_in_list(self, field):
-        return field.get("name") != "price_config_subtotal"
+    def _extract_parent_field_name(self, expr):
+        """Return the first field name referenced as 'parent.<field>'
+        in an expression string, or False if there is none."""
+        match = re.search(r"parent\.(\w+)", str(expr))
+        return match.group(1) if match else False
 
-    def _sl_field_have_invalid_attrs_parent_field(self, field):
-        # If we have some attrs depending on a parent field
-        # we check if that field exist on sale order line
-        # it's not perfect as the field can exist in the model
-        # but not in the view. But checking the view is super complex
-        # so checking the model should solve most of incompatibility case
-        for _key, domain in literal_eval(field.get("attrs", "{}")).items():
-            for item in domain:
-                if len(item) == 3 and "parent" in item[0]:
-                    field_name = item[0].replace("parent.", "")
-                    if field_name not in self.env["sale.order.line"]._fields:
-                        _logger.info(
-                            f"Field {field.get('name')} depends on parent {field_name}"
-                            "the field do not exist so we skip it"
-                        )
-                        return True
+    def _have_attr_with_invalid_parent_field(self, field):
+        """Return whether a field attribute references a parent field that
+        does not exist on sale.order.line.
+
+        Such references are only valid on the sale.order view they come from;
+        on the sale.order.line child view they would break validation, so the
+        field must be skipped."""
+        sol_fields = self.env["sale.order.line"]._fields
+        for attr_name in ("column_invisible", "invisible", "readonly", "required"):
+            field_name = self._extract_parent_field_name(field.get(attr_name, ""))
+            if field_name and field_name not in sol_fields:
+                _logger.info(
+                    f"Field {field.get('name')} has attribute {attr_name} "
+                    f"referencing parent {field_name}, a field that does not "
+                    "exist on sale.order.line so we skip it"
+                )
+                return True
         return False
 
     def _get_sale_line_list_item(self):
@@ -50,14 +54,10 @@ class IrUiView(models.Model):
         fields = doc.xpath("//field[@name='order_line']/list/field")
         items = []
         for field in fields:
-            # We remove attrs on price_subtotal as they depend on field parent_id
-            if field.get("name") in ["price_subtotal"]:
-                field.set("attrs", "{}")
-            # We skip fields with invalid attrs parent
-            if self._sl_field_have_invalid_attrs_parent_field(field):
+            if self._have_attr_with_invalid_parent_field(field):
                 continue
-            # We remove this field that do not make sense on child view
-            if self.add_field_in_list(field):
+            # price_config_subtotal does not make sense on child view
+            if field.get("name") != "price_config_subtotal":
                 items.append(field)
         return items
 
