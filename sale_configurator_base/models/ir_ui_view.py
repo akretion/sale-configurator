@@ -56,6 +56,8 @@ class IrUiView(models.Model):
         for field in fields:
             if self._have_attr_with_invalid_parent_field(field):
                 continue
+            if field.get("name") == "product_id" and field.get("optional") == "hide":
+                field.set("optional", "show")
             # price_config_subtotal does not make sense on child view
             if field.get("name") != "price_config_subtotal":
                 items.append(field)
