@@ -136,7 +136,7 @@ class SaleOrderLine(models.Model):
         help="Defines whether the line refers to a configurable product or "
         "to one of its child items ('option', 'variant', etc.)",
         compute="_compute_config_type",
-        store=True
+        store=True,
     )
 
     report_line_is_empty_parent = fields.Boolean(
