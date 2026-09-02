@@ -6,8 +6,7 @@
 {
     "name": "Sale configurator option bom",
     "license": "AGPL-3",
-    "summary": "add modification on sale product to have relation beetwin option \
-    and bom",
+    "summary": "Relate configurable product's options to manufacturing BOM lines",
     "category": "Uncategorized",
     "website": "https://github.com/akretion/sale-configurator",
     "author": "Akretion, Odoo Community Association (OCA)",

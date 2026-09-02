@@ -6,8 +6,7 @@
 {
     "name": "sale configurator option product",
     "license": "AGPL-3",
-    "summary": "Adds physical Options product to the Manufacture Order of their "
-    "related Configurable Product",
+    "summary": "Add physical option products to manufacturing orders",
     "category": "Uncategorized",
     "author": "Akretion,Odoo Community Association (OCA)",
     "website": "https://github.com/akretion/sale-configurator",

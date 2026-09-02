@@ -5,7 +5,7 @@
 
 {
     "name": "Sale Stock Configurator Option",
-    "summary": "Sale Stock glue module for sale configurator",
+    "summary": "Deliver configurable products without their options",
     "version": "18.0.0.0.0",
     "category": "Uncategorized",
     "website": "https://github.com/akretion/sale-configurator",

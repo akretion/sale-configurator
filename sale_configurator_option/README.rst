@@ -22,14 +22,109 @@ Sale Configurator Option
 
 |badge1| |badge2| |badge3|
 
-This module extends the ``sale_configurator_base`` functionality to
-allow defining and selecting **product options** for a main configurable
-product.
+This module extends the ``sale_configurator_base`` functionality to let
+the customer choose **options** for a configurable product.
+
+An option is a child line of the configurable product (parent) line.
+Options are mostly services, e.g. the customer buying T-shirts can add a
+*flocking* service on each T-shirt.
+
+The **quantity** of an option can be:
+
+- **proportional**: it follows the quantity of the parent line
+  (``option_qty`` times the parent quantity). For example 1 flocking for
+  1 T-shirt: 50 T-shirts → 50 flockings;
+- **independent**: the quantity is fixed, whatever the parent quantity.
+  For example a setup service charged once per order.
+
+The **price**: each option line is priced with its own product and
+pricelist rules (quantity discounts are computed on the option's own
+quantity). The prices of the options are added to the price of the
+parent line in the configurable subtotal.
+
+The **delivered quantities**: only the parent line is delivered. Options
+(services) have no stock moves; their delivered quantity simply follows
+the delivered quantity of the parent line *in proportion*. This delivery
+behavior is provided by ``sale_stock_configurator_option``: without it,
+no delivery is managed for the configurable products.
+
+Example: the customer buys 50 T-shirts priced 10.00 each and 1 flocking
+at 15.00 on each. The flocking has a *proportional* quantity.
+
+- T-shirt (parent): 50 × 10.00 = 500.00
+- Flocking (option): 50 × 15.00 = 750.00
+- Configurable total: 1250.00
+
+Only the 50 T-shirts are delivered; 1250.00 are invoiced.
+
+If the flocking had an *independent* quantity, its quantity would be
+fixed (e.g. 1 flocking charged once whatever the number of T-shirts).
+
+The options proposed for a configurable product can be marked as
+*default* ones: they are then automatically added when the configurable
+product is selected.
 
 **Table of contents**
 
 .. contents::
    :local:
+
+Configuration
+=============
+
+Configure product options
+-------------------------
+
+To offer options on the sale order lines, you must first define them on
+the products, either directly on each configurable product or through a
+reusable *product configurator template*.
+
+Create the option products
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create a product for each option (e.g. a *Flocking* service) and set its
+*Configuration type* to *Option*.
+
+Link the options to a configurable product
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+On the configurable product (e.g. the T-shirt), in the *Configurator
+Options* tab, you can:
+
+- add *specific options* directly on the product;
+- or select a *product configurator template* that already defines a set
+  of options shared by several products.
+
+For each option, set:
+
+- the *quantity type*: *Proportional* (the option quantity follows the
+  parent quantity) or *Independent* (the option has its own fixed
+  quantity, computed from the ``option_qty`` value);
+- whether it is a *default* option, i.e. automatically added when the
+  configurable product is selected.
+
+Usage
+=====
+
+Use options on a sale order
+---------------------------
+
+1. Create or open a *Quotation*.
+2. Click on *Add a configurable product*.
+3. Select the configurable product (e.g. the T-shirt).
+4. In the *Options* section, the *default* options are added
+   automatically. Add or remove the options you want to sell.
+5. For each option, set the quantity:
+
+   - *Proportional*: the *Qty* value is multiplied by the parent
+     quantity (e.g. 1 flocking per T-shirt);
+   - *Independent*: the *Qty* value is the fixed quantity, whatever the
+     parent quantity.
+
+6. Save the line.
+
+The prices of the options are added to the price of the configurable
+product line. Only the parent product is delivered.
 
 Changelog
 =========

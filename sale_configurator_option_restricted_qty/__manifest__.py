@@ -4,7 +4,7 @@
 
 {
     "name": "Sale Configurator Option Restricted Qty",
-    "summary": "Manage Restricted Qty on Sale configurator",
+    "summary": "Set min/max quantities on configurator options",
     "version": "14.0.1.0.2",
     "category": "Sale",
     "website": "https://github.com/akretion/sale-configurator",

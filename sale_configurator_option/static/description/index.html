@@ -370,29 +370,128 @@ ul.auto-toc {
 !! source digest: sha256:0b295287f9c1cc2735c8eb484b4ffdd899c9bf2f39894678fdd6866d60326fd2
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 <p><a class="reference external image-reference" href="https://odoo-community.org/page/development-status"><img alt="Beta" src="https://img.shields.io/badge/maturity-Beta-yellow.png" /></a> <a class="reference external image-reference" href="http://www.gnu.org/licenses/agpl-3.0-standalone.html"><img alt="License: AGPL-3" src="https://img.shields.io/badge/licence-AGPL--3-blue.png" /></a> <a class="reference external image-reference" href="https://github.com/akretion/sale-configurator/tree/18.0/sale_configurator_option"><img alt="akretion/sale-configurator" src="https://img.shields.io/badge/github-akretion%2Fsale--configurator-lightgray.png?logo=github" /></a></p>
-<p>This module extends the <tt class="docutils literal">sale_configurator_base</tt> functionality to
-allow defining and selecting <strong>product options</strong> for a main configurable
-product.</p>
+<p>This module extends the <tt class="docutils literal">sale_configurator_base</tt> functionality to let
+the customer choose <strong>options</strong> for a configurable product.</p>
+<p>An option is a child line of the configurable product (parent) line.
+Options are mostly services, e.g. the customer buying T-shirts can add a
+<em>flocking</em> service on each T-shirt.</p>
+<p>The <strong>quantity</strong> of an option can be:</p>
+<ul class="simple">
+<li><strong>proportional</strong>: it follows the quantity of the parent line
+(<tt class="docutils literal">option_qty</tt> times the parent quantity). For example 1 flocking for
+1 T-shirt: 50 T-shirts → 50 flockings;</li>
+<li><strong>independent</strong>: the quantity is fixed, whatever the parent quantity.
+For example a setup service charged once per order.</li>
+</ul>
+<p>The <strong>price</strong>: each option line is priced with its own product and
+pricelist rules (quantity discounts are computed on the option’s own
+quantity). The prices of the options are added to the price of the
+parent line in the configurable subtotal.</p>
+<p>The <strong>delivered quantities</strong>: only the parent line is delivered. Options
+(services) have no stock moves; their delivered quantity simply follows
+the delivered quantity of the parent line <em>in proportion</em>. This delivery
+behavior is provided by <tt class="docutils literal">sale_stock_configurator_option</tt>: without it,
+no delivery is managed for the configurable products.</p>
+<p>Example: the customer buys 50 T-shirts priced 10.00 each and 1 flocking
+at 15.00 on each. The flocking has a <em>proportional</em> quantity.</p>
+<ul class="simple">
+<li>T-shirt (parent): 50 × 10.00 = 500.00</li>
+<li>Flocking (option): 50 × 15.00 = 750.00</li>
+<li>Configurable total: 1250.00</li>
+</ul>
+<p>Only the 50 T-shirts are delivered; 1250.00 are invoiced.</p>
+<p>If the flocking had an <em>independent</em> quantity, its quantity would be
+fixed (e.g. 1 flocking charged once whatever the number of T-shirts).</p>
+<p>The options proposed for a configurable product can be marked as
+<em>default</em> ones: they are then automatically added when the configurable
+product is selected.</p>
 <p><strong>Table of contents</strong></p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#changelog" id="toc-entry-1">Changelog</a><ul>
-<li><a class="reference internal" href="#section-1" id="toc-entry-2">18.0.1.0.0 (2025-11-22)</a></li>
+<li><a class="reference internal" href="#configuration" id="toc-entry-1">Configuration</a><ul>
+<li><a class="reference internal" href="#configure-product-options" id="toc-entry-2">Configure product options</a><ul>
+<li><a class="reference internal" href="#create-the-option-products" id="toc-entry-3">Create the option products</a></li>
+<li><a class="reference internal" href="#link-the-options-to-a-configurable-product" id="toc-entry-4">Link the options to a configurable product</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#bug-tracker" id="toc-entry-3">Bug Tracker</a></li>
-<li><a class="reference internal" href="#credits" id="toc-entry-4">Credits</a><ul>
-<li><a class="reference internal" href="#authors" id="toc-entry-5">Authors</a></li>
-<li><a class="reference internal" href="#contributors" id="toc-entry-6">Contributors</a></li>
-<li><a class="reference internal" href="#maintainers" id="toc-entry-7">Maintainers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#usage" id="toc-entry-5">Usage</a><ul>
+<li><a class="reference internal" href="#use-options-on-a-sale-order" id="toc-entry-6">Use options on a sale order</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#changelog" id="toc-entry-7">Changelog</a><ul>
+<li><a class="reference internal" href="#section-1" id="toc-entry-8">18.0.1.0.0 (2025-11-22)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bug-tracker" id="toc-entry-9">Bug Tracker</a></li>
+<li><a class="reference internal" href="#credits" id="toc-entry-10">Credits</a><ul>
+<li><a class="reference internal" href="#authors" id="toc-entry-11">Authors</a></li>
+<li><a class="reference internal" href="#contributors" id="toc-entry-12">Contributors</a></li>
+<li><a class="reference internal" href="#maintainers" id="toc-entry-13">Maintainers</a></li>
 </ul>
 </li>
 </ul>
 </div>
+<div class="section" id="configuration">
+<h1><a class="toc-backref" href="#toc-entry-1">Configuration</a></h1>
+<div class="section" id="configure-product-options">
+<h2><a class="toc-backref" href="#toc-entry-2">Configure product options</a></h2>
+<p>To offer options on the sale order lines, you must first define them on
+the products, either directly on each configurable product or through a
+reusable <em>product configurator template</em>.</p>
+<div class="section" id="create-the-option-products">
+<h3><a class="toc-backref" href="#toc-entry-3">Create the option products</a></h3>
+<p>Create a product for each option (e.g. a <em>Flocking</em> service) and set its
+<em>Configuration type</em> to <em>Option</em>.</p>
+</div>
+<div class="section" id="link-the-options-to-a-configurable-product">
+<h3><a class="toc-backref" href="#toc-entry-4">Link the options to a configurable product</a></h3>
+<p>On the configurable product (e.g. the T-shirt), in the <em>Configurator
+Options</em> tab, you can:</p>
+<ul class="simple">
+<li>add <em>specific options</em> directly on the product;</li>
+<li>or select a <em>product configurator template</em> that already defines a set
+of options shared by several products.</li>
+</ul>
+<p>For each option, set:</p>
+<ul class="simple">
+<li>the <em>quantity type</em>: <em>Proportional</em> (the option quantity follows the
+parent quantity) or <em>Independent</em> (the option has its own fixed
+quantity, computed from the <tt class="docutils literal">option_qty</tt> value);</li>
+<li>whether it is a <em>default</em> option, i.e. automatically added when the
+configurable product is selected.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="usage">
+<h1><a class="toc-backref" href="#toc-entry-5">Usage</a></h1>
+<div class="section" id="use-options-on-a-sale-order">
+<h2><a class="toc-backref" href="#toc-entry-6">Use options on a sale order</a></h2>
+<ol class="arabic simple">
+<li>Create or open a <em>Quotation</em>.</li>
+<li>Click on <em>Add a configurable product</em>.</li>
+<li>Select the configurable product (e.g. the T-shirt).</li>
+<li>In the <em>Options</em> section, the <em>default</em> options are added
+automatically. Add or remove the options you want to sell.</li>
+<li>For each option, set the quantity:<ul>
+<li><em>Proportional</em>: the <em>Qty</em> value is multiplied by the parent
+quantity (e.g. 1 flocking per T-shirt);</li>
+<li><em>Independent</em>: the <em>Qty</em> value is the fixed quantity, whatever the
+parent quantity.</li>
+</ul>
+</li>
+<li>Save the line.</li>
+</ol>
+<p>The prices of the options are added to the price of the configurable
+product line. Only the parent product is delivered.</p>
+</div>
+</div>
 <div class="section" id="changelog">
-<h1><a class="toc-backref" href="#toc-entry-1">Changelog</a></h1>
+<h1><a class="toc-backref" href="#toc-entry-7">Changelog</a></h1>
 <div class="section" id="section-1">
-<h2><a class="toc-backref" href="#toc-entry-2">18.0.1.0.0 (2025-11-22)</a></h2>
+<h2><a class="toc-backref" href="#toc-entry-8">18.0.1.0.0 (2025-11-22)</a></h2>
 <ul class="simple">
 <li><strong>[MIGRATION]</strong> Migration to Odoo 18.0.</li>
 <li><strong>[BREAKING]</strong> <strong>Major field name refactoring</strong> for model consistency.
@@ -507,7 +606,7 @@ field <tt class="docutils literal">config_type</tt>.</p>
 </div>
 </div>
 <div class="section" id="bug-tracker">
-<h1><a class="toc-backref" href="#toc-entry-3">Bug Tracker</a></h1>
+<h1><a class="toc-backref" href="#toc-entry-9">Bug Tracker</a></h1>
 <p>Bugs are tracked on <a class="reference external" href="https://github.com/akretion/sale-configurator/issues">GitHub Issues</a>.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
@@ -515,15 +614,15 @@ If you spotted it first, help us to smash it by providing a detailed and welcome
 <p>Do not contact contributors directly about support or help with technical issues.</p>
 </div>
 <div class="section" id="credits">
-<h1><a class="toc-backref" href="#toc-entry-4">Credits</a></h1>
+<h1><a class="toc-backref" href="#toc-entry-10">Credits</a></h1>
 <div class="section" id="authors">
-<h2><a class="toc-backref" href="#toc-entry-5">Authors</a></h2>
+<h2><a class="toc-backref" href="#toc-entry-11">Authors</a></h2>
 <ul class="simple">
 <li>Akretion</li>
 </ul>
 </div>
 <div class="section" id="contributors">
-<h2><a class="toc-backref" href="#toc-entry-6">Contributors</a></h2>
+<h2><a class="toc-backref" href="#toc-entry-12">Contributors</a></h2>
 <ul class="simple">
 <li>Mourad EL HADJ MIMOUN &lt;<a class="reference external" href="mailto:mourad.elhadj.mimoune&#64;akretion.com">mourad.elhadj.mimoune&#64;akretion.com</a>&gt;</li>
 <li>Sébastien Beau &lt;<a class="reference external" href="mailto:sebastien.beau&#64;akretion.com">sebastien.beau&#64;akretion.com</a>&gt;</li>
@@ -531,7 +630,7 @@ If you spotted it first, help us to smash it by providing a detailed and welcome
 </ul>
 </div>
 <div class="section" id="maintainers">
-<h2><a class="toc-backref" href="#toc-entry-7">Maintainers</a></h2>
+<h2><a class="toc-backref" href="#toc-entry-13">Maintainers</a></h2>
 <p>This module is part of the <a class="reference external" href="https://github.com/akretion/sale-configurator/tree/18.0/sale_configurator_option">akretion/sale-configurator</a> project on GitHub.</p>
 <p>You are welcome to contribute.</p>
 </div>

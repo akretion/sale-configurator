@@ -5,7 +5,7 @@
 
 {
     "name": "Sale Configurator Variant",
-    "summary": "Extend sale configurator to manage product variant",
+    "summary": "Apply quantity discounts based on the sum of variants",
     "version": "18.0.1.0.0",
     "category": "Sale",
     "website": "https://github.com/akretion/sale-configurator",

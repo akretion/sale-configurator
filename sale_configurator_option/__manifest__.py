@@ -5,7 +5,7 @@
 
 {
     "name": "Sale Configurator Option",
-    "summary": "Base module for sale configurator",
+    "summary": "Add services (options) to configurable products",
     "version": "18.0.1.0.0",
     "category": "Uncategorized",
     "website": "https://github.com/akretion/sale-configurator",

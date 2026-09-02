@@ -5,7 +5,7 @@
 
 {
     "name": "Sale Configurator Base",
-    "summary": "Base module for sale configurator",
+    "summary": "Parent/child hierarchy for configurable products",
     "version": "18.0.1.0.0",
     "category": "Uncategorized",
     "website": "https://github.com/akretion/sale-configurator",

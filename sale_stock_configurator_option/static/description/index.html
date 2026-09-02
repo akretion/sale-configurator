@@ -370,9 +370,23 @@ ul.auto-toc {
 !! source digest: sha256:ee484b9fec4be4676edfb8127eeeb26b897a60f4bae4deb1460e94f6afe15ec9
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 <p><a class="reference external image-reference" href="https://odoo-community.org/page/development-status"><img alt="Beta" src="https://img.shields.io/badge/maturity-Beta-yellow.png" /></a> <a class="reference external image-reference" href="http://www.gnu.org/licenses/agpl-3.0-standalone.html"><img alt="License: AGPL-3" src="https://img.shields.io/badge/licence-AGPL--3-blue.png" /></a> <a class="reference external image-reference" href="https://github.com/akretion/sale-configurator/tree/18.0/sale_stock_configurator_option"><img alt="akretion/sale-configurator" src="https://img.shields.io/badge/github-akretion%2Fsale--configurator-lightgray.png?logo=github" /></a></p>
-<p>This module allow the manage stock of configurable product. We can get
-in the picking only configurable product without option for exemple (the
-pack).</p>
+<p>This module glues <tt class="docutils literal">sale_configurator_option</tt> with the <strong>stock</strong>
+application to manage the delivery of configurable products.</p>
+<p>The options (services, e.g. the flocking of a T-shirt) are <strong>not
+delivered</strong>: no stock move is generated for them. Only the configurable
+products (the parent lines and the other real products) appear in the
+picking.</p>
+<p>The delivered quantity of an option is computed <em>proportionally</em> to the
+delivered quantity of its parent line: for example, if the picking only
+delivers half of the T-shirts, the flocking option is considered as
+delivered for half of its quantity too. This keeps the invoicing based
+on the delivered quantities consistent.</p>
+<p>Example: a picking delivers 25 of the 50 ordered T-shirts.</p>
+<ul class="simple">
+<li>T-shirt (parent): 25 delivered</li>
+<li>Flocking (option): 25 delivered (proportional to the T-shirt’s
+delivered quantity, although no flocking stock move exists)</li>
+</ul>
 <p><strong>Table of contents</strong></p>
 <div class="contents local topic" id="contents">
 <ul class="simple">

@@ -5,7 +5,7 @@
 
 {
     "name": "Test Sale Configuration Option and Variant",
-    "summary": "Module for testing compatibility",
+    "summary": "Tests for the combination of options and variants",
     "version": "18.0.0.0.0",
     "development_status": "Alpha",
     "category": "Uncategorized",
