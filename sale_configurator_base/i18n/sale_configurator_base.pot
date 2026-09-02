@@ -1,0 +1,180 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* sale_configurator_base
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sale_configurator_base
+#: model_terms:ir.ui.view,arch_db:sale_configurator_base.report_saleorder_document
+msgid "<span>Sub-total</span>"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model_terms:ir.ui.view,arch_db:sale_configurator_base.report_saleorder_document
+msgid "<span>Total</span>"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model_terms:ir.ui.view,arch_db:sale_configurator_base.view_order_form
+msgid "Add a configurable product"
+msgstr ""
+
+#. module: sale_configurator_base
+#. odoo-python
+#: code:addons/sale_configurator_base/models/sale.py:0
+msgid "Base Configurator"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model_terms:ir.ui.view,arch_db:sale_configurator_base.sale_order_line_config_base_view_form
+msgid "Cancel"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__child_ids
+msgid "Children Lines"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__price_config_subtotal
+msgid "Config Subtotal"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__price_config_total
+msgid "Config Total"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields.selection,name:sale_configurator_base.selection__sale_order_line__config_type__configurable
+msgid "Configurable"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__config_type
+msgid "Configuration type"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields,help:sale_configurator_base.field_sale_order_line__config_type
+msgid ""
+"Defines whether the line refers to a configurable product or to one of its "
+"child items ('option', 'variant', etc.)"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order__is_config_type
+msgid "Has Configurable Product"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields,field_description:sale_configurator_base.field_account_move_line__has_parent
+msgid "Has Parent"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order__hide_subtotal
+#: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__hide_subtotal
+msgid "Hide Subtotal"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields,help:sale_configurator_base.field_sale_order_line__pricelist_id
+msgid "If you change the pricelist, only newly added lines will be affected."
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model,name:sale_configurator_base.model_account_move_line
+msgid "Journal Item"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order__main_line_ids
+msgid "Main Line"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model_terms:ir.ui.view,arch_db:sale_configurator_base.view_order_form
+msgid "Opt Subtotal"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__partner_id
+msgid "Order Customer"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__parent_id
+msgid "Parent Line"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__pricelist_id
+msgid "Pricelist"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.ui.menu,name:sale_configurator_base.menu_product_configurator
+msgid "Product Configurator"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields,field_description:sale_configurator_base.field_sale_order_line__report_line_is_empty_parent
+msgid "Report Line Is Empty Parent"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.actions.act_window,name:sale_configurator_base.action_sale_line_config_base
+msgid "Sale Line Configure bases"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model_terms:ir.ui.view,arch_db:sale_configurator_base.sale_order_line_config_base_view_form
+msgid "Sale Order Line base Configurator"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model,name:sale_configurator_base.model_sale_order
+msgid "Sales Order"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model,name:sale_configurator_base.model_sale_order_line
+msgid "Sales Order Line"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model_terms:ir.ui.view,arch_db:sale_configurator_base.sale_order_line_config_base_view_form
+msgid "Save & Close"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model_terms:ir.ui.view,arch_db:sale_configurator_base.sale_order_line_config_base_view_form
+msgid "Save & New"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model_terms:ir.ui.view,arch_db:sale_configurator_base.view_order_form
+msgid "Subtotal"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model.fields,help:sale_configurator_base.field_sale_order_line__report_line_is_empty_parent
+msgid ""
+"Technical field used in the report to hide subtotals and taxes in case a "
+"parent line (with children lines) has no price by itself"
+msgstr ""
+
+#. module: sale_configurator_base
+#: model:ir.model,name:sale_configurator_base.model_ir_ui_view
+msgid "View"
+msgstr ""

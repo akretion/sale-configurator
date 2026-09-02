@@ -17,13 +17,30 @@ Sale Stock Configurator Option
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-akretion%2Fsale--configurator-lightgray.png?logo=github
-    :target: https://github.com/akretion/sale-configurator/tree/14.0/sale_stock_configurator_option
+    :target: https://github.com/akretion/sale-configurator/tree/18.0/sale_stock_configurator_option
     :alt: akretion/sale-configurator
 
 |badge1| |badge2| |badge3|
 
-This module allow the manage stock of configurable product.
-We can get in the picking only configurable product without option for exemple (the pack).
+This module glues ``sale_configurator_option`` with the **stock**
+application to manage the delivery of configurable products.
+
+The options (services, e.g. the flocking of a T-shirt) are **not
+delivered**: no stock move is generated for them. Only the configurable
+products (the parent lines and the other real products) appear in the
+picking.
+
+The delivered quantity of an option is computed *proportionally* to the
+delivered quantity of its parent line: for example, if the picking only
+delivers half of the T-shirts, the flocking option is considered as
+delivered for half of its quantity too. This keeps the invoicing based
+on the delivered quantities consistent.
+
+Example: a picking delivers 25 of the 50 ordered T-shirts.
+
+- T-shirt (parent): 25 delivered
+- Flocking (option): 25 delivered (proportional to the T-shirt's
+  delivered quantity, although no flocking stock move exists)
 
 **Table of contents**
 
@@ -36,7 +53,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/akretion/sale-configurator/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/akretion/sale-configurator/issues/new?body=module:%20sale_stock_configurator_option%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/akretion/sale-configurator/issues/new?body=module:%20sale_stock_configurator_option%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -44,18 +61,18 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Akretion
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Sébastien Beau <sebastien.beau@akretion.com>
+- Sébastien Beau <sebastien.beau@akretion.com>
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
-This module is part of the `akretion/sale-configurator <https://github.com/akretion/sale-configurator/tree/14.0/sale_stock_configurator_option>`_ project on GitHub.
+This module is part of the `akretion/sale-configurator <https://github.com/akretion/sale-configurator/tree/18.0/sale_stock_configurator_option>`_ project on GitHub.
 
 You are welcome to contribute.

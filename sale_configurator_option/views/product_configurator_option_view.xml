@@ -1,49 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-
-    <record id="product_configurator_option_view_tree" model="ir.ui.view">
+    <record id="product_configurator_option_view_list" model="ir.ui.view">
         <field name="model">product.configurator.option</field>
         <field name="arch" type="xml">
-            <tree string="Option" editable="bottom" decoration-muted="not active">
-                <field
-                    name="sequence"
-                    widget="handle"
-                    invisible="not context.get('base_model_name')"
-                />
-                <field
-                    name="product_conf_tmpl_id"
-                    invisible="context.get('base_model_name')"
-                />
-                <field
-                    name="product_tmpl_id"
-                    invisible="context.get('base_model_name')"
-                />
+            <list editable="bottom" decoration-muted="not active">
+                <field name="sequence" widget="handle" />
                 <field name="product_id" />
-                <field name="product_uom_id" />
                 <field name="option_qty_type" />
+                <field name="product_uom_id" />
                 <field name="is_default_option" />
-                <field name="active" invisible="1" />
-            </tree>
+            </list>
         </field>
     </record>
 
-    <record id="product_configurator_option_view_form" model="ir.ui.view">
+    <record id="product_configurator_option_full_view_list" model="ir.ui.view">
         <field name="model">product.configurator.option</field>
+        <field name="inherit_id" ref="product_configurator_option_view_list" />
+        <field name="mode">primary</field>
         <field name="arch" type="xml">
-            <form string="Option">
-                <group>
-                    <field name="sequence" widget="handle" />
-                    <field
-                        name="product_conf_tmpl_id"
-                        invisible="context.get('hjhjh')"
-                    />
-                    <field name="product_tmpl_id" invisible="context.get('hjhjh')" />
-                    <field name="product_id" />
-                    <field name="product_uom_id" />
-                    <field name="option_qty_type" />
-                    <field name="is_default_option" />
-                </group>
-            </form>
+            <xpath expr="//field[@name='sequence']" position="after">
+                <field name="configurator_id" />
+                <field name="configurable_product_tmpl_id" />
+            </xpath>
         </field>
     </record>
 
@@ -51,16 +29,16 @@
         <field name="model">product.configurator.option</field>
         <field name="arch" type="xml">
             <search string="Option">
-                <field name="product_conf_tmpl_id" />
+                <field name="configurator_id" />
+                <field
+                    name="configurable_product_tmpl_id"
+                    domain="[('config_type', '=', 'configurable')]"
+                />
                 <field
                     name="product_tmpl_id"
-                    domain="[('is_configurable_opt', '=', True)]"
+                    domain="[('config_type', '=', 'option')]"
                 />
-                <field
-                    name="option_product_tmpl_id"
-                    domain="[('is_option', '=', True)]"
-                />
-                <field name="product_id" domain="[('is_option', '=', True)]" />
+                <field name="product_id" domain="[('config_type', '=', 'option')]" />
                 <filter
                     string="Archived"
                     name="inactive"
@@ -74,8 +52,8 @@
         <field name="name">Option</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">product.configurator.option</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="product_configurator_option_full_view_list" />
         <field name="search_view_id" ref="product_configurator_option_view_search" />
     </record>
-
 </odoo>

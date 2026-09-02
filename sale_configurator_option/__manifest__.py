@@ -5,17 +5,18 @@
 
 {
     "name": "Sale Configurator Option",
-    "summary": "Base module for sale configurator",
-    "version": "14.0.1.0.2",
+    "summary": "Add services (options) to configurable products",
+    "version": "18.0.1.0.0",
     "category": "Uncategorized",
     "website": "https://github.com/akretion/sale-configurator",
     "author": " Akretion",
     "license": "AGPL-3",
-    "installable": False,
-    "external_dependencies": {"python": [], "bin": []},
+    "installable": True,
+    "external_dependencies": {"python": ["openupgradelib"]},
     "depends": [
-        "base_view_inheritance_extension",
         "sale_configurator_base",
+        # https://github.com/OCA/server-tools
+        "base_view_inheritance_extension",
     ],
     "data": [
         "views/account_move_view.xml",

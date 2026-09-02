@@ -12,7 +12,7 @@ class SaleOrderLine(models.Model):
     parent_variant_id = fields.Many2one(
         "sale.order.line", string="Parent Variant", index=True
     )
-    child_type = fields.Selection(
+    config_type = fields.Selection(
         selection_add=[("variant", "Variant")],
         ondelete={"variant": "set null"},
     )
@@ -20,119 +20,139 @@ class SaleOrderLine(models.Model):
         "sale.order.line",
         "parent_variant_id",
         "Variants",
-        context={"default_child_type": "variant"},
+        context={"default_config_type": "variant"},
         copy=True,
     )
-    product_tmpl_id = fields.Many2one(
-        "product.template",
-        string="Product Template",
-        domain=[("sale_ok", "=", True)],
-        change_default=True,
-        ondelete="restrict",
+    product_uom_qty = fields.Float(recursive=True)
+    is_configurable_with_variant = fields.Boolean("With variants?")
+
+    product_id = fields.Many2one(
+        compute="_compute_product_id",
+        readonly=False,
+        store=True,
+        precompute=True,
     )
-    is_multi_variant_line = fields.Boolean(
-        "Multi variant",
-    )
-    discount = fields.Float(compute="_compute_discount", readonly=False, store=True)
+
+    @api.depends("product_template_id")
+    def _compute_product_id(self):
+        for rec in self:
+            rec.product_id = rec.product_template_id.product_variant_id
 
     @api.depends("parent_variant_id")
-    def _compute_parent(self):
+    def _compute_parent(self):  # pylint: disable=missing-return
         for record in self:
             if record.parent_variant_id:
                 record.parent_id = record.parent_variant_id
-                record.child_type = "variant"
             else:
                 super(SaleOrderLine, record)._compute_parent()
 
-    def _get_sale_line_price_variant(self):
-        product = self.product_id.with_context(
-            partner=self.order_id.partner_id,
-            quantity=self.parent_variant_id.product_uom_qty,
-            date=self.order_id.date_order,
-            pricelist=self.order_id.pricelist_id.id,
-            uom=self.parent_variant_id.product_uom.id,
-        )
-        return self.env["account.tax"]._fix_tax_included_price_company(
-            self._get_display_price(product),
-            self.product_id.taxes_id,
-            self.tax_id,
-            self.company_id,
-        )
-
-    def _get_display_price(self, product):
-        if self.variant_ids:
-            return 0
-        else:
-            if self.parent_variant_id:
-                self = self.with_context(
-                    parent_variant_qty=self.parent_variant_id.product_uom_qty
-                )
-            return super()._get_display_price(product)
-
-    @api.depends("parent_variant_id.product_uom_qty", "product_id")
-    def _compute_price_unit(self):
-        super()._compute_price_unit()
-        for record in self:
-            if record.parent_variant_id and record.product_id:
-                record.price_unit = record._get_sale_line_price_variant()
-
-    @api.depends("parent_variant_id.product_uom_qty")
-    def _compute_discount(self):
-        for record in self:
-            if record.parent_variant_id and record.product_id:
-                record._onchange_discount()
-
     @api.depends("variant_ids.product_uom_qty")
-    def _compute_product_uom_qty(self):
-        super()._compute_product_uom_qty()
-        for record in self:
-            if record.variant_ids:
-                record.product_uom_qty = record._get_child_qty()
+    def _compute_product_uom_qty(self):  # pylint: disable=missing-return
+        """Parent's quantity is the sum of its Variants quantities."""
 
-    def _get_child_type_sort(self):
-        res = super()._get_child_type_sort()
-        res.append((10, "variant"))
-        return res
+        parents = self.filtered(lambda r: r.variant_ids)
+        for rec in parents:
+            rec.product_uom_qty = rec._get_child_qty()
 
-    def _is_line_configurable(self):
-        if self.parent_variant_id:
-            return False
-        elif self.is_multi_variant_line:
-            return True
-        else:
-            return super()._is_line_configurable()
+        # We force computing parents with variant BEFORE other lines
+        # in order to have the correct parent's quantity before computing
+        # potential option children quantities (which depend on their parent's quantity)
+        super(SaleOrderLine, self - parents)._compute_product_uom_qty()
 
     def _get_child_qty(self):
         self.ensure_one()
-        # TODO clean on V16
-        # hack to solve onchange issue
-        variants = self.variant_ids.filtered(
-            lambda s: not isinstance(s.id, models.NewId) or hasattr(s.id, "ref")
-        )
-        return sum(variants.mapped("product_uom_qty"))
+        return sum(self.variant_ids.mapped("product_uom_qty"))
 
-    @api.onchange("product_tmpl_id")
-    def product_tmpl_id_change(self):
-        self.variant_ids = False
-        if self.product_tmpl_id:
-            # ToFIX set product_id to False raise error on[
-            #  _sql_constraints = accountable_required_fields
-            self.product_id = self.product_tmpl_id.product_variant_id
-            self.product_uom = self.product_tmpl_id.uom_id
+    @api.depends("parent_variant_id", "parent_variant_id.product_uom_qty")
+    def _compute_pricelist_item_id(self):  # pylint: disable=missing-return
+        """Compute Variant's price_unit based on its Parent's quantity and UoM.
+        (Parent's quantity == the sum of all the Variants quantities)"""
+        super()._compute_pricelist_item_id()
+        for line in self:
+            parent_variant = line.parent_variant_id
+            if parent_variant and line.product_id:
+                line.pricelist_item_id = line.order_id.pricelist_id._get_product_rule(
+                    line.product_id,
+                    quantity=parent_variant.product_uom_qty or 1.0,
+                    uom=parent_variant.product_uom,
+                    date=line._get_order_date(),
+                )
 
-    def get_sale_order_line_multiline_description_sale(self, product):
-        if self.product_tmpl_id:
-            return self._get_product_template_description_sale()
-        elif self.child_type == "variant":
-            return self._get_product_variant_description_sale()
+    @api.depends("parent_variant_id.product_uom_qty")
+    def _compute_discount(self):  # pylint: disable=missing-return
+        super()._compute_discount()
+
+    # Override the 2 methods used to compute discount (when the discount security group
+    # is enabled) with Parent's quantity and UoM
+    def _get_pricelist_price(self):
+        price = super()._get_pricelist_price()
+        parent_variant = self.parent_variant_id
+        if parent_variant:
+            price = self.pricelist_item_id._compute_price(
+                product=self.product_id.with_context(
+                    **self._get_product_price_context()
+                ),
+                quantity=parent_variant.product_uom_qty or 1.0,
+                uom=parent_variant.product_uom,
+                date=self._get_order_date(),
+                currency=self.currency_id,
+            )
+        return price
+
+    def _get_pricelist_price_before_discount(self):
+        base_price = super()._get_pricelist_price_before_discount()
+        parent_variant = self.parent_variant_id
+        if parent_variant:
+            base_price = self.pricelist_item_id._compute_price_before_discount(
+                product=self.product_id.with_context(
+                    **self._get_product_price_context()
+                ),
+                quantity=parent_variant.product_uom_qty or 1.0,
+                uom=parent_variant.product_uom,
+                date=self._get_order_date(),
+                currency=self.currency_id,
+            )
+        return base_price
+
+    @api.depends("parent_variant_id.product_uom_qty")
+    def _compute_price_unit(self):  # pylint: disable=missing-return
+        """The variant's parent has always price_unit == 0"""
+        super()._compute_price_unit()
+        for rec in self:
+            if rec.variant_ids:
+                rec.price_unit = 0
+
+    @api.depends("variant_ids")
+    def _compute_report_line_is_empty_parent(self):  # pylint: disable=missing-return
+        super()._compute_report_line_is_empty_parent()
+
+    @api.depends("variant_ids.price_subtotal", "variant_ids.price_total")
+    def _compute_config_amount(self):  # pylint: disable=missing-return
+        super()._compute_config_amount()
+
+    @api.depends("product_template_id")
+    def _compute_config_type(self):  # pylint: disable=missing-return
+        super()._compute_config_type()
+
+    def get_children(self):
+        return super().get_children() + self.variant_ids
+
+    def _get_child_type_sort(self):
+        res = super()._get_child_type_sort()
+        res.append((20, "variant"))
+        return res
+
+    def _get_config_type(self):
+        if self.parent_variant_id:
+            return "variant"
+        elif self.is_configurable_with_variant:
+            return "configurable"
         else:
-            return super().get_sale_order_line_multiline_description_sale(product)
+            return super()._get_config_type()
 
-    def _get_product_template_description_sale(self):
-        return f"{self.product_tmpl_id.name}\n{self.product_tmpl_id.description_sale}"
-
-    def _get_product_variant_description_sale(self):
-        return self.product_id.display_name
+    def _get_child_qty(self):
+        self.ensure_one()
+        return sum(self.variant_ids.mapped("product_uom_qty"))
 
     def _get_parent_id_from_vals(self, vals):
         if vals.get("parent_variant_id"):
@@ -140,31 +160,44 @@ class SaleOrderLine(models.Model):
         else:
             return super()._get_parent_id_from_vals(vals)
 
-    @api.depends("variant_ids")
-    def _compute_report_line_is_empty_parent(self):
-        super()._compute_report_line_is_empty_parent()
+    def _get_sale_order_line_multiline_description_sale(self):
+        if self.is_configurable_with_variant and self.product_template_id:
+            return self._get_product_template_description_sale()
+        elif self.config_type == "variant" and self.product_id:
+            return self._get_product_variant_description_sale()
+        else:
+            return super()._get_sale_order_line_multiline_description_sale()
 
-    @api.depends("variant_ids.price_subtotal", "variant_ids.price_total")
-    def _compute_config_amount(self):
-        super()._compute_config_amount()
+    def _get_product_template_description_sale(self):
+        """Simplified description for parent of variants"""
+        description = self.product_template_id.display_name
+        if description_sale := self.product_template_id.description_sale:
+            description += "\n" + description_sale
 
-    def get_children(self):
-        return super().get_children() + self.variant_ids
+        return description
 
-    @api.onchange(
-        "product_id", "price_unit", "product_uom", "product_uom_qty", "tax_id"
-    )
-    def _onchange_discount(self):
-        if self.parent_variant_id:
-            self = self.with_context(
-                parent_variant_qty=self.parent_variant_id.product_uom_qty
-            )
-        return super()._onchange_discount()
+    def _get_product_variant_description_sale(self):
+        """Simplified description for variants"""
+        return self.product_id.display_name
 
-    def _get_real_price_currency(self, product, rule_id, qty, uom, pricelist_id):
-        if self._context.get("parent_variant_qty"):
-            qty = self._context.get("parent_variant_qty")
-            product = product.with_context(quantity=qty)
-        return super()._get_real_price_currency(
-            product, rule_id, qty, uom, pricelist_id
-        )
+    @api.model_create_multi
+    def create(self, vals_list):
+        variants_list = [vals.pop("variant_ids", None) for vals in vals_list]
+        lines = super().create(vals_list)
+
+        # We ensure to write variants after all field on the main line are recomputed
+        # otherwise 'variant_ids' is erased during the create
+        if any(variants_list):
+            for line, vals in zip(lines, variants_list, strict=False):
+                if vals:
+                    line.write({"variant_ids": vals})
+
+        return lines
+
+    def write(self, vals):
+        super().write(vals)
+        # As we write "variant_ids" at the end of the create, we need to define
+        # the sequences of the newly created lines who have this parent/child hierarchy
+        if "variant_ids" in vals:
+            self.order_id.sync_sequence()
+        return True

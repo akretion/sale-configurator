@@ -1,7 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<!-- Copyright 2020 Akretion (http://www.akretion.com).
-     @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
-     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<?xml version='1.0' encoding='utf-8' ?>
 <odoo>
     <record id="sale_order_line_config_variant_view_form_base" model="ir.ui.view">
         <field name="model">sale.order.line</field>
@@ -10,37 +7,37 @@
             ref="sale_configurator_base.sale_order_line_config_base_view_form"
         />
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='product_id']" position="before">
-                <field name="is_multi_variant_line" />
+            <xpath expr="//label[@for='product_id']" position="before">
+                <field name="is_configurable_with_variant" />
                 <field
-                    name="product_tmpl_id"
-                    attrs="{'invisible': [('is_multi_variant_line', '=', False)],
-                    'required': [('is_multi_variant_line', '=', True)]}"
+                    name="product_template_id"
+                    invisible="not is_configurable_with_variant"
+                    required="is_configurable_with_variant"
                 />
             </xpath>
-            <xpath expr="//field[@name='product_id']" position="attributes">
-                <attribute
-                    name="attrs"
-                >{'readonly': [('product_updatable', '=', False)],
-                    'invisible': [('is_multi_variant_line', '=',True)],
-                    'required': [('display_type', '=', False)]}</attribute>
+            <xpath expr="//field[@name='product_id']/.." position="attributes">
+                <attribute name="invisible">is_configurable_with_variant</attribute>
+            </xpath>
+            <xpath expr="//label[@for='product_id']" position="attributes">
+                <attribute name="invisible">is_configurable_with_variant</attribute>
+            </xpath>
+            <xpath expr="//field[@name='product_uom_qty']" position="attributes">
+                <attribute name="readonly">variant_ids</attribute>
             </xpath>
 
             <xpath expr="//field[@name='name']" position="after">
-                <label
-                    for="variant_ids"
-                    attrs="{'invisible': [('is_multi_variant_line', '=', False)]}"
-                />
+                <label for="variant_ids" invisible="not is_configurable_with_variant" />
                 <field
                     name="variant_ids"
                     context="{'default_order_id': order_id}"
-                    attrs="{'invisible': [('is_multi_variant_line', '=', False)]}"
+                    invisible="not is_configurable_with_variant"
                 >
-                    <tree editable="bottom">
+                    <list editable="bottom">
                         <!-- There is some magic here, please look at models/ir_ui_view.py
-                             We dynamically retrieve all field from the sale order form
+                    We dynamically retrieve all the fields from the
+                    sale.order.line list defined in the original sale.order form view.
                         -->
-                    </tree>
+                    </list>
                 </field>
             </xpath>
         </field>
@@ -51,18 +48,38 @@
         <field name="inherit_id" ref="sale_order_line_config_variant_view_form_base" />
         <field name="arch" type="xml">
             <xpath
-                expr="//field[@name='variant_ids']/tree/field[@name='product_id']"
+                expr="//field[@name='variant_ids']/list/field[@name='product_template_id']"
                 position="attributes"
             >
-                <attribute
-                    name="domain"
-                >[('product_tmpl_id','=', parent.product_tmpl_id)]</attribute>
+                <attribute name="column_invisible">1</attribute>
             </xpath>
             <xpath
-                expr="//field[@name='variant_ids']/tree/field[@name='product_uom_qty']"
+                expr="//field[@name='variant_ids']/list/field[@name='product_id']"
+                position="attributes"
+            >
+                <attribute name="domain" operation="domain_add" join_operator="AND">
+                    [('product_tmpl_id','=', parent.product_template_id)]
+                </attribute>
+            </xpath>
+            <xpath
+                expr="//field[@name='variant_ids']/list/field[@name='product_uom_qty']"
                 position="attributes"
             >
                 <attribute name="sum">Total</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_sale_form" model="ir.ui.view">
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+            <xpath
+                expr="//notebook//field[@name='order_line']//list//field[@name='product_id']"
+                position="before"
+            >
+                <!-- Need to be present in view for JS patch -->
+                <field name="is_configurable_with_variant" column_invisible="1" />
             </xpath>
         </field>
     </record>

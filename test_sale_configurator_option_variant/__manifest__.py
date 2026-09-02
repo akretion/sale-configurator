@@ -5,8 +5,8 @@
 
 {
     "name": "Test Sale Configuration Option and Variant",
-    "summary": "Module for testing compatibility",
-    "version": "14.0.1.0.1",
+    "summary": "Tests for the combination of options and variants",
+    "version": "18.0.0.0.0",
     "development_status": "Alpha",
     "category": "Uncategorized",
     "website": "https://github.com/akretion/sale-configurator",
@@ -22,5 +22,5 @@
     ],
     "data": [],
     "demo": [],
-    "installable": False,
+    "installable": True,
 }

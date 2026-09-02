@@ -3,36 +3,101 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 
-from odoo.tests import SavepointCase
+from odoo import Command
+from odoo.tests import Form
+from odoo.tests.common import TransactionCase
 
 
-class SaleOrderCase(SavepointCase):
+class SaleConfiguratorVariant(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.sale = cls.env.ref("sale_configurator_variant.sale_order_1")
-        cls.line_with_variant = cls.env.ref(
-            "sale_configurator_variant.sale_order_line_1"
+        # Product with Variants
+        # ----------------------
+        Template = cls.env["product.template"]
+        Attribute = cls.env["product.attribute"]
+        AttributeValue = cls.env["product.attribute.value"]
+        SaleOrderLine = cls.env["sale.order.line"]
+
+        cls.attr_ref = Attribute.create(
+            {"name": "Attribute Ref", "create_variant": "always"}
         )
-        cls.line_variant_1 = cls.env.ref(
-            "sale_configurator_variant.sale_order_line_variant_1"
+        cls.value_ids = AttributeValue.create(
+            [{"name": f"V {i}", "attribute_id": cls.attr_ref.id} for i in range(1, 6)]
         )
-        cls.line_variant_2 = cls.env.ref(
-            "sale_configurator_variant.sale_order_line_variant_2"
+
+        cls.product_with_variant = Template.create(
+            {
+                "name": "Test Configurable Product",
+                "description_sale": "Description",
+                "list_price": 750,
+                "taxes_id": [Command.set([])],
+                "attribute_line_ids": [
+                    Command.create(
+                        {
+                            "attribute_id": cls.attr_ref.id,
+                            "value_ids": [Command.set(cls.value_ids.ids)],
+                        },
+                    ),
+                ],
+            }
         )
-        cls.line_variant_3 = cls.env.ref(
-            "sale_configurator_variant.sale_order_line_variant_3"
+        cls.variants = cls.product_with_variant.product_variant_ids.sorted(
+            lambda r: r.product_template_attribute_value_ids.name[1:]
         )
-        cls.product_with_variant = cls.env.ref(
-            "product.product_product_4_product_template"
+        cls.product_variant_1 = cls.variants[0]
+        cls.product_variant_2 = cls.variants[1]
+        cls.product_variant_3 = cls.variants[2]
+        cls.product_variant_4 = cls.variants[3]
+        cls.product_variant_5 = cls.variants[4]
+
+        cls.product_variant_2.description_sale = "Description"
+        cls.product_variant_3.product_template_attribute_value_ids.price_extra = 50
+
+        # Sale Order
+        # ----------
+        cls.partner = cls.env["res.partner"].create({"name": "Test Customer"})
+        cls.pricelist = cls.env["product.pricelist"].create(
+            {"name": "Pricelist", "sequence": 1}
         )
-        cls.product_with_variant.is_configurable_opt = True
-        cls.product_variant_1 = cls.env.ref("product.product_product_4")
-        cls.product_variant_2 = cls.env.ref("product.product_product_4b")
-        cls.product_variant_3 = cls.env.ref("product.product_product_4c")
-        cls.product_variant_4 = cls.env.ref("sale.product_product_4e")
-        cls.product_variant_5 = cls.env.ref("sale.product_product_4f")
-        cls.pricelist = cls.env.ref("product.list0")
+        cls.sale = cls.env["sale.order"].create(
+            {"partner_id": cls.partner.id, "pricelist_id": cls.pricelist.id}
+        )
+
+        cls.line_with_variant = SaleOrderLine.create(
+            {
+                "order_id": cls.sale.id,
+                "product_template_id": cls.product_with_variant.id,
+                "product_id": cls.product_variant_1.id,
+                "is_configurable_with_variant": True,
+            }
+        )
+        cls.line_variant_1 = SaleOrderLine.create(
+            {
+                "order_id": cls.sale.id,
+                "parent_variant_id": cls.line_with_variant.id,
+                "product_id": cls.product_variant_1.id,
+                "product_uom_qty": 4,
+            }
+        )
+
+        cls.line_variant_2 = SaleOrderLine.create(
+            {
+                "order_id": cls.sale.id,
+                "parent_variant_id": cls.line_with_variant.id,
+                "product_id": cls.product_variant_2.id,
+                "product_uom_qty": 3,
+            }
+        )
+
+        cls.line_variant_3 = SaleOrderLine.create(
+            {
+                "order_id": cls.sale.id,
+                "parent_variant_id": cls.line_with_variant.id,
+                "product_id": cls.product_variant_3.id,
+                "product_uom_qty": 2,
+            }
+        )
 
     def _conf_product_add_variants(self, sale_line):
         default_variants = [
@@ -51,59 +116,86 @@ class SaleOrderCase(SavepointCase):
                 "parent_variant_id": sale_line.id,
                 "price_unit": prod.list_price,
             }
-            new_vrt = sale_line.create(vrt_vals)
-            new_vrt.product_id_change()
-            new_vrt.product_uom_change()
+            sale_line.create(vrt_vals)
 
     def create_sale_line_parent(self, product_tmpl):
         sale_line = self.env["sale.order.line"].create(
             {
                 "name": product_tmpl.name,
-                "product_tmpl_id": product_tmpl.id,
+                "product_template_id": product_tmpl.id,
                 "product_id": product_tmpl.product_variant_id.id,
                 "price_unit": product_tmpl.list_price,
                 "order_id": self.sale.id,
+                "is_configurable_with_variant": True,
             }
         )
         return sale_line
 
-    def test_is_configurable(self):
+    def test_onchange_product_template_id(self):
+        with Form(
+            self.env["sale.order.line"].with_context(default_order_id=self.sale.id)
+        ) as line_form:
+            line_form.is_configurable_with_variant = True
+            line_form.product_template_id = self.product_with_variant
+            self.assertEqual(line_form.product_id, self.product_variant_1)
+
+    def test_quantity_readonly(self):
+        with Form(
+            self.env["sale.order.line"].with_context(default_order_id=self.sale.id)
+        ) as line_form:
+            line_form.is_configurable_with_variant = True
+            line_form.product_template_id = self.product_with_variant
+            with line_form.variant_ids.new() as variant:
+                variant.product_id = self.product_variant_4
+            with self.assertRaisesRegex(AssertionError, "can't write on readonly"):
+                line_form.product_uom_qty = 3
+
+    def test_config_type(self):
         new_line = self.create_sale_line_parent(self.product_with_variant)
-        new_line.product_tmpl_id_change()
         self._conf_product_add_variants(new_line)
         for line in new_line.variant_ids:
-            self.assertFalse(line.is_configurable)
-        self.assertTrue(new_line.is_configurable)
+            self.assertEqual(line.config_type, "variant")
+        self.assertEqual(new_line.config_type, "configurable")
+
+    def test_parent_variant_name(self):
+        self.assertEqual(
+            self.sale.order_line[0].name, "Test Configurable Product\nDescription"
+        )
+        self.assertEqual(
+            self.sale.order_line[1].name, "Test Configurable Product (V 1)"
+        )
+        self.assertEqual(
+            self.sale.order_line[2].name, "Test Configurable Product (V 2)"
+        )
 
     def test_total_amount(self):
-        self.assertEqual(self.sale.amount_total, 6850.80)
-        self.assertEqual(self.sale.amount_untaxed, 6850.80)
+        self.assertEqual(self.sale.amount_tax, 0)
+        self.assertEqual(self.sale.amount_total, 6850)
+        self.assertEqual(self.sale.amount_untaxed, 6850)
+
+    def test_update_price(self):
+        self.sale._recompute_prices()
+        self.assertEqual(self.sale.amount_total, 6850)
+        self.assertEqual(self.sale.amount_untaxed, 6850)
         self.assertEqual(self.sale.amount_tax, 0)
 
-    def test_conf_total_amount_price(self):
-        self.assertEqual(self.line_with_variant.price_config_subtotal, 6850.80)
-        self.assertEqual(self.line_with_variant.price_config_total, 6850.80)
+    def test_price_config_total(self):
+        self.assertEqual(self.line_with_variant.price_config_subtotal, 6850)
+        self.assertEqual(self.line_with_variant.price_config_total, 6850)
         self.assertEqual(self.line_variant_1.price_config_total, 0)
         self.assertEqual(self.line_variant_2.price_config_total, 0)
         self.assertEqual(self.line_variant_3.price_config_total, 0)
 
-    def test_conf_product_variant_qty(self):
+    def test_parent_quantity(self):
         new_line = self.create_sale_line_parent(self.product_with_variant)
-        new_line.product_tmpl_id_change()
         self._conf_product_add_variants(new_line)
         self.assertEqual(new_line.product_uom_qty, 5)
         new_line.variant_ids[0].product_uom_qty = 3
         self.assertEqual(new_line.product_uom_qty, 7)
 
-    def test_conf_product_variant_price_global_qty(self):
-        # Check if qty of one variant change price of other variant change
-        new_line = self.create_sale_line_parent(self.product_with_variant)
-        new_line.product_tmpl_id_change()
-        self._conf_product_add_variants(new_line)
-        line_product_variant_1 = new_line.variant_ids.filtered(
-            lambda l: l.product_id == self.product_variant_1
-        )
-        self.assertEqual(line_product_variant_1.price_unit, 750)
+    def test_variant_price_depends_on_global_qty_discount_disabled(self):
+        self.assertEqual(self.line_variant_1.price_unit, 750)
+
         self.env["product.pricelist.item"].create(
             {
                 "pricelist_id": self.pricelist.id,
@@ -114,14 +206,77 @@ class SaleOrderCase(SavepointCase):
                 "min_quantity": 10,
             }
         )
-        line_product_variant_2 = new_line.variant_ids.filtered(
-            lambda l: l.product_id == self.product_variant_2
-        )
-        line_product_variant_2.product_uom_qty = 6
-        self.assertEqual(line_product_variant_1.price_unit, 600)
+        # Price does not change while min_qty < 10
+        self.assertEqual(self.line_variant_1.price_unit, 750)
+        self.assertEqual(self.line_variant_1.discount, 0)
 
-    def test_update_price(self):
-        self.sale.update_prices()
-        self.assertEqual(self.sale.amount_total, 6850.80)
-        self.assertEqual(self.sale.amount_untaxed, 6850.80)
-        self.assertEqual(self.sale.amount_tax, 0)
+        self.line_variant_2.product_uom_qty = 4
+
+        self.assertEqual(self.line_variant_1.discount, 0)
+        self.assertEqual(self.line_variant_1.price_unit, 600)
+        self.assertEqual(self.line_variant_2.price_unit, 600)
+        self.assertEqual(self.line_variant_3.price_unit, 640)
+
+    def test_variant_price_depends_on_global_qty_discount_enabled(self):
+        self.env.user.groups_id += self.env.ref("sale.group_discount_per_so_line")
+        self.assertEqual(self.line_variant_1.price_unit, 750)
+
+        self.env["product.pricelist.item"].create(
+            {
+                "pricelist_id": self.pricelist.id,
+                "applied_on": "1_product",
+                "product_tmpl_id": self.product_with_variant.id,
+                "compute_price": "percentage",
+                "percent_price": 20,
+                "min_quantity": 10,
+            }
+        )
+        # Price does not change while min_qty < 10
+        self.assertEqual(self.line_variant_1.discount, 0)
+        self.assertEqual(self.line_variant_1.price_unit, 750)
+        self.assertEqual(self.line_variant_1.price_subtotal, 3000)
+
+        self.line_variant_2.product_uom_qty = 4
+
+        # Discount applied when parent quantity = 10
+        self.assertEqual(self.line_variant_1.discount, 20)
+        self.assertEqual(self.line_variant_2.discount, 20)
+        self.assertEqual(self.line_variant_3.discount, 20)
+
+        self.assertEqual(self.line_variant_1.price_unit, 750)
+        self.assertEqual(self.line_variant_2.price_unit, 750)
+        self.assertEqual(self.line_variant_3.price_unit, 800)
+
+        # Discount only on subtotal
+        # Expected price_subtotal == 4 * 600
+        self.assertEqual(self.line_variant_1.price_subtotal, 2400)
+        self.assertEqual(self.line_variant_2.price_subtotal, 2400)
+        # Expected price_subtotal == 2 * 640
+        self.assertEqual(self.line_variant_3.price_subtotal, 1280)
+
+    def test_variant_price_depends_on_global_qty_and_local_pricelist(self):
+        self.env["product.pricelist.item"].create(
+            [
+                {
+                    "pricelist_id": self.pricelist.id,
+                    "applied_on": "1_product",
+                    "product_tmpl_id": self.product_with_variant.id,
+                    "compute_price": "percentage",
+                    "percent_price": 20,
+                    "min_quantity": 10,
+                },
+                {
+                    "pricelist_id": self.pricelist.id,
+                    "applied_on": "0_product_variant",
+                    "product_id": self.product_variant_2.id,
+                    "compute_price": "percentage",
+                    "percent_price": 50,
+                    "min_quantity": 10,
+                },
+            ]
+        )
+        self.line_variant_3.product_uom_qty = 3
+
+        self.assertEqual(self.line_variant_1.price_unit, 600)
+        self.assertEqual(self.line_variant_2.price_unit, 375)
+        self.assertEqual(self.line_variant_3.price_unit, 640)

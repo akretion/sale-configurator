@@ -9,16 +9,15 @@ class MrpBomLine(models.Model):
 
     related_option_id = fields.Many2one(
         "product.configurator.option",
-        "Option ref",
-        domain="[('product_tmpl_id', '=', parent_product_tmpl_id)]",
+        "Related Option",
+        domain="[('configurable_product_tmpl_id', '=', parent_product_tmpl_id)]",
     )
 
-    def _skip_bom_line(self, product):
-
+    def _skip_bom_line(self, product, never_attribute_values=False):
         if self.related_option_id:
             return True
         else:
-            return super()._skip_bom_line(product)
+            return super()._skip_bom_line(product, never_attribute_values)
 
 
 class MrpProduction(models.Model):
@@ -26,75 +25,30 @@ class MrpProduction(models.Model):
 
     def _get_moves_raw_values(self):
         moves = super()._get_moves_raw_values()
-        options = []
-        for prod in self:
-            lines = self.env["mrp.bom.line"].read_group(
-                [
-                    (
-                        "related_option_id.id",
-                        "in",
-                        prod.sale_line_ids.option_ids.product_option_id.ids,
-                    ),
-                    ("bom_id", "=", prod.bom_id.id),
-                ],
-                fields=["product_qty:sum"],
-                groupby=["product_id", "product_uom_id", "related_option_id"],
-                lazy=False,
+
+        for production in self:
+            sol_options = production.sale_line_id.child_option_ids
+            option_quantities = {
+                sol.product_id.id: (sol.product_uom_qty, sol.product_uom)
+                for sol in sol_options
+            }
+
+            bom_lines = production.bom_id.bom_line_ids.filtered_domain(
+                [("related_option_id", "in", sol_options.option_id.ids)]
             )
-            options = self.env["sale.order.line"].read_group(
-                [
-                    ("product_id.type", "=", "service"),
-                    ("id", "in", prod.sale_line_ids.option_ids.ids),
-                ],
-                fields=["product_uom_qty:sum"],
-                groupby=["product_id", "product_uom"],
-                lazy=False,
-            )
-            if lines:
-                list_lines = []
-                list_product_id = []
-                for line in lines:
-                    for option in options:
-                        if (
-                            self.env["product.configurator.option"]
-                            .browse(line["related_option_id"][0])
-                            .product_id.id
-                            == option["product_id"][0]
-                        ):
-                            total_qty_line = (
-                                line["product_qty"] * option["product_uom_qty"]
-                            )
-                    if list_lines:
-                        if line["product_id"][0] in list_product_id:
-                            index_list_prod = list_product_id.index(
-                                line["product_id"][0]
-                            )
-                            if (
-                                list_lines[index_list_prod]["product_id"][0]
-                                == line["product_id"][0]
-                                and list_lines[index_list_prod]["product_uom_id"][0]
-                                == line["product_uom_id"][0]
-                            ):
-                                list_lines[index_list_prod]["product_qty"] = (
-                                    list_lines[index_list_prod]["product_qty"]
-                                    + total_qty_line
-                                )
-                            else:
-                                list_lines.append(line)
-                                list_lines[-1]["product_qty"] = total_qty_line
-                                list_product_id.append(line["product_id"][0])
-                    else:
-                        list_lines.append(line)
-                        list_product_id.append(line["product_id"][0])
-                        list_lines[-1]["product_qty"] = total_qty_line
-                for list_prod in list_lines:
+
+            for bom_line in bom_lines:
+                option_product = bom_line.related_option_id.product_id
+                (qty_sold, sol_uom) = option_quantities.get(option_product.id)
+
+                bom_uom = bom_line.product_uom_id
+                qty_option_sold_bom_uom = sol_uom._compute_quantity(qty_sold, bom_uom)
+
+                if qty_option_sold_bom_uom > 0.0:
+                    total_qty_required = bom_line.product_qty * qty_option_sold_bom_uom
                     moves.append(
-                        prod._get_move_raw_values(
-                            self.env["product.product"].browse(
-                                list_prod["product_id"][0]
-                            ),
-                            list_prod["product_qty"],
-                            self.env["uom.uom"].browse(list_prod["product_uom_id"][0]),
+                        production._get_move_raw_values(
+                            bom_line.product_id, total_qty_required, bom_uom
                         )
                     )
         return moves

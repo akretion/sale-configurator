@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-
     <record model="ir.ui.view" id="product_template_form_view">
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_form_view" />
@@ -9,19 +8,20 @@
                 <button
                     name="%(product_configurator_option_action)d"
                     type="action"
-                    context="{'search_default_option_product_tmpl_id': context.get('active_id')}"
+                    context="{'search_default_product_tmpl_id': id}"
                     class="oe_stat_button"
                     icon="fa-level-up"
+                    invisible="count_used_as_option == 0"
                 >
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_value">
                             <field
-                                name="count_used_on_option_line"
+                                name="count_used_as_option"
                                 widget="statinfo"
                                 nolabel="1"
                             />
                         </span>
-                        <span class="o_stat_text">Used In Configurable</span>
+                        <span class="o_stat_text">Used as Option</span>
                     </div>
                 </button>
             </div>
@@ -29,52 +29,58 @@
                 <page name="config_options" string="Configurator Options">
                     <group name="options">
                         <group name="setting" colspan="4">
+                            <field name="config_type" />
                             <field
-                                name="is_configurable_opt"
-                                attrs="{'invisible': [('is_option','=', True)]}"
-                            />
-                            <field
-                                name="is_option"
-                                attrs="{'invisible': [('is_configurable_opt', '=', True)]}"
-                            />
-                            <field
-                                name="product_conf_tmpl_id"
-                                attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
+                                name="configurator_id"
+                                invisible="config_type != 'configurable'"
                                 colspan="2"
                             />
                             <field
-                                name="sale_alone_forbidden"
-                                attrs="{'invisible': [('is_configurable_opt', '=', True)]}"
+                                name="is_not_sold_alone"
+                                invisible="config_type == 'configurable'"
                             />
                         </group>
                         <group
-                            name="local_options"
-                            string="Local Options"
-                            attrs="{'invisible': ['|', ('is_configurable_opt', '=', False),
-                              ('product_conf_tmpl_id', '!=', False)]}"
+                            name="specific_options"
+                            string="Specific Options"
+                            invisible="config_type != 'configurable' or configurator_id"
                             colspan="4"
                         >
                             <field
-                                name="local_configurable_option_ids"
+                                name="specific_option_ids"
                                 nolabel="1"
-                                mode="tree"
+                                mode="list"
+                                context="{'list_view_ref': 'sale_configurator_option.product_configurator_option_view_list'}"
                             />
                         </group>
                         <group
-                            name="template_options"
-                            string="Template Options"
-                            attrs="{'invisible': ['|', ('is_configurable_opt', '=', False),
-                              ('product_conf_tmpl_id', '=', False)]}"
+                            name="configurator_options"
+                            string="Options"
+                            invisible="config_type != 'configurable' or not configurator_id"
                             colspan="4"
+                            context="{'list_view_ref': 'sale_configurator_option.product_configurator_option_view_list'}"
                         >
-                            <field
-                                name="configurable_option_ids"
-                                nolabel="1"
-                                mode="tree"
-                            />
+                            <field name="option_ids" nolabel="1" mode="list" />
                         </group>
                     </group>
                 </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Special search_default context on Variant views to match product.product's ID
+        instead of product.template's ID -->
+    <record model="ir.ui.view" id="product_normal_form_view">
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view" />
+        <field name="arch" type="xml">
+            <xpath
+                expr="//button[@name='%(product_configurator_option_action)d']"
+                position="attributes"
+            >
+                <attribute name="context">
+                    {'search_default_product_id': id}
+                </attribute>
             </xpath>
         </field>
     </record>

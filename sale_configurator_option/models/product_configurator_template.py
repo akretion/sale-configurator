@@ -12,22 +12,26 @@ class ProductConfiguratorTemplate(models.Model):
     _description = "Product Configurator Template"
     _order = "name"
 
-    name = fields.Char("Name", index=True, required=True, translate=True)
+    name = fields.Char(index=True, required=True, translate=True)
     code = fields.Char("Internal Reference", index=True)
-    description = fields.Text("Description", translate=True)
+    description = fields.Text(translate=True)
 
     active = fields.Boolean(
-        "Active",
         default=True,
         help="If unchecked, it will allow you to hide\n"
         "the Configurator Template without removing it.",
     )
-    configurable_option_ids = fields.One2many(
+    option_ids = fields.One2many(
         "product.configurator.option",
-        "product_conf_tmpl_id",
-        "Configurable Option Lines",
+        "configurator_id",
+        "Options",
         copy=True,
+        help="If this Configurator is selected for a Configurable Product, "
+        "all these Options will be linked to the product",
     )
-    product_tmpl_ids = fields.One2many(
-        "product.template", "product_conf_tmpl_id", "Product Tmpl"
+    configurable_product_tmpl_ids = fields.One2many(
+        "product.template",
+        "configurator_id",
+        "Configurable Products",
+        help="All the Configurable Products using this Configurator",
     )

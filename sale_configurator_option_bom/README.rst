@@ -17,19 +17,56 @@ Sale configurator option bom
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-akretion%2Fsale--configurator-lightgray.png?logo=github
-    :target: https://github.com/akretion/sale-configurator/tree/14.0/sale_configurator_option_bom
+    :target: https://github.com/akretion/sale-configurator/tree/18.0/sale_configurator_option_bom
     :alt: akretion/sale-configurator
 
 |badge1| |badge2| |badge3|
 
-This module allow to link bom line to an option.
-So when the option is selected in a sale order. 
-The bom line will be add to the manufactur order.
+This module creates a link between BoM lines and configurable products
+options.
+
+When selling a manufacturable and configurable product with a Make To
+Order route, if a BoM line of this product is related to an Option of
+the same product, the component will be produced **proportionally to the
+Option's sold quantity** and not to the main product sold quantity.
 
 **Table of contents**
 
 .. contents::
    :local:
+
+Usage
+=====
+
+1. Create a Manufacturable and Configurable product
+
+   - Create a new configurable product with a Make To Order route
+   - Add an Option with "Independent Qty" as "Option Qty Type"
+   - Add a BoM to manufacture this product, with a component line of
+     quantity 3
+   - In the field "Related Option" of the BoM's first component, choose
+     the newly created Option
+
+2. Create a Sale Order to sell this product
+
+   - Create a Sale Order
+   - Select the newly created Configurable Product and his Option
+   - Set the Configurable Product's quantity to 4 and the Option's
+     quantity to 2
+
+3. Confirm the Sale Order to consume the related components
+
+   - Confirm the Sale Order
+   - Check the related Manufacture Order
+   - The Component's consumed quantity will be 3*2 = 6
+
+Exemple
+-------
+
+If your configurable product is a "boots checkup" associated to an
+option service "changing shoelaces", you want to consume 2 shoelaces
+each time the option service is sold, and not each time the "boots
+checkup is sold".
 
 Bug Tracker
 ===========
@@ -37,7 +74,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/akretion/sale-configurator/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/akretion/sale-configurator/issues/new?body=module:%20sale_configurator_option_bom%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/akretion/sale-configurator/issues/new?body=module:%20sale_configurator_option_bom%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -45,18 +82,18 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Akretion
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Thomas BONNERUE <thomas.bonnerue@akretion.com>
+- Thomas BONNERUE <thomas.bonnerue@akretion.com>
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
-This module is part of the `akretion/sale-configurator <https://github.com/akretion/sale-configurator/tree/14.0/sale_configurator_option_bom>`_ project on GitHub.
+This module is part of the `akretion/sale-configurator <https://github.com/akretion/sale-configurator/tree/18.0/sale_configurator_option_bom>`_ project on GitHub.
 
 You are welcome to contribute.

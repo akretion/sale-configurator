@@ -12,21 +12,17 @@ class SaleOrderLine(models.Model):
     parent_option_id = fields.Many2one(
         "sale.order.line", string="Parent Option", index=True
     )
-    child_type = fields.Selection(
+    config_type = fields.Selection(
         selection_add=[("option", "Option")],
         ondelete={"option": "set null"},
     )
-    option_ids = fields.One2many(
+    child_option_ids = fields.One2many(
         "sale.order.line",
         "parent_option_id",
         "Options",
         copy=True,
     )
-    is_configurable_opt = fields.Boolean(
-        "Is the product configurable Option ?", related="product_id.is_configurable_opt"
-    )
-    option_unit_qty = fields.Float(
-        string="Option Unit Qty",
+    option_qty = fields.Float(
         digits="Product Unit of Measure",
         default=1.0,
     )
@@ -37,127 +33,104 @@ class SaleOrderLine(models.Model):
         ],
         string="Option qty Type",
         compute="_compute_option_qty_type",
+        precompute=True,
         store=True,
         readonly=False,
     )
-    product_option_id = fields.Many2one(
+    option_id = fields.Many2one(
         "product.configurator.option",
         "Product Option",
         ondelete="set null",
-        compute="_compute_product_option_id",
+        compute="_compute_option_id",
     )
 
-    # TODO in V16 the price_unit is a computed field \o/
-    # so we should be able to drop this
-    @api.depends("product_uom_qty")
-    def _compute_price_unit(self):
-        super()._compute_price_unit()
-        for record in self:
-            if record.child_type == "option":
-                product = record.product_id.with_context(
-                    partner=record.order_id.partner_id,
-                    quantity=record.product_uom_qty,
-                    date=record.order_id.date_order,
-                    pricelist=record.order_id.pricelist_id.id,
-                    uom=record.product_uom.id,
-                )
-                record.price_unit = record._get_display_price(product)
-
-    @api.depends("parent_option_id")
-    def _compute_parent(self):
-        for record in self:
-            if record.parent_option_id:
-                record.parent_id = record.parent_option_id
-                record.child_type = "option"
-            else:
-                super(SaleOrderLine, record)._compute_parent()
+    product_uom_qty = fields.Float(recursive=True)
 
     def _get_child_type_sort(self):
         res = super()._get_child_type_sort()
-        res.append((20, "option"))
+        res.append((30, "option"))
         return res
 
-    def _is_line_configurable(self):
-        if self.is_configurable_opt:
-            return True
+    def get_children(self):
+        return super().get_children() + self.child_option_ids
+
+    def _get_config_type(self):
+        p_type = self.product_id.config_type
+        if self.parent_option_id and p_type == "option":
+            return "option"
+
+        if p_type == "configurable":
+            return "configurable"
+
+        return super()._get_config_type()
+
+    def _get_parent_id_from_vals(self, vals):
+        if vals.get("parent_option_id"):
+            return vals["parent_option_id"]
         else:
-            return super()._is_line_configurable()
+            return super()._get_parent_id_from_vals(vals)
+
+    def _get_option(self):
+        self.ensure_one()
+        return self.parent_option_id.product_id.option_ids.filtered(
+            lambda o: o.product_id == self.product_id
+        )
+
+    @api.depends("product_id")
+    def _compute_option_id(self):
+        for record in self:
+            record.option_id = record._get_option()
+
+    @api.depends("parent_option_id")
+    def _compute_parent(self):  # pylint: disable=missing-return
+        for record in self:
+            if record.parent_option_id:
+                record.parent_id = record.parent_option_id
+            else:
+                super(SaleOrderLine, record)._compute_parent()
 
     @api.depends(
         "product_uom_qty",
-        "option_unit_qty",
+        "option_qty",
         "option_qty_type",
         "parent_option_id.product_uom_qty",
     )
-    def _compute_product_uom_qty(self):
+    def _compute_product_uom_qty(self):  # pylint: disable=missing-return
         super()._compute_product_uom_qty()
         for record in self:
             if record.parent_option_id:
                 if record.option_qty_type == "proportional_qty":
                     record.product_uom_qty = (
-                        record.option_unit_qty * record.parent_option_id.product_uom_qty
+                        record.option_qty * record.parent_option_id.product_uom_qty
                     )
                 elif record.option_qty_type == "independent_qty":
-                    record.product_uom_qty = record.option_unit_qty
-
-    @api.onchange("product_uom_qty")
-    def onchange_qty_propagate_to_child(self):
-        # When adding a new configurable product the qty is not propagated
-        # correctly to child line with the onchange (it work when modifying)
-        # seem to have a bug in odoo ORM
-        for record in self:
-            record.option_ids._compute_product_uom_qty()
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        options_list = [vals.pop("option_ids", None) for vals in vals_list]
-        lines = super().create(vals_list)
-        # For weird reason it seem that the product_uom_qty have been not recomputed
-        # correctly. Recompute is only triggered in the onchange
-        # and the onchange do not propagate the qty see the following test:
-        # tests/test_sale_order.py::SaleOrderCase::test_create_sale_with_option_ids
-        # Note maybe it's because the product_uom_qty have a default value
-        # and so the create will add it, end then if we have a value the recompute
-        # is note done
-        lines._compute_product_uom_qty()
-
-        # We ensure to write the option after all field on the main line a recomputed
-        if any(options_list):
-            for line, vals in zip(lines, options_list):
-                if vals:
-                    line.write({"option_ids": vals})
-
-        return lines
-
-    def _get_product_option(self):
-        self.ensure_one()
-        return self.parent_option_id.product_id.configurable_option_ids.filtered(
-            lambda o: o.product_id == self.product_id
-        )
-
-    @api.depends("product_id")
-    def _compute_product_option_id(self):
-        for record in self:
-            record.product_option_id = record._get_product_option()
+                    record.product_uom_qty = record.option_qty
 
     @api.depends("product_id")
     def _compute_option_qty_type(self):
         for record in self:
-            if record.product_option_id:
-                record.option_qty_type = record.product_option_id.option_qty_type
+            if record.option_id:
+                record.option_qty_type = record.option_id.option_qty_type
+            else:
+                record.option_qty_type = False
+
+    @api.depends("child_option_ids")
+    def _compute_report_line_is_empty_parent(self):  # pylint: disable=missing-return
+        super()._compute_report_line_is_empty_parent()
+
+    @api.depends("child_option_ids.price_subtotal", "child_option_ids.price_total")
+    def _compute_config_amount(self):  # pylint: disable=missing-return
+        super()._compute_config_amount()
 
     @api.onchange("product_id")
-    def product_id_change(self):
-        res = super().product_id_change()
-        # Note we use here the context because we only want to add the default option
-        # in odoo backend when editing a SO
-        # Other module can call the method product_id_change and we do not want
-        # to have weird side effect
-        if self.product_id.is_configurable_opt and self._context.get(
-            "add_default_option"
-        ):
-            self.option_ids = False
-            for opt in self.product_id.configurable_option_ids:
+    def _onchange_product_id(self):
+        # We tried to avoid this onchange transforming child_option_ids in
+        # a compute field, but it does not work in v18 because of too much confusions
+        # between NewId and real records. Let's try again in next versions!
+        res = super()._onchange_product_id()
+        if self.product_id.config_type == "configurable":
+            self.child_option_ids = False
+            for opt in self.product_id.option_ids:
                 if opt.is_default_option:
                     option = self.new(
                         {
@@ -166,23 +139,32 @@ class SaleOrderLine(models.Model):
                             "order_id": self.order_id.id,
                         }
                     )
-                    option.product_id_change()
-                    self.option_ids |= option
+                    option._onchange_product_id()
+                    self.child_option_ids |= option
         return res
 
-    def _get_parent_id_from_vals(self, vals):
-        if vals.get("parent_option_id"):
-            return vals["parent_option_id"]
-        else:
-            return super()._get_parent_id_from_vals(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        options_list = [vals.pop("child_option_ids", None) for vals in vals_list]
+        lines = super().create(vals_list)
 
-    @api.depends("option_ids")
-    def _compute_report_line_is_empty_parent(self):
-        super()._compute_report_line_is_empty_parent()
+        # The product_uom_qty is not computed during the create (maybe because of the
+        # default value '1.0' in sale module?), so we force the compute here.
+        lines._compute_product_uom_qty()
 
-    @api.depends("option_ids.price_subtotal", "option_ids.price_total")
-    def _compute_config_amount(self):
-        super()._compute_config_amount()
+        # We ensure to write the option after all field on the main line are recomputed
+        # otherwise 'child_option_ids' is erased during the create
+        if any(options_list):
+            for line, vals in zip(lines, options_list, strict=False):
+                if vals:
+                    line.write({"child_option_ids": vals})
 
-    def get_children(self):
-        return super().get_children() + self.option_ids
+        return lines
+
+    def write(self, vals):
+        super().write(vals)
+        # As we write "child_option_ids" at the end of the create, we need to define
+        # the sequences of the newly created lines who have this parent/child hierarchy
+        if "child_option_ids" in vals:
+            self.order_id.sync_sequence()
+        return True

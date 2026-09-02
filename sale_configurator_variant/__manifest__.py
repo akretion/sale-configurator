@@ -5,17 +5,28 @@
 
 {
     "name": "Sale Configurator Variant",
-    "summary": "Extend sale configurator to manage product variant",
-    "version": "14.0.1.1.3",
+    "summary": "Apply quantity discounts based on the sum of variants",
+    "version": "18.0.1.0.0",
     "category": "Sale",
     "website": "https://github.com/akretion/sale-configurator",
     "author": " Akretion",
     "license": "AGPL-3",
     "application": False,
-    "installable": False,
-    "external_dependencies": {"python": [], "bin": []},
-    "depends": ["sale_configurator_option"],
+    "installable": True,
+    "external_dependencies": {"python": ["openupgradelib"]},
+    "depends": [
+        "sale_configurator_base",
+        # https://github.com/OCA/server-tools
+        "base_view_inheritance_extension",
+    ],
     "data": ["views/sale_view.xml"],
     "demo": ["demo/sale_demo.xml"],
+    "assets": {
+        "web.assets_backend": [
+            "after",
+            "sale/static/src/js/**/*",
+            "sale_configurator_variant/static/src/js/sol_many2one_inherit.esm.js",
+        ]
+    },
     "qweb": [],
 }

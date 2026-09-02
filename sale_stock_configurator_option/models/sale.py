@@ -4,34 +4,26 @@
 
 
 from odoo import api, fields, models
-
-
-# TODO for now we simply round with integer qty
-# see when we will have the case to support float qty
-# but not sure we will have the case so let's see latter
-def round_up(val):
-    rounded_qty = round(val, 0)
-    if rounded_qty <= val:
-        return rounded_qty
-    else:
-        return rounded_qty + 1
+from odoo.tools.float_utils import float_round
 
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
+
+    qty_delivered = fields.Float(recursive=True)
 
     qty_delivered_method = fields.Selection(
         selection_add=[("option_proportional", "Proportional Option")]
     )
 
     def _action_launch_stock_rule(self, previous_product_uom_qty=False):
-        lines = self.filtered(lambda l: l.child_type != "option")
+        lines = self.filtered(lambda line: line.config_type != "option")
         return super(SaleOrderLine, lines)._action_launch_stock_rule(
             previous_product_uom_qty=previous_product_uom_qty
         )
 
     @api.depends("parent_id.qty_delivered", "qty_delivered_method", "product_uom_qty")
-    def _compute_qty_delivered(self):
+    def _compute_qty_delivered(self):  # pylint: disable=missing-return
         for line in self:
             if line.qty_delivered_method == "option_proportional":
                 parent = line.parent_id
@@ -40,10 +32,11 @@ class SaleOrderLine(models.Model):
                 else:
                     line.qty_delivered = min(
                         line.product_uom_qty,
-                        round_up(
+                        float_round(
                             parent.qty_delivered
                             / parent.product_uom_qty
-                            * line.product_uom_qty
+                            * line.product_uom_qty,
+                            precision_rounding=line.product_uom.rounding,
                         ),
                     )
             else:
@@ -52,10 +45,10 @@ class SaleOrderLine(models.Model):
     def _get_compute_delivered_method(self):
         return "option_proportional"
 
-    @api.depends("parent_id")
-    def _compute_qty_delivered_method(self):
+    @api.depends("product_id")
+    def _compute_qty_delivered_method(self):  # pylint: disable=missing-return
         for line in self:
-            if line.child_type == "option":
+            if line.product_id.config_type == "option":
                 line.qty_delivered_method = line._get_compute_delivered_method()
             else:
                 super(SaleOrderLine, line)._compute_qty_delivered_method()

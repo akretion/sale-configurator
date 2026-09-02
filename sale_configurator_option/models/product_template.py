@@ -9,53 +9,62 @@ from odoo import api, fields, models
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    is_configurable_opt = fields.Boolean(
-        "Is a Configurable Product ?",
-        help="Check this, if the product is configurable with options",
+    config_type = fields.Selection(
+        [("configurable", "Configurable Product"), ("option", "Option")],
+        string="Configuration type",
+        help="Defines whether the product is a Configurable Product or an Option "
+        "linked to another Configurable Product",
     )
-    is_option = fields.Boolean(
-        "Is an Option Product ?",
-        help="Check this, if the product is an option used in configurable product",
-    )
-    sale_alone_forbidden = fields.Boolean(
-        "Is only an option",
-        help="This product can't be sold without a configuration",
+
+    is_not_sold_alone = fields.Boolean(
+        help="This Option can only be sold as part of a Configurable Product",
         default=False,
+        compute="_compute_is_not_sold_alone",
+        readonly=False,
+        store=True,
     )
-    product_conf_tmpl_id = fields.Many2one(
+    configurator_id = fields.Many2one(
         "product.configurator.template",
-        "Related Configurable Template",
+        "Product Configurator Template",
+        help="Configurator template used to assign many Options at once to the current "
+        "Configurable Product.",
     )
-    local_configurable_option_ids = fields.One2many(
+    # The Options of a Configurable Product (option_ids) can be defined
+    # either by its related Configurator Template's Options, or by its own
+    # specific Options defined here.
+    specific_option_ids = fields.One2many(
         "product.configurator.option",
-        "product_tmpl_id",
-        "Specific Configurable Option Lines",
+        "configurable_product_tmpl_id",
+        "Specific Options",
         copy=True,
+        help="Options specific to the current Configurable Product",
     )
-    configurable_option_ids = fields.One2many(
+    option_ids = fields.One2many(
         "product.configurator.option",
-        string="Configurable Option Lines",
-        compute="_compute_configurable_option_ids",
+        string="Options",
+        compute="_compute_option_ids",
         copy=True,
+        help="Options of the current Configurable Product\n"
+        "(coming from the Configurator or specific to the Product)",
     )
-    count_used_on_option_line = fields.Integer(
-        "Count Use On Option Line", compute="_compute_count_used_on_option_line"
+    count_used_as_option = fields.Integer(
+        compute="_compute_count_used_as_option",
+        help="Number of configurator Options made with this product",
     )
 
-    def _compute_count_used_on_option_line(self):
-        for record in self:
-            record.count_used_on_option_line = len(
-                record.product_variant_ids.used_on_option_line_ids
-            )
+    @api.depends("config_type")
+    def _compute_is_not_sold_alone(self):
+        for rec in self:
+            rec.is_not_sold_alone = rec.config_type == "option"
 
-    @api.depends("product_conf_tmpl_id")
-    def _compute_configurable_option_ids(self):
-        for template in self:
-            if template.product_conf_tmpl_id:
-                template.configurable_option_ids = (
-                    template.product_conf_tmpl_id.configurable_option_ids
-                )
+    def _compute_count_used_as_option(self):
+        for rec in self:
+            rec.count_used_as_option = len(rec.product_variant_ids.used_as_option_ids)
+
+    @api.depends("configurator_id")
+    def _compute_option_ids(self):
+        for rec in self:
+            if rec.configurator_id:
+                rec.option_ids = rec.configurator_id.option_ids
             else:
-                template.configurable_option_ids = (
-                    template.local_configurable_option_ids
-                )
+                rec.option_ids = rec.specific_option_ids

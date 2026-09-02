@@ -7,7 +7,7 @@
     >
         <!--Apply distinct style to children lines-->
         <xpath
-            expr="//t[@t-if='not line.display_type']//td[@name='td_name']//span"
+            expr="//t[@t-if=&quot;not line.display_type and line.product_type != 'combo'&quot;]//td[@name='td_name']//span"
             position="replace"
         >
             <t t-if="line.parent_id">

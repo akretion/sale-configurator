@@ -3,7 +3,6 @@
      @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
-
     <record id="sale_order_line_config_option_view_form_base" model="ir.ui.view">
         <field name="model">sale.order.line</field>
         <field
@@ -11,34 +10,40 @@
             ref="sale_configurator_base.sale_order_line_config_base_view_form"
         />
         <field name="arch" type="xml">
-            <xpath expr="//group/group/field[@name='product_id']" position="attributes">
-                <attribute
-                    name="context"
-                    operation="python_dict"
-                    key="add_default_option"
-                >True</attribute>
+            <xpath
+                expr="//group/group/div/field[@name='product_id']"
+                position="attributes"
+            >
+                <attribute name="context" operation="update">
+                    {
+                        "add_default_option": True,
+                    }
+                </attribute>
             </xpath>
-            <xpath expr="//group/group/field[@name='product_id']" position="attributes">
+            <xpath
+                expr="//group/group/div/field[@name='product_id']"
+                position="attributes"
+            >
                 <attribute
                     name="domain"
-                >[("is_configurable_opt", "=", True)]</attribute>
+                >[("config_type", "=", "configurable")]</attribute>
             </xpath>
             <xpath expr="//field[@name='name']" position="after">
-                <field name="is_configurable_opt" invisible="1" />
                 <label
-                    for="option_ids"
-                    attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
+                    for="child_option_ids"
+                    invisible="config_type != 'configurable'"
                 />
                 <field
-                    name="option_ids"
+                    name="child_option_ids"
                     context="{'default_order_id': order_id}"
-                    attrs="{'invisible': [('is_configurable_opt', '=', False)]}"
+                    invisible="config_type != 'configurable'"
                 >
-                    <tree editable="bottom">
+                    <list editable="bottom">
                         <!-- There is some magic here, please look at models/ir_ui_view.py
-                            We dynamically retrieve all field from the sale order form
-                        -->
-                    </tree>
+                    We dynamically retrieve all the fields from the
+                    sale.order.line list defined in the original sale.order form view.
+                -->
+                    </list>
                 </field>
             </xpath>
         </field>
@@ -49,36 +54,35 @@
         <field name="inherit_id" ref="sale_order_line_config_option_view_form_base" />
         <field name="arch" type="xml">
             <xpath
-                expr="//field[@name='option_ids']/tree/field[@name='product_uom_qty']"
+                expr="//field[@name='child_option_ids']/list/field[@name='product_uom_qty']"
                 position="before"
             >
-                <field name="option_unit_qty" string="Qty" />
+                <field name="option_qty" string="Qty" />
                 <field name="option_qty_type" string="Qty type" optional="hide" />
             </xpath>
             <xpath
-                expr="//field[@name='option_ids']/tree/field[@name='product_uom_qty']"
+                expr="//field[@name='child_option_ids']/list/field[@name='product_uom_qty']"
                 position="attributes"
             >
                 <attribute name="readonly">1</attribute>
                 <attribute name="string">Total Qty</attribute>
             </xpath>
             <xpath
-                expr="//field[@name='option_ids']/tree/field[@name='product_id']"
+                expr="//field[@name='child_option_ids']/list/field[@name='product_id']"
                 position="attributes"
             >
                 <attribute
                     name="domain"
-                >[('is_option', '=', True),('used_on_product_ids', '=', parent.product_id)]</attribute>
+                >[('config_type', '=', 'option'),('used_in_configurable_product_ids', '=', parent.product_id)]</attribute>
             </xpath>
-            <!-- In case that you have the configurator activated -->
             <xpath
-                expr="//field[@name='option_ids']/tree/field[@name='product_template_id']"
+                expr="//field[@name='child_option_ids']/list/field[@name='product_template_id']"
                 position="attributes"
             >
-                <attribute name="invisible">1</attribute>
+                <attribute name="column_invisible">1</attribute>
             </xpath>
             <xpath
-                expr="//field[@name='option_ids']/tree/field[@name='product_id']"
+                expr="//field[@name='child_option_ids']/list/field[@name='product_id']"
                 position="attributes"
             >
                 <attribute name="optional" />
@@ -87,4 +91,26 @@
         </field>
     </record>
 
+    <record id="view_sale_form" model="ir.ui.view">
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+            <xpath
+                expr="//notebook//field[@name='order_line']//list//field[@name='product_id']"
+                position="attributes"
+            >
+                <attribute name="domain" operation="domain_add" join_operator="AND">
+                    [('is_not_sold_alone', '=', False)]
+                </attribute>
+            </xpath>
+            <xpath
+                expr="//notebook//field[@name='order_line']//list//field[@name='product_template_id']"
+                position="attributes"
+            >
+                <attribute name="domain" operation="domain_add" join_operator="AND">
+                    [('is_not_sold_alone', '=', False)]
+                </attribute>
+            </xpath>
+        </field>
+    </record>
 </odoo>

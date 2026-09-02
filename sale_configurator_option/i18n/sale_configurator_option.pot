@@ -1,10 +1,6 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* sale_configurator_option
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 14.0\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -15,7 +11,7 @@ msgstr ""
 
 #. module: sale_configurator_option
 #: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_template_form_view
-msgid "<span class=\"o_stat_text\">Used In Configurable</span>"
+msgid "<span class=\"o_stat_text\">Used as Option</span>"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -55,6 +51,11 @@ msgid "Add this option by default."
 msgstr ""
 
 #. module: sale_configurator_option
+#: model:ir.model.fields,help:sale_configurator_option.field_product_configurator_template__configurable_product_tmpl_ids
+msgid "All the Configurable Products using this Configurator"
+msgstr ""
+
+#. module: sale_configurator_option
 #: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_option_view_search
 #: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_form_view
 #: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_search_view
@@ -67,38 +68,25 @@ msgid "Attachment Count"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,help:sale_configurator_option.field_product_product__is_option
-#: model:ir.model.fields,help:sale_configurator_option.field_product_template__is_option
-msgid "Check this, if the product is an option used in configurable product"
+#: model:ir.model.fields.selection,name:sale_configurator_option.selection__product_template__config_type__configurable
+msgid "Configurable Product"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,help:sale_configurator_option.field_product_product__is_configurable_opt
-#: model:ir.model.fields,help:sale_configurator_option.field_product_template__is_configurable_opt
-#: model:ir.model.fields,help:sale_configurator_option.field_sale_order_line__is_configurable_opt
-msgid "Check this, if the product is configurable with options"
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__configurable_product_tmpl_ids
+msgid "Configurable Products"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__child_type
-msgid "Child Type"
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__used_in_configurable_product_tmpl_ids
+msgid "Configurable Products using this Option"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__configurable_option_ids
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__configurable_option_ids
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__configurable_option_ids
-msgid "Configurable Option Lines"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_form_view
-msgid "Configurable Options"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model:ir.actions.act_window,name:sale_configurator_option.product_configurator_template_action
-msgid "Configurator Option Templates"
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__config_type
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__config_type
+#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__config_type
+msgid "Configuration type"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -107,6 +95,7 @@ msgid "Configurator Options"
 msgstr ""
 
 #. module: sale_configurator_option
+#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_form_view
 #: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_search_view
 msgid "Configurator Template"
 msgstr ""
@@ -117,19 +106,22 @@ msgid "Configurator Template Name"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_search_view
-msgid "Configurator option Templates"
+#: model:ir.model.fields,help:sale_configurator_option.field_product_product__configurator_id
+#: model:ir.model.fields,help:sale_configurator_option.field_product_template__configurator_id
+msgid ""
+"Configurator template used to assign many Options at once to the current "
+"Configurable Product."
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__count_used_on_option_line
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__count_used_on_option_line
-msgid "Count Use On Option Line"
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__count_used_as_option
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__count_used_as_option
+msgid "Count Used As Option"
 msgstr ""
 
 #. module: sale_configurator_option
 #: model_terms:ir.actions.act_window,help:sale_configurator_option.product_configurator_template_action
-msgid "Create a new product configurator cemplate"
+msgid "Create a new Product Configurator Template"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -145,29 +137,34 @@ msgid "Created on"
 msgstr ""
 
 #. module: sale_configurator_option
+#: model:ir.model.fields,help:sale_configurator_option.field_sale_order_line__config_type
+msgid ""
+"Defines whether the line refers to a configurable product or to one of its "
+"child items ('option', 'variant', etc.)"
+msgstr ""
+
+#. module: sale_configurator_option
+#: model:ir.model.fields,help:sale_configurator_option.field_product_product__config_type
+#: model:ir.model.fields,help:sale_configurator_option.field_product_template__config_type
+msgid ""
+"Defines whether the product is a Configurable Product or an Option linked to"
+" another Configurable Product"
+msgstr ""
+
+#. module: sale_configurator_option
 #: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__description
 msgid "Description"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_account_move__display_name
-#: model:ir.model.fields,field_description:sale_configurator_option.field_ir_ui_view__display_name
 #: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__display_name
 #: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__display_name
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__display_name
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__display_name
-#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__display_name
 msgid "Display Name"
 msgstr ""
 
 #. module: sale_configurator_option
 #: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__message_follower_ids
 msgid "Followers"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__message_channel_ids
-msgid "Followers (Channels)"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -181,23 +178,18 @@ msgid "Font awesome icon e.g. fa-tasks"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_search_view
-msgid "Future Activities"
-msgstr ""
-
-#. module: sale_configurator_option
 #: model:ir.model.fields,help:sale_configurator_option.field_product_configurator_option__sequence
 msgid "Gives the sequence order when displaying."
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_account_move__id
-#: model:ir.model.fields,field_description:sale_configurator_option.field_ir_ui_view__id
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: sale_configurator_option
 #: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__id
 #: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__id
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__id
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__id
-#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__id
 msgid "ID"
 msgstr ""
 
@@ -213,7 +205,6 @@ msgstr ""
 
 #. module: sale_configurator_option
 #: model:ir.model.fields,help:sale_configurator_option.field_product_configurator_template__message_needaction
-#: model:ir.model.fields,help:sale_configurator_option.field_product_configurator_template__message_unread
 msgid "If checked, new messages require your attention."
 msgstr ""
 
@@ -221,6 +212,13 @@ msgstr ""
 #: model:ir.model.fields,help:sale_configurator_option.field_product_configurator_template__message_has_error
 #: model:ir.model.fields,help:sale_configurator_option.field_product_configurator_template__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: sale_configurator_option
+#: model:ir.model.fields,help:sale_configurator_option.field_product_configurator_template__option_ids
+msgid ""
+"If this Configurator is selected for a Configurable Product, all these "
+"Options will be linked to the product"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -234,6 +232,13 @@ msgstr ""
 #: model:ir.model.fields.selection,name:sale_configurator_option.selection__product_configurator_option__option_qty_type__independent_qty
 #: model:ir.model.fields.selection,name:sale_configurator_option.selection__sale_order_line__option_qty_type__independent_qty
 msgid "Independent Qty"
+msgstr ""
+
+#. module: sale_configurator_option
+#: model:ir.model.fields,help:sale_configurator_option.field_product_configurator_option__product_uom_id
+msgid ""
+"Informative Unit of Measure, just to be displayed in Options views. Not used"
+" technically"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -252,36 +257,14 @@ msgid "Is Follower"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__is_configurable_opt
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__is_configurable_opt
-msgid "Is a Configurable Product ?"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__is_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__is_option
-msgid "Is an Option Product ?"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__is_configurable_opt
-msgid "Is the product configurable Option ?"
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__is_not_sold_alone
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__is_not_sold_alone
+msgid "Is Not Sold Alone"
 msgstr ""
 
 #. module: sale_configurator_option
 #: model:ir.model,name:sale_configurator_option.model_account_move
 msgid "Journal Entry"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_account_move____last_update
-#: model:ir.model.fields,field_description:sale_configurator_option.field_ir_ui_view____last_update
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option____last_update
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template____last_update
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product____last_update
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template____last_update
-#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line____last_update
-msgid "Last Modified on"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -294,21 +277,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__write_date
 #: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__write_date
 msgid "Last Updated on"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_search_view
-msgid "Late Activities"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_template_form_view
-msgid "Local Options"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__message_main_attachment_id
-msgid "Main Attachment"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -352,13 +320,19 @@ msgid "Number of Actions"
 msgstr ""
 
 #. module: sale_configurator_option
+#: model:ir.model.fields,help:sale_configurator_option.field_product_product__count_used_as_option
+#: model:ir.model.fields,help:sale_configurator_option.field_product_template__count_used_as_option
+msgid "Number of configurator Options made with this product"
+msgstr ""
+
+#. module: sale_configurator_option
 #: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__message_has_error_counter
 msgid "Number of errors"
 msgstr ""
 
 #. module: sale_configurator_option
 #: model:ir.model.fields,help:sale_configurator_option.field_product_configurator_template__message_needaction_counter
-msgid "Number of messages which requires an action"
+msgid "Number of messages requiring action"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -367,60 +341,92 @@ msgid "Number of messages with delivery error"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,help:sale_configurator_option.field_product_configurator_template__message_unread_counter
-msgid "Number of unread messages"
-msgstr ""
-
-#. module: sale_configurator_option
+#. odoo-python
 #: code:addons/sale_configurator_option/models/product_product.py:0
-#, python-format
 msgid "Operator %s not supported"
 msgstr ""
 
 #. module: sale_configurator_option
 #: model:ir.actions.act_window,name:sale_configurator_option.product_configurator_option_action
-#: model:ir.model.fields.selection,name:sale_configurator_option.selection__sale_order_line__child_type__option
-#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_option_view_form
+#: model:ir.model.fields.selection,name:sale_configurator_option.selection__product_template__config_type__option
+#: model:ir.model.fields.selection,name:sale_configurator_option.selection__sale_order_line__config_type__option
 #: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_option_view_search
-#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_option_view_tree
-#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_search_view
 msgid "Option"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__option_product_tmpl_id
-msgid "Option Product Template"
+#: model:product.template,name:sale_configurator_option.product_option_1_product_template
+msgid "Option 1"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__product_id
-msgid "Option Product Variant"
+#: model:product.template,name:sale_configurator_option.product_option_2_product_template
+msgid "Option 2"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__option_unit_qty
-msgid "Option Unit Qty"
+#: model:product.template,name:sale_configurator_option.product_option_3_product_template
+msgid "Option 3"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.constraint,message:sale_configurator_option.constraint_product_configurator_option_product_tmpl_id_product_id_unique
-msgid "Option must be unique by configurable product"
+#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__option_qty
+msgid "Option Qty"
 msgstr ""
 
 #. module: sale_configurator_option
 #: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__option_qty_type
+msgid "Option Qty Type"
+msgstr ""
+
+#. module: sale_configurator_option
+#: model:ir.model.constraint,message:sale_configurator_option.constraint_product_configurator_option_configurable_product_tmpl_id_product_id_unique
+msgid "Option must be unique by configurable product"
+msgstr ""
+
+#. module: sale_configurator_option
 #: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__option_qty_type
 msgid "Option qty Type"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__option_ids
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__option_ids
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__option_ids
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__option_ids
+#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__child_option_ids
+#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_form_view
+#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_search_view
+#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_template_form_view
 msgid "Options"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__product_conf_tmpl_id
-msgid "Parent Configurable Template"
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__used_as_option_ids
+msgid "Options made with this Product"
+msgstr ""
+
+#. module: sale_configurator_option
+#: model:ir.model.fields,help:sale_configurator_option.field_product_product__option_ids
+#: model:ir.model.fields,help:sale_configurator_option.field_product_template__option_ids
+msgid ""
+"Options of the current Configurable Product\n"
+"(coming from the Configurator or specific to the Product)"
+msgstr ""
+
+#. module: sale_configurator_option
+#: model:ir.model.fields,help:sale_configurator_option.field_product_product__specific_option_ids
+#: model:ir.model.fields,help:sale_configurator_option.field_product_template__specific_option_ids
+msgid "Options specific to the current Configurable Product"
+msgstr ""
+
+#. module: sale_configurator_option
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__configurable_product_tmpl_id
+msgid "Parent Configurable Product Template"
+msgstr ""
+
+#. module: sale_configurator_option
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__configurator_id
+msgid "Parent Configurator Template"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -429,14 +435,8 @@ msgid "Parent Option"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__product_tmpl_id
-msgid "Parent Product Template"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model:ir.model,name:sale_configurator_option.model_product_product
-#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_form_view
-#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_tree_view
+#: model:ir.model,name:sale_configurator_option.model_product_template
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__product_id
 #: model_terms:ir.ui.view,arch_db:sale_configurator_option.sale_order_line_config_option_view_form
 msgid "Product"
 msgstr ""
@@ -448,32 +448,36 @@ msgstr ""
 
 #. module: sale_configurator_option
 #: model:ir.model,name:sale_configurator_option.model_product_configurator_template
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__configurator_id
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__configurator_id
 msgid "Product Configurator Template"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__product_option_id
+#: model:ir.actions.act_window,name:sale_configurator_option.product_configurator_template_action
+#: model:ir.ui.menu,name:sale_configurator_option.menu_configurator_template
+#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_search_view
+msgid "Product Configurator Templates"
+msgstr ""
+
+#. module: sale_configurator_option
+#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__option_id
 msgid "Product Option"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model,name:sale_configurator_option.model_product_template
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__product_tmpl_id
 msgid "Product Template"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__product_tmpl_ids
-msgid "Product Tmpl"
+#: model:ir.model,name:sale_configurator_option.model_product_product
+msgid "Product Variant"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__product_uom_id
-msgid "Product Unit of Measure"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model:ir.ui.menu,name:sale_configurator_option.menu_configurator_template
-msgid "Product configurator Templates"
+#: model:product.template,name:sale_configurator_option.product_with_option_product_template
+msgid "Product With option"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -493,9 +497,8 @@ msgid "Qty type"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__product_conf_tmpl_id
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__product_conf_tmpl_id
-msgid "Related Configurable Template"
+#: model:ir.model.fields,field_description:sale_configurator_option.field_sale_order_line__product_uom_qty
+msgid "Quantity"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -509,11 +512,6 @@ msgid "SMS Delivery error"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model,name:sale_configurator_option.model_sale_order
-msgid "Sales Order"
-msgstr ""
-
-#. module: sale_configurator_option
 #: model:ir.model,name:sale_configurator_option.model_sale_order_line
 msgid "Sales Order Line"
 msgstr ""
@@ -524,14 +522,10 @@ msgid "Sequence"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_search_view
-msgid "Show all records which has next action date is before today"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__local_configurable_option_ids
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__local_configurable_option_ids
-msgid "Specific Configurable Option Lines"
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__specific_option_ids
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_template__specific_option_ids
+#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_template_form_view
+msgid "Specific Options"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -544,26 +538,14 @@ msgid ""
 msgstr ""
 
 #. module: sale_configurator_option
-#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_template_form_view
-msgid "Template Options"
-msgstr ""
-
-#. module: sale_configurator_option
-#: code:addons/sale_configurator_option/models/product_configurator_option.py:0
-#, python-format
-msgid ""
-"The Product Unit of Measure you chose has a different category than in the "
-"product form."
+#: model:ir.model.fields,help:sale_configurator_option.field_product_product__is_not_sold_alone
+#: model:ir.model.fields,help:sale_configurator_option.field_product_template__is_not_sold_alone
+msgid "This Option can only be sold as part of a Configurable Product"
 msgstr ""
 
 #. module: sale_configurator_option
 #: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_form_view
 msgid "This note is only for internal purposes."
-msgstr ""
-
-#. module: sale_configurator_option
-#: model_terms:ir.ui.view,arch_db:sale_configurator_option.product_configurator_template_search_view
-msgid "Today Activities"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -577,51 +559,23 @@ msgid "Type of the exception activity on record."
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,help:sale_configurator_option.field_product_configurator_option__product_uom_id
-msgid ""
-"Unit of Measure (Unit of Measure) is the unit of measurement for the "
-"inventory control"
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__product_uom_id
+msgid "Unit of Measure"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__message_unread
-msgid "Unread Messages"
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__used_in_configurable_product_ids
+msgid "Used In Configurable Product"
 msgstr ""
 
 #. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_template__message_unread_counter
-msgid "Unread Messages Counter"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__used_on_option_line_ids
-msgid "Use On Option Line"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__used_on_product_ids
-msgid "Used On Product"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__used_on_product_tmpl_ids
-msgid "Used On Product Tmpl"
-msgstr ""
-
-#. module: sale_configurator_option
-#: model:ir.model.fields,field_description:sale_configurator_option.field_product_configurator_option__used_on_product_tmpl_ids
-msgid "Used on product template"
+#: model:ir.model.fields,field_description:sale_configurator_option.field_product_product__used_in_configurable_product_tmpl_ids
+msgid "Used In Configurable Product Tmpl"
 msgstr ""
 
 #. module: sale_configurator_option
 #: model:ir.model,name:sale_configurator_option.model_ir_ui_view
 msgid "View"
-msgstr ""
-
-#. module: sale_configurator_option
-#: code:addons/sale_configurator_option/models/product_configurator_option.py:0
-#, python-format
-msgid "Warning"
 msgstr ""
 
 #. module: sale_configurator_option
@@ -632,12 +586,4 @@ msgstr ""
 #. module: sale_configurator_option
 #: model:ir.model.fields,help:sale_configurator_option.field_product_configurator_template__website_message_ids
 msgid "Website communication history"
-msgstr ""
-
-#. module: sale_configurator_option
-#: code:addons/sale_configurator_option/models/product_configurator_option.py:0
-#, python-format
-msgid ""
-"You can not active/inactive option manually,instead active/inactive related "
-"product"
 msgstr ""

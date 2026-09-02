@@ -5,7 +5,6 @@
         inherit_id="account.report_invoice_document"
         priority="200"
     >
-
         <!--Apply distinct style to children lines-->
         <xpath
             expr="//t[@name='account_invoice_line_accountable']//span[@t-field='line.name']"
@@ -22,6 +21,5 @@
                 <span t-field="line.name" t-options="{'widget': 'text'}" />
             </t>
         </xpath>
-
     </template>
 </odoo>

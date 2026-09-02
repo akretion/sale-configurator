@@ -7,10 +7,10 @@
         <field name="name">Customizable Desk</field>
         <field name="order_id" ref="sale_order_1" />
         <field
-            name="product_tmpl_id"
+            name="product_template_id"
             ref="product.product_product_4_product_template"
         />
-        <field name="is_multi_variant_line" eval="1" />
+        <field name="is_configurable_with_variant" eval="1" />
         <field name="product_id" ref="product.product_product_4" />
         <field name="price_unit" eval="0" />
     </record>

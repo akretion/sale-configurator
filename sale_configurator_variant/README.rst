@@ -17,17 +17,77 @@ Sale Configurator Variant
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-akretion%2Fsale--configurator-lightgray.png?logo=github
-    :target: https://github.com/akretion/sale-configurator/tree/14.0/sale_configurator_variant
+    :target: https://github.com/akretion/sale-configurator/tree/18.0/sale_configurator_variant
     :alt: akretion/sale-configurator
 
 |badge1| |badge2| |badge3|
 
-This module Allow to sale multivariant product and applining quantities discount based on all variants quantities.
+This module extends the ``sale_configurator_base`` functionality for
+products that are sold in **several variants** (e.g. different colors or
+sizes of a given model), when the customer wants to mix the quantities
+of the variants on a single Sale Order.
+
+When the line is configurable *with variants*:
+
+- the **parent line** represents the product itself: it has **no price
+  of its own** (``price_unit == 0``) and its quantity is the **sum of
+  the quantities of all its variants**;
+- each **variant** is a child line with its own product, quantity and
+  price.
+
+The **prices of the variants are based on the total quantity of the
+parent line** (the sum of the quantities of all the variants), not on
+each variant quantity separately. This way, quantity-based discount
+rules of the pricelists are applied on the *cumulated* quantity of all
+the variants: buy the total over a threshold in several variants, and
+the discount applies anyway.
+
+The **delivered quantities**: each variant line is a real product for
+which a stock move is generated with its own quantity; the delivery
+quantity is tracked through the *parent* line.
+
+Example: T-shirts priced 10.00 each with a 20% quantity discount above
+40 T-shirts. The customer buys 50 T-shirts: 30 in size M and 20 in size
+L.
+
+- T-shirt (parent): quantity 50, price 0.00
+- T-shirt size M (variant): 30 × 8.00 = 240.00
+- T-shirt size L (variant): 20 × 8.00 = 160.00
+- Configurable total: 400.00
+
+The 20% discount is applied on the parent's total quantity (50 T-shirts
+is above the 40 threshold) and each variant is priced 8.00 (10.00 -
+20%).
+
+This usage is complementary to ``sale_configurator_option``: a
+configurable product *with variants* can also have **options**, whose
+proportional quantity is computed from the parent line quantity (the sum
+of the variants). For example, a single *flocking* option is applied on
+the whole set of sizes.
 
 **Table of contents**
 
 .. contents::
    :local:
+
+Usage
+=====
+
+Use a configurable product with variants
+----------------------------------------
+
+1. Create or open a *Quotation*.
+2. Click on *Add a configurable product*.
+3. Tick *With variants?* and select the product template (the product
+   and its variants must exist, e.g. the T-shirt in sizes M and L).
+4. In the *Variants* section, add one line per variant and set the
+   quantity. The parent line quantity is updated automatically: it is
+   the sum of the quantities of all the variants.
+5. Set the price on each variant line.
+
+The discounts based on the quantity are applied on the total quantity of
+the parent line (the sum of the quantities of all the variants). The
+variants are the delivered products.
 
 Bug Tracker
 ===========
@@ -35,7 +95,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/akretion/sale-configurator/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/akretion/sale-configurator/issues/new?body=module:%20sale_configurator_variant%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/akretion/sale-configurator/issues/new?body=module:%20sale_configurator_variant%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -43,19 +103,19 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Akretion
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Mourad EL HADJ MIMOUN <mourad.elhadj.mimoune@akretion.com>
-* Sébastien Beau <sebastien.beau@akretion.com>
+- Mourad EL HADJ MIMOUN <mourad.elhadj.mimoune@akretion.com>
+- Sébastien Beau <sebastien.beau@akretion.com>
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
-This module is part of the `akretion/sale-configurator <https://github.com/akretion/sale-configurator/tree/14.0/sale_configurator_variant>`_ project on GitHub.
+This module is part of the `akretion/sale-configurator <https://github.com/akretion/sale-configurator/tree/18.0/sale_configurator_variant>`_ project on GitHub.
 
 You are welcome to contribute.
